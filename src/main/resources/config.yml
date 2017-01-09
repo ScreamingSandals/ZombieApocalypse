@@ -1,0 +1,28 @@
+world: "zaworld"
+spawn_x: 0
+spawn_y: 60
+spawn_z: 0
+spawn_yaw: 0
+spawn_pitch: 0
+spawn_giant: true
+giant_x: 0
+giant_y: 60
+giant_z: 0
+giant_yaw: 0
+giant_pitch: 0
+message_prefix: "[ZA]"
+message_join: "%name% is join to game."
+message_leave: "%name% is leave the game."
+message_change_player: "%name% is changed to player."
+message_change_spectator: "%name% is changed to spectator."
+message_giant_spawned: "Giant spawned. Apocalypse will end after kill giant."
+message_giant_killed: "Giant killed. Apocalypse is restarting now."
+message_phase_start: "Zombie apocalypse started. Phase: %number%"
+message_death_player: "%player% killed by %killer%."
+message_player_get_points: "You killed %entity% and got %points% points. Your points: %newpoints% "
+message_player_miss_points: "You killed by %killer% and miss %points% points. Your points: %newpoints% "
+message_starting: "Zombie Apocalypse starting in %time%"
+message_minutes: "minutes"
+message_minute: "minute"
+message_seconds: "seconds"
+message_second: "second"
