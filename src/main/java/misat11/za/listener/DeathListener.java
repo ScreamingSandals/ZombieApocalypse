@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,8 +20,9 @@ public class DeathListener implements Listener{
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event){
+    	World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
     	if (event.getEntity() instanceof Player){
-	    	if (event.getEntity().getWorld().getName() == Main.instance.getConfig().getString("world")){
+	    	if (event.getEntity().getWorld() == zaworld){
 	    		Player player = Bukkit.getPlayer(event.getEntity().getName());
 	            if(Main.instance.getSaveConfig().isSet(player.getName()+".play") == false){
 	            	Main.instance.getSaveConfig().set(player.getName()+".play", true);
@@ -76,7 +78,7 @@ public class DeathListener implements Listener{
 	            }
 	    	}
 	    }else{
-	    	if (event.getEntity().getWorld().getName() == Main.instance.getConfig().getString("world")){
+	    	if (event.getEntity().getWorld() == zaworld){
 	            Entity killer = event.getEntity().getKiller();
 	            if (killer instanceof Player){
 	            	Player killer2 = Bukkit.getPlayer(killer.getName());

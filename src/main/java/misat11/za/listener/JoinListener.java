@@ -6,6 +6,7 @@ import java.util.Calendar;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -17,15 +18,15 @@ public class JoinListener implements Listener{
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-    	if (event.getPlayer().getWorld().getName() == Main.instance.getConfig().getString("world")){
+    	World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
+    	if (event.getPlayer().getWorld() == zaworld){
     		Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_prefix") + Main.instance.getConfig().getString("message_join").replace("%name%", event.getPlayer().getDisplayName()));
-            Location location = null;
-            location.setWorld(Bukkit.getServer().getWorld(Main.instance.getConfig().getString("world")));
-            location.setX(Main.instance.getConfig().getInt("spawn_x"));
-            location.setY(Main.instance.getConfig().getInt("spawn_y"));
-            location.setZ(Main.instance.getConfig().getInt("spawn_z"));
-            location.setYaw(Main.instance.getConfig().getInt("spawn_yaw"));
-            location.setPitch(Main.instance.getConfig().getInt("spawn_pitch"));
+            int x = Main.instance.getConfig().getInt("spawn_x");
+            int y = Main.instance.getConfig().getInt("spawn_y");
+            int z = Main.instance.getConfig().getInt("spawn_z");
+            int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+            int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+            Location location = new Location(zaworld, x, y, z, yaw, pitch);
             event.getPlayer().teleport(location);
             if(Main.instance.getSaveConfig().isSet(event.getPlayer().getName()+".play") == false){
             	Main.instance.getSaveConfig().set(event.getPlayer().getName()+".play", true);

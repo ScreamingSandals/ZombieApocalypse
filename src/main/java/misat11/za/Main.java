@@ -26,88 +26,88 @@ public class Main extends JavaPlugin
 		
 		createFiles();
 		
-		if (this.getConfig().isSet("world")){
+		if (this.getConfig().isSet("world") == false){
 			this.getConfig().set("world", "zaworld");
 		}
-		if (this.getConfig().isSet("spawn_x")){
+		if (this.getConfig().isSet("spawn_x") == false){
 			this.getConfig().set("spawn_x", 0);
 		}
-		if (this.getConfig().isSet("spawn_y")){
+		if (this.getConfig().isSet("spawn_y") == false){
 			this.getConfig().set("spawn_y", 60);
 		}
-		if (this.getConfig().isSet("spawn_z")){
+		if (this.getConfig().isSet("spawn_z") == false){
 			this.getConfig().set("spawn_z", 0);
 		}
-		if (this.getConfig().isSet("spawn_yaw")){
+		if (this.getConfig().isSet("spawn_yaw") == false){
 			this.getConfig().set("spawn_yaw", 0);
 		}
-		if (this.getConfig().isSet("spawn_pitch")){
+		if (this.getConfig().isSet("spawn_pitch") == false){
 			this.getConfig().set("spawn_pitch", 0);
 		}
-		if (this.getConfig().isSet("spawn_giant")){
+		if (this.getConfig().isSet("spawn_giant") == false){
 			this.getConfig().set("spawn_giant", true);
 		}
-		if (this.getConfig().isSet("giant_x")){
+		if (this.getConfig().isSet("giant_x") == false){
 			this.getConfig().set("giant_x", 0);
 		}
-		if (this.getConfig().isSet("giant_y")){
+		if (this.getConfig().isSet("giant_y") == false){
 			this.getConfig().set("giant_y", 60);
 		}
-		if (this.getConfig().isSet("giant_z")){
+		if (this.getConfig().isSet("giant_z") == false){
 			this.getConfig().set("giant_z", 0);
 		}
-		if (this.getConfig().isSet("giant_yaw")){
+		if (this.getConfig().isSet("giant_yaw") == false){
 			this.getConfig().set("giant_yaw", 0);
 		}
-		if (this.getConfig().isSet("giant_pitch")){
+		if (this.getConfig().isSet("giant_pitch") == false){
 			this.getConfig().set("giant_pitch", 0);
 		}
-		if (this.getConfig().isSet("message_prefix")){
+		if (this.getConfig().isSet("message_prefix") == false){
 			this.getConfig().set("message_prefix", "[ZA]");
 		}
-		if (this.getConfig().isSet("message_join")){
+		if (this.getConfig().isSet("message_join") == false){
 			this.getConfig().set("message_join", "%name% is join to game.");
 		}
-		if (this.getConfig().isSet("message_leave")){
+		if (this.getConfig().isSet("message_leave") == false){
 			this.getConfig().set("message_leave", "%name% is leave the game.");
 		}
-		if (this.getConfig().isSet("message_change_player")){
+		if (this.getConfig().isSet("message_change_player") == false){
 			this.getConfig().set("message_change_player", "%name% is changed to player.");
 		}
-		if (this.getConfig().isSet("message_change_spectator")){
+		if (this.getConfig().isSet("message_change_spectator") == false){
 			this.getConfig().set("message_change_spectator", "%name% is changed to spectator.");
 		}
-		if (this.getConfig().isSet("message_giant_spawned")){
+		if (this.getConfig().isSet("message_giant_spawned") == false){
 			this.getConfig().set("message_giant_spawned", "Giant spawned. Apocalypse will end after kill giant.");
 		}
-		if (this.getConfig().isSet("message_giant_killed")){
+		if (this.getConfig().isSet("message_giant_killed") == false){
 			this.getConfig().set("message_giant_killed", "Giant killed. Apocalypse is restarting now.");
 		}
-		if (this.getConfig().isSet("message_phase_start")){
+		if (this.getConfig().isSet("message_phase_start") == false){
 			this.getConfig().set("message_phase_start", "Zombie apocalypse started. Phase: %number%");
 		}
-		if (this.getConfig().isSet("message_death_player")){
+		if (this.getConfig().isSet("message_death_player") == false){
 			this.getConfig().set("message_death_player", "%player% killed by %killer%.");
 		}
-		if (this.getConfig().isSet("message_player_get_points")){
+		if (this.getConfig().isSet("message_player_get_points") == false){
 			this.getConfig().set("message_player_get_points", "You killed %entity% and got %points% points. Your points: %newpoints%");
 		}
-		if (this.getConfig().isSet("message_player_miss_points")){
+		if (this.getConfig().isSet("message_player_miss_points") == false){
 			this.getConfig().set("message_player_miss_points", "You killed by %killer% and miss %points% points. Your points: %newpoints%");
 		}
-		if (this.getConfig().isSet("message_starting")){
+		if (this.getConfig().isSet("message_starting") == false){
 			this.getConfig().set("message_starting", "Zombie Apocalypse starting in %time%");
 		}
-		if (this.getConfig().isSet("message_minutes")){
+		if (this.getConfig().isSet("message_minutes") == false){
 			this.getConfig().set("message_minutes", "minutes");
 		}
-		if (this.getConfig().isSet("message_minute")){
+		if (this.getConfig().isSet("message_minute") == false){
 			this.getConfig().set("message_minute", "minute");
 		}
-		if (this.getConfig().isSet("message_seconds")){
+		if (this.getConfig().isSet("message_seconds") == false){
 			this.getConfig().set("message_seconds", "seconds");
 		}
-		if (this.getConfig().isSet("message_second")){
+		if (this.getConfig().isSet("message_second") == false){
 			this.getConfig().set("message_second", "second");
 		}
         
