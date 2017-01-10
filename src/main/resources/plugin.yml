@@ -6,4 +6,4 @@ author: Misat11
 commands:
   za:
     description: Command of ZA plugin
-    usage: /za
+    usage: /za [subcommand]
