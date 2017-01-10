@@ -14,8 +14,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import misat11.za.Main;
 
-import net.md_5.bungee.api.chat.TextComponent;
-
 public class DeathListener implements Listener{
 
     @EventHandler
@@ -23,7 +21,7 @@ public class DeathListener implements Listener{
     	World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
     	if (event.getEntity() instanceof Player){
 	    	if (event.getEntity().getWorld() == zaworld){
-	    		Player player = Bukkit.getPlayer(event.getEntity().getName());
+	    		Player player = (Player)Bukkit.getPlayer(event.getEntity().getName());
 	            if(Main.instance.getSaveConfig().isSet(player.getName()+".play") == false){
 	            	Main.instance.getSaveConfig().set(player.getName()+".play", true);
 	            	Main.instance.getSaveConfig().set(player.getName()+".play.points", 100);
@@ -46,7 +44,7 @@ public class DeathListener implements Listener{
 							e.printStackTrace();
 						}
 		            }
-	            	Player killer2 = Bukkit.getPlayer(killer.getName());
+	            	Player killer2 = (Player)Bukkit.getPlayer(killer.getName());
 	                int oldpoints = Main.instance.getSaveConfig().getInt(player.getName()+".play.points");
 	                Main.instance.getSaveConfig().set(player.getName()+".play.points", oldpoints - 10);
 	            	try {
@@ -55,7 +53,7 @@ public class DeathListener implements Listener{
 	    				e.printStackTrace();
 	    			}
 	            	int newpoints = Main.instance.getSaveConfig().getInt(player.getName()+".play.points");
-	            	player.spigot().sendMessage( new TextComponent( Main.instance.getSaveConfig().getString("message_player_miss_points").replace("%killer%", killer2.getDisplayName()).replace("%points%", "10").replace("%newpoints%", Integer.toString(newpoints)) ) );
+	            	player.sendMessage( Main.instance.getSaveConfig().getString("message_player_miss_points").replace("%killer%", killer2.getDisplayName()).replace("%points%", "10").replace("%newpoints%", Integer.toString(newpoints)) );
 	                int oldpoints2 = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
 	                Main.instance.getSaveConfig().set(killer2.getName()+".play.points", oldpoints2 + 10);
 	            	try {
@@ -64,7 +62,7 @@ public class DeathListener implements Listener{
 	    				e.printStackTrace();
 	    			}
 	            	int newpoints2 = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
-	            	killer2.spigot().sendMessage( new TextComponent( Main.instance.getSaveConfig().getString("message_player_get_points").replace("%points%", "10").replace("%entity%", player.getDisplayName()).replace("%newpoints%", Integer.toString(newpoints2)) ) );
+	            	killer2.sendMessage( Main.instance.getSaveConfig().getString("message_player_get_points").replace("%points%", "10").replace("%entity%", player.getDisplayName()).replace("%newpoints%", Integer.toString(newpoints2)) );
 	            }else{
 	                int oldpoints = Main.instance.getSaveConfig().getInt(player.getName()+".play.points");
 	                Main.instance.getSaveConfig().set(player.getName()+".play.points", oldpoints - 5);
@@ -74,14 +72,14 @@ public class DeathListener implements Listener{
 	    				e.printStackTrace();
 	    			}
 	            	int newpoints = Main.instance.getSaveConfig().getInt(player.getName()+".play.points");
-	            	player.spigot().sendMessage( new TextComponent( Main.instance.getSaveConfig().getString("message_player_miss_points").replace("%killer%", killer.getName()).replace("%points%", "5").replace("%newpoints%", Integer.toString(newpoints)) ) );	
+	            	player.sendMessage( Main.instance.getSaveConfig().getString("message_player_miss_points").replace("%killer%", killer.getName()).replace("%points%", "5").replace("%newpoints%", Integer.toString(newpoints)) );	
 	            }
 	    	}
 	    }else{
 	    	if (event.getEntity().getWorld() == zaworld){
 	            Entity killer = event.getEntity().getKiller();
 	            if (killer instanceof Player){
-	            	Player killer2 = Bukkit.getPlayer(killer.getName());
+	            	Player killer2 = (Player)Bukkit.getPlayer(killer.getName());
 		            if(Main.instance.getSaveConfig().isSet(killer2.getName()+".play") == false){
 		            	Main.instance.getSaveConfig().set(killer2.getName()+".play", true);
 		            	Main.instance.getSaveConfig().set(killer2.getName()+".play.points", 100);
@@ -100,7 +98,7 @@ public class DeathListener implements Listener{
 	    				e.printStackTrace();
 	    			}
 	            	int newpoints = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
-	            	killer2.spigot().sendMessage( new TextComponent( Main.instance.getSaveConfig().getString("message_player_get_points").replace("%entity%", event.getEntity().getName()).replace("%points%", "5").replace("%newpoints%", Integer.toString(newpoints)) ) );	 
+	            	killer2.sendMessage(Main.instance.getSaveConfig().getString("message_player_get_points").replace("%entity%", event.getEntity().toString()).replace("%points%", "5").replace("%newpoints%", Integer.toString(newpoints)) );	 
 	            }
 	    	}
 	    }

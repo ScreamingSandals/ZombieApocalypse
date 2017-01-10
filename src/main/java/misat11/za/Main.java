@@ -1,6 +1,7 @@
 package misat11.za;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import misat11.za.listener.DeathListener;
 import misat11.za.listener.JoinListener;
@@ -10,9 +11,12 @@ import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class Main extends JavaPlugin
 {
@@ -110,10 +114,80 @@ public class Main extends JavaPlugin
 		if (this.getConfig().isSet("message_second") == false){
 			this.getConfig().set("message_second", "second");
 		}
+    	try {
+    		this.getConfig().save(savef);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         
 		Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
 		Bukkit.getPluginManager().registerEvents(new onTeleportListener(), this);
+		
+        BukkitScheduler scheduler = getServer().getScheduler();
+        scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
+            public void run() {
+            	World zaworld = Bukkit.getWorld(getConfig().getString("world"));
+                if(getSaveConfig().isSet("SERVER.ARENA") == false){
+                	getSaveConfig().set("SERVER.ARENA.phase", 1);
+                	getSaveConfig().set("SERVER.ARENA.time", "day");
+                	getSaveConfig().set("SERVER.ARENA.countdown", 60);
+                	try {
+                		getSaveConfig().save(savef);
+        			} catch (IOException e) {
+        				e.printStackTrace();
+        			}
+                }
+            	if (getSaveConfig().getString("SERVER.ARENA.time") == "day"){
+            			getSaveConfig().set("SERVER.ARENA.countdown", getSaveConfig().getInt("SERVER.ARENA.countdown")-1);
+            			zaworld.setTime(0);
+    	        		if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0){
+    	                	getSaveConfig().set("SERVER.ARENA.time", "night");
+    	                	getSaveConfig().set("SERVER.ARENA.countdown", 300);
+    	                	int x = Main.instance.getConfig().getInt("spawn_x");
+    	    	            int y = Main.instance.getConfig().getInt("spawn_y");
+    	    	            int z = Main.instance.getConfig().getInt("spawn_z");
+    	    	            int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+    	    	            int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+    	    	            Location location = new Location(zaworld, x, y, z, yaw, pitch);
+    	    	            for(Player p : Bukkit.getOnlinePlayers())
+    	    	            {
+    	    	              if(p.getWorld().equals(zaworld))
+    	    	              {
+    	    	                  p.teleport(location);
+    	    	              }
+    	    	            }
+    	    	            Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " " + getConfig().getString("message_phase_start").replace("%number%", Integer.toString(getSaveConfig().getInt("SERVER.ARENA.phase"))));
+    	        		}
+            		}else{
+            			getSaveConfig().set("SERVER.ARENA.countdown", getSaveConfig().getInt("SERVER.ARENA.countdown")-1);
+            			zaworld.setTime(20000);
+    	        		if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0){
+    	                	getSaveConfig().set("SERVER.ARENA.time", "day");
+    	                	getSaveConfig().set("SERVER.ARENA.countdown", 60);
+    	                	int x = Main.instance.getConfig().getInt("spawn_x");
+    	    	            int y = Main.instance.getConfig().getInt("spawn_y");
+    	    	            int z = Main.instance.getConfig().getInt("spawn_z");
+    	    	            int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+    	    	            int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+    	    	            Location location = new Location(zaworld, x, y, z, yaw, pitch);
+    	    	            for(Player p : Bukkit.getOnlinePlayers())
+    	    	            {
+    	    	              if(p.getWorld().equals(zaworld))
+    	    	              {
+    	    	                  p.teleport(location);
+    	    	              }
+    	    	            }
+    	    	            Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " " + getConfig().getString("message_starting").replace("%time%", "1 "+getConfig().getString("message_minute")));
+    	        		}
+            		}
+	            	try {
+	            		getSaveConfig().save(savef);
+	    			} catch (IOException e) {
+	    				e.printStackTrace();
+	    			}
+                }
+        }, 0L, 20L);
 	}
 	
     public FileConfiguration getSaveConfig() {

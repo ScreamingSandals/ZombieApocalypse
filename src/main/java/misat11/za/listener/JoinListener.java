@@ -20,7 +20,7 @@ public class JoinListener implements Listener{
     {
     	World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
     	if (event.getPlayer().getWorld() == zaworld){
-    		Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_prefix") + Main.instance.getConfig().getString("message_join").replace("%name%", event.getPlayer().getDisplayName()));
+    		Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_prefix") + " " + Main.instance.getConfig().getString("message_join").replace("%name%", event.getPlayer().getDisplayName()));
             int x = Main.instance.getConfig().getInt("spawn_x");
             int y = Main.instance.getConfig().getInt("spawn_y");
             int z = Main.instance.getConfig().getInt("spawn_z");
