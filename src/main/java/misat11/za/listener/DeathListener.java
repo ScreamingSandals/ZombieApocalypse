@@ -7,6 +7,7 @@ import java.util.Calendar;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -53,7 +54,7 @@ public class DeathListener implements Listener{
 	    				e.printStackTrace();
 	    			}
 	            	int newpoints = Main.instance.getSaveConfig().getInt(player.getName()+".play.points");
-	            	player.sendMessage( Main.instance.getSaveConfig().getString("message_player_miss_points").replace("%killer%", killer2.getDisplayName()).replace("%points%", "10").replace("%newpoints%", Integer.toString(newpoints)) );
+	            	player.sendMessage( Main.instance.getConfig().getString("message_player_miss_points").replace("%killer%", killer2.getDisplayName()).replace("%points%", "10").replace("%newpoints%", Integer.toString(newpoints)) );
 	                int oldpoints2 = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
 	                Main.instance.getSaveConfig().set(killer2.getName()+".play.points", oldpoints2 + 10);
 	            	try {
@@ -62,7 +63,7 @@ public class DeathListener implements Listener{
 	    				e.printStackTrace();
 	    			}
 	            	int newpoints2 = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
-	            	killer2.sendMessage( Main.instance.getSaveConfig().getString("message_player_get_points").replace("%points%", "10").replace("%entity%", player.getDisplayName()).replace("%newpoints%", Integer.toString(newpoints2)) );
+	            	killer2.sendMessage( Main.instance.getConfig().getString("message_player_get_points").replace("%points%", "10").replace("%entity%", player.getDisplayName()).replace("%newpoints%", Integer.toString(newpoints2)) );
 	            }else{
 	                int oldpoints = Main.instance.getSaveConfig().getInt(player.getName()+".play.points");
 	                Main.instance.getSaveConfig().set(player.getName()+".play.points", oldpoints - 5);
@@ -72,34 +73,69 @@ public class DeathListener implements Listener{
 	    				e.printStackTrace();
 	    			}
 	            	int newpoints = Main.instance.getSaveConfig().getInt(player.getName()+".play.points");
-	            	player.sendMessage( Main.instance.getSaveConfig().getString("message_player_miss_points").replace("%killer%", killer.getName()).replace("%points%", "5").replace("%newpoints%", Integer.toString(newpoints)) );	
+	            	player.sendMessage( Main.instance.getConfig().getString("message_player_miss_points").replace("%killer%", killer.getName()).replace("%points%", "5").replace("%newpoints%", Integer.toString(newpoints)) );	
 	            }
 	    	}
 	    }else{
 	    	if (event.getEntity().getWorld() == zaworld){
-	            Entity killer = event.getEntity().getKiller();
-	            if (killer instanceof Player){
-	            	Player killer2 = (Player)Bukkit.getPlayer(killer.getName());
-		            if(Main.instance.getSaveConfig().isSet(killer2.getName()+".play") == false){
-		            	Main.instance.getSaveConfig().set(killer2.getName()+".play", true);
-		            	Main.instance.getSaveConfig().set(killer2.getName()+".play.points", 100);
-		            	Main.instance.getSaveConfig().set(killer2.getName()+".play.gift",  new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
+	    		if (event.getEntity().getType() == EntityType.GIANT){
+		            Entity killer = event.getEntity().getKiller();
+		            if (killer instanceof Player){
+		            	Player killer2 = (Player)Bukkit.getPlayer(killer.getName());
+			            if(Main.instance.getSaveConfig().isSet(killer2.getName()+".play") == false){
+			            	Main.instance.getSaveConfig().set(killer2.getName()+".play", true);
+			            	Main.instance.getSaveConfig().set(killer2.getName()+".play.points", 100);
+			            	Main.instance.getSaveConfig().set(killer2.getName()+".play.gift",  new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
+			            	try {
+			            		Main.instance.getSaveConfig().save(Main.instance.savef);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+			            }
+			            int oldpoints = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
+			            Main.instance.getSaveConfig().set(killer2.getName()+".play.points", oldpoints + 100);
+			            Main.instance.getSaveConfig().set("SERVER.ARENA.phase", 1);
+			            Main.instance.getSaveConfig().set("SERVER.ARENA.countdown", 60);
+			            Main.instance.getSaveConfig().set("SERVER.ARENA.time", "day");
 		            	try {
 		            		Main.instance.getSaveConfig().save(Main.instance.savef);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+		    			} catch (IOException e) {
+		    				e.printStackTrace();
+		    			}
+		            	Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_prefix") + " " + Main.instance.getConfig().getString("message_giant_killed"));
 		            }
-		            int oldpoints = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
-		            Main.instance.getSaveConfig().set(killer2.getName()+".play.points", oldpoints + 5);
-	            	try {
-	            		Main.instance.getSaveConfig().save(Main.instance.savef);
-	    			} catch (IOException e) {
-	    				e.printStackTrace();
-	    			}
-	            	int newpoints = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
-	            	killer2.sendMessage(Main.instance.getSaveConfig().getString("message_player_get_points").replace("%entity%", event.getEntity().toString()).replace("%points%", "5").replace("%newpoints%", Integer.toString(newpoints)) );	 
-	            }
+	    		}else{
+		            Entity killer = event.getEntity().getKiller();
+		            if (killer instanceof Player){
+		            	Player killer2 = (Player)Bukkit.getPlayer(killer.getName());
+			            if(Main.instance.getSaveConfig().isSet(killer2.getName()+".play") == false){
+			            	Main.instance.getSaveConfig().set(killer2.getName()+".play", true);
+			            	Main.instance.getSaveConfig().set(killer2.getName()+".play.points", 100);
+			            	Main.instance.getSaveConfig().set(killer2.getName()+".play.gift",  new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
+			            	try {
+			            		Main.instance.getSaveConfig().save(Main.instance.savef);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+			            }
+			            int oldpoints = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
+			            Main.instance.getSaveConfig().set(killer2.getName()+".play.points", oldpoints + 5);
+		            	try {
+		            		Main.instance.getSaveConfig().save(Main.instance.savef);
+		    			} catch (IOException e) {
+		    				e.printStackTrace();
+		    			}
+		            	int newpoints = Main.instance.getSaveConfig().getInt(killer2.getName()+".play.points");
+		            	killer2.sendMessage(
+		            			Main.instance
+		            			.getConfig()
+		            			.getString("message_player_get_points")
+		            			.replace("%entity%", event.getEntity().toString())
+		            			.replace("%points%", "5")
+		            			.replace("%newpoints%", Integer.toString(newpoints))
+		            			);	 
+		            }
+		    	}
 	    	}
 	    }
     }

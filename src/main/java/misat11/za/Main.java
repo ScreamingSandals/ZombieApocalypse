@@ -3,8 +3,11 @@ package misat11.za;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import misat11.za.commands.ZaCommand;
 import misat11.za.listener.DeathListener;
 import misat11.za.listener.JoinListener;
+import misat11.za.listener.LeaveListener;
+import misat11.za.listener.RespawnListener;
 import misat11.za.listener.onTeleportListener;
 
 import java.io.File;
@@ -16,6 +19,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class Main extends JavaPlugin
@@ -121,8 +125,12 @@ public class Main extends JavaPlugin
 		}
         
 		Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
+		Bukkit.getPluginManager().registerEvents(new LeaveListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
 		Bukkit.getPluginManager().registerEvents(new onTeleportListener(), this);
+		Bukkit.getPluginManager().registerEvents(new RespawnListener(), this);
+		
+		this.getCommand("za").setExecutor(new ZaCommand());
 		
         BukkitScheduler scheduler = getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
@@ -142,6 +150,21 @@ public class Main extends JavaPlugin
             			getSaveConfig().set("SERVER.ARENA.countdown", getSaveConfig().getInt("SERVER.ARENA.countdown")-1);
             			zaworld.setTime(0);
     	        		if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0){
+    	        			if(getConfig().getBoolean("spawn_giant") == true){
+    	        				if(getSaveConfig().getInt("SERVER.ARENA.phase") != 5){
+    	        					getSaveConfig().set("SERVER.ARENA.phase", getSaveConfig().getInt("SERVER.ARENA.phase")+1);
+    	        				}
+    	        				if(getSaveConfig().getInt("SERVER.ARENA.phase") == 5){
+    	    	    	            Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " " + getConfig().getString("message_giant_spawned"));
+    	    	                	int x = Main.instance.getConfig().getInt("giant_x");
+    	    	    	            int y = Main.instance.getConfig().getInt("giant_y");
+    	    	    	            int z = Main.instance.getConfig().getInt("giant_z");
+    	    	    	            int yaw = Main.instance.getConfig().getInt("giant_yaw");
+    	    	    	            int pitch = Main.instance.getConfig().getInt("giant_pitch");
+    	    	    	            Location location = new Location(zaworld, x, y, z, yaw, pitch);
+    	    	    	            Bukkit.getWorld("world").spawnEntity(location, EntityType.GIANT);
+    	        				}
+    	        			}
     	                	getSaveConfig().set("SERVER.ARENA.time", "night");
     	                	getSaveConfig().set("SERVER.ARENA.countdown", 300);
     	                	int x = Main.instance.getConfig().getInt("spawn_x");
@@ -162,7 +185,7 @@ public class Main extends JavaPlugin
             		}else{
             			getSaveConfig().set("SERVER.ARENA.countdown", getSaveConfig().getInt("SERVER.ARENA.countdown")-1);
             			zaworld.setTime(20000);
-    	        		if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0){
+    	        		if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0 && getSaveConfig().getInt("SERVER.ARENA.phase") < 5){
     	                	getSaveConfig().set("SERVER.ARENA.time", "day");
     	                	getSaveConfig().set("SERVER.ARENA.countdown", 60);
     	                	int x = Main.instance.getConfig().getInt("spawn_x");

@@ -2,3 +2,8 @@ name: ZombieApocalypse
 main: misat11.za.Main
 version: 1.0.0
 author: Misat11
+
+commands:
+  za:
+    description: Command of ZA plugin
+    usage: /za
