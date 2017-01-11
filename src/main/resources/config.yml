@@ -11,6 +11,10 @@ giant_y: 60
 giant_z: 0
 giant_yaw: 0
 giant_pitch: 0
+arena_pos1_x: 0
+arena_pos1_z: 0
+arena_pos2_x: 0
+arena_pos2_z: 0
 message_prefix: "[ZA]"
 message_join: "%name% is join to game."
 message_leave: "%name% is leave the game."
@@ -39,5 +43,7 @@ help_points: "Display your points"
 help_gift: "Get daily gift to you"
 help_setspawnloc: "Admin Command: set spawn location"
 help_setgiantloc: "Admin Command: set giant location"
+help_setpos1: "Admin Command: set arena pos 1"
+help_setpos2: "Admin Command: set arena pos 2"
 help_enablegame: "Admin Command: enable/disable game"
 help_enablegiantgame: "Admin Command: enable/disable spawning giants"

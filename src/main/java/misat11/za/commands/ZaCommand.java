@@ -12,7 +12,6 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,67 +25,67 @@ public class ZaCommand implements CommandExecutor {
 			Player player = (Player) sender;
 			if (args.length > 0) {
 				if (args[0].equalsIgnoreCase("gift")) {
-					if (player.getWorld() == zaworld) {
-						String time = new SimpleDateFormat("yyyyMMdd")
-								.format(Calendar.getInstance().getTime());
-						if (Main.instance.getSaveConfig()
-								.getString(player.getName() + ".play.gift") == time) {
-							sender.sendMessage(Main.instance.getConfig().getString("message_gift_already_have"));
-						} else {
-							double d = Math.random();
-							if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.BREAD, 2);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Bread"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.STONE_SWORD);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Stone sword"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.APPLE, 5);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Apple"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.WOOD_SWORD);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Wood sword"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.BOW);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Bow"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.ARROW, 10);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Arrow"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.GOLDEN_APPLE);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Golden Apple"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.INK_SACK, 10, (short) 4);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Lapis Lazuli"));
-							} else if (d < 0.1) {
-								ItemStack item = new ItemStack(Material.APPLE, 3);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Apple"));
+					if (Main.instance.getConfig().getBoolean("enabled") == true) {
+						if (player.getWorld() == zaworld) {
+							String time = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+							if (Main.instance.getSaveConfig().getString(player.getName() + ".play.gift") == time) {
+								sender.sendMessage(Main.instance.getConfig().getString("message_gift_already_have"));
 							} else {
-								ItemStack item = new ItemStack(Material.CARROT_ITEM, 2);
-								player.getInventory().addItem(item);
-								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
-										.replace("%gift%", "Carrot"));
+								double d = Math.random();
+								if (d < 0.1) {
+									ItemStack item = new ItemStack(Material.BREAD, 2);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Bread"));
+								} else if (d < 0.2) {
+									ItemStack item = new ItemStack(Material.STONE_SWORD);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Stone sword"));
+								} else if (d < 0.3) {
+									ItemStack item = new ItemStack(Material.APPLE, 5);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Apple"));
+								} else if (d < 0.4) {
+									ItemStack item = new ItemStack(Material.WOOD_SWORD);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Wood sword"));
+								} else if (d < 0.5) {
+									ItemStack item = new ItemStack(Material.BOW);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Bow"));
+								} else if (d < 0.6) {
+									ItemStack item = new ItemStack(Material.ARROW, 10);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Arrow"));
+								} else if (d < 0.7) {
+									ItemStack item = new ItemStack(Material.GOLDEN_APPLE);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Golden Apple"));
+								} else if (d < 0.8) {
+									ItemStack item = new ItemStack(Material.INK_SACK, 10, (short) 4);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Lapis Lazuli"));
+								} else if (d < 0.9) {
+									ItemStack item = new ItemStack(Material.APPLE, 3);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Apple"));
+								} else {
+									ItemStack item = new ItemStack(Material.CARROT_ITEM, 2);
+									player.getInventory().addItem(item);
+									sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
+											.replace("%gift%", "Carrot"));
+								}
+								Main.instance.getSaveConfig().set(player.getName() + ".play.gift",
+										new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
 							}
-							Main.instance.getSaveConfig().set(player.getName() + ".play.gift",
-									new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
 						}
 					}
 				} else if (args[0].equalsIgnoreCase("points")) {
@@ -121,54 +120,57 @@ public class ZaCommand implements CommandExecutor {
 							.replace("%count%", Integer.toString(playerscount)));
 					sender.sendMessage(players);
 				} else if (args[0].equalsIgnoreCase("join")) {
-					if (Main.instance.getSaveConfig().isSet(player.getName() + ".play") == false) {
-						Main.instance.getSaveConfig().set(player.getName() + ".play", true);
-						Main.instance.getSaveConfig().set(player.getName() + ".play.points", 100);
-						Main.instance.getSaveConfig().set(player.getName() + ".play.gift",
-								new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
-						try {
-							Main.instance.getSaveConfig().save(Main.instance.savef);
-						} catch (IOException e) {
-							e.printStackTrace();
+					if (Main.instance.getConfig().getBoolean("enabled") == true) {
+						if (Main.instance.getSaveConfig().isSet(player.getName() + ".play") == false) {
+							Main.instance.getSaveConfig().set(player.getName() + ".play", true);
+							Main.instance.getSaveConfig().set(player.getName() + ".play.points", 100);
+							Main.instance.getSaveConfig().set(player.getName() + ".play.gift",
+									new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
+							try {
+								Main.instance.getSaveConfig().save(Main.instance.savef);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						if (player.getWorld() != zaworld) {
+							int x = Main.instance.getConfig().getInt("spawn_x");
+							int y = Main.instance.getConfig().getInt("spawn_y");
+							int z = Main.instance.getConfig().getInt("spawn_z");
+							int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+							int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+							Location location = new Location(zaworld, x, y, z, yaw, pitch);
+							player.teleport(location);
+							sender.sendMessage(Main.instance.getConfig().getString("message_arena_teleport"));
+						} else {
+							sender.sendMessage(Main.instance.getConfig().getString("message_arena_already_in"));
 						}
 					}
-					if (player.getWorld() != zaworld) {
-						int x = Main.instance.getConfig().getInt("spawn_x");
-						int y = Main.instance.getConfig().getInt("spawn_y");
-						int z = Main.instance.getConfig().getInt("spawn_z");
-						int yaw = Main.instance.getConfig().getInt("spawn_yaw");
-						int pitch = Main.instance.getConfig().getInt("spawn_pitch");
-						Location location = new Location(zaworld, x, y, z, yaw, pitch);
-						player.teleport(location);
-						sender.sendMessage(Main.instance.getConfig().getString("message_arena_teleport"));
-					} else {
-						sender.sendMessage(Main.instance.getConfig().getString("message_arena_already_in"));
-					}
 				} else if (args[0].equalsIgnoreCase("spectate")) {
-
-					if (player.getWorld() == zaworld) {
-						if (player.getGameMode() == GameMode.SPECTATOR) {
-							int x = Main.instance.getConfig().getInt("spawn_x");
-							int y = Main.instance.getConfig().getInt("spawn_y");
-							int z = Main.instance.getConfig().getInt("spawn_z");
-							int yaw = Main.instance.getConfig().getInt("spawn_yaw");
-							int pitch = Main.instance.getConfig().getInt("spawn_pitch");
-							Location location = new Location(zaworld, x, y, z, yaw, pitch);
-							player.teleport(location);
-							player.setGameMode(GameMode.ADVENTURE);
-							Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_change_player")
-									.replace("%name%", player.getDisplayName()));
-						} else {
-							int x = Main.instance.getConfig().getInt("spawn_x");
-							int y = Main.instance.getConfig().getInt("spawn_y");
-							int z = Main.instance.getConfig().getInt("spawn_z");
-							int yaw = Main.instance.getConfig().getInt("spawn_yaw");
-							int pitch = Main.instance.getConfig().getInt("spawn_pitch");
-							Location location = new Location(zaworld, x, y, z, yaw, pitch);
-							player.teleport(location);
-							player.setGameMode(GameMode.SPECTATOR);
-							Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_change_spectator")
-									.replace("%name%", player.getDisplayName()));
+					if (Main.instance.getConfig().getBoolean("enabled") == true) {
+						if (player.getWorld() == zaworld) {
+							if (player.getGameMode() == GameMode.SPECTATOR) {
+								int x = Main.instance.getConfig().getInt("spawn_x");
+								int y = Main.instance.getConfig().getInt("spawn_y");
+								int z = Main.instance.getConfig().getInt("spawn_z");
+								int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+								int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+								Location location = new Location(zaworld, x, y, z, yaw, pitch);
+								player.teleport(location);
+								player.setGameMode(GameMode.ADVENTURE);
+								Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_change_player")
+										.replace("%name%", player.getDisplayName()));
+							} else {
+								int x = Main.instance.getConfig().getInt("spawn_x");
+								int y = Main.instance.getConfig().getInt("spawn_y");
+								int z = Main.instance.getConfig().getInt("spawn_z");
+								int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+								int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+								Location location = new Location(zaworld, x, y, z, yaw, pitch);
+								player.teleport(location);
+								player.setGameMode(GameMode.SPECTATOR);
+								Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_change_spectator")
+										.replace("%name%", player.getDisplayName()));
+							}
 						}
 					}
 					// TODO In version 1.1.0
@@ -206,6 +208,34 @@ public class ZaCommand implements CommandExecutor {
 							e.printStackTrace();
 						}
 						sender.sendMessage("Spawn of Giant set.");
+					} else {
+						sender.sendMessage("You have not any permissions!");
+					}
+				} else if (args[0].equalsIgnoreCase("setpos1")) {
+					if (player.hasPermission("misat11.za.admin")) {
+						Location playerloc = player.getLocation();
+						Main.instance.getConfig().set("arena_pos1_x", playerloc.getBlockX());
+						Main.instance.getConfig().set("arena_pos1_z", playerloc.getBlockZ());
+						try {
+							Main.instance.getConfig().save(Main.instance.configf);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						sender.sendMessage("Arena pos 1 set.");
+					} else {
+						sender.sendMessage("You have not any permissions!");
+					}
+				} else if (args[0].equalsIgnoreCase("setpos2")) {
+					if (player.hasPermission("misat11.za.admin")) {
+						Location playerloc = player.getLocation();
+						Main.instance.getConfig().set("arena_pos2_x", playerloc.getBlockX());
+						Main.instance.getConfig().set("arena_pos2_z", playerloc.getBlockZ());
+						try {
+							Main.instance.getConfig().save(Main.instance.configf);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						sender.sendMessage("Arena pos 2 set.");
 					} else {
 						sender.sendMessage("You have not any permissions!");
 					}
@@ -256,6 +286,10 @@ public class ZaCommand implements CommandExecutor {
 					sender.sendMessage("/za enablegame - " + Main.instance.getConfig().getString("help_enablegame"));
 					sender.sendMessage(
 							"/za enablegiantgame - " + Main.instance.getConfig().getString("help_enablegiantgame"));
+					sender.sendMessage(
+							"/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
+					sender.sendMessage(
+							"/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
 				}
 			} else {
 				sender.sendMessage("ZombieApocalypse V" + Main.version + " by Misat11");
@@ -269,6 +303,10 @@ public class ZaCommand implements CommandExecutor {
 				sender.sendMessage("/za enablegame - " + Main.instance.getConfig().getString("help_enablegame"));
 				sender.sendMessage(
 						"/za enablegiantgame - " + Main.instance.getConfig().getString("help_enablegiantgame"));
+				sender.sendMessage(
+						"/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
+				sender.sendMessage(
+						"/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
 			}
 		} else {
 			sender.sendMessage("It's only for players!");

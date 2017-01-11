@@ -8,15 +8,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import misat11.za.Main;
 
-public class LeaveListener implements Listener{
-	
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event)
-    {
-    	World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
-    	if (event.getPlayer().getWorld() == zaworld){
-    		Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_prefix") + " " + Main.instance.getConfig().getString("message_leave").replace("%name%", event.getPlayer().getDisplayName()));
-    	}
-    }
+public class LeaveListener implements Listener {
+
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		if (Main.instance.getConfig().getBoolean("enabled") == true) {
+			World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
+			if (event.getPlayer().getWorld() == zaworld) {
+				Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_prefix") + " " + Main.instance
+						.getConfig().getString("message_leave").replace("%name%", event.getPlayer().getDisplayName()));
+			}
+		}
+	}
 
 }
