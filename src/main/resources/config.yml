@@ -15,6 +15,7 @@ arena_pos1_x: 0
 arena_pos1_z: 0
 arena_pos2_x: 0
 arena_pos2_z: 0
+zombies_spawn_countdown: 10
 message_prefix: "[ZA]"
 message_join: "%name% is join to game."
 message_leave: "%name% is leave the game."

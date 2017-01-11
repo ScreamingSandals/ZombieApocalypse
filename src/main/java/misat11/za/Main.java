@@ -123,6 +123,9 @@ public class Main extends JavaPlugin {
 		if (this.getConfig().isSet("arena_pos2_z") == false) {
 			this.getConfig().set("arena_pos2_z", 0);
 		}
+		if (this.getConfig().isSet("zombies_spawn_countdown") == false) {
+			this.getConfig().set("zombies_spawn_countdown", 10);
+		}
 		if (this.getConfig().isSet("message_prefix") == false) {
 			this.getConfig().set("message_prefix", "[ZA]");
 		}
@@ -237,7 +240,8 @@ public class Main extends JavaPlugin {
 									int yaw = Main.instance.getConfig().getInt("giant_yaw");
 									int pitch = Main.instance.getConfig().getInt("giant_pitch");
 									Location location = new Location(zaworld, x, y, z, yaw, pitch);
-									Bukkit.getWorld("world").spawnEntity(location, EntityType.GIANT);
+									Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location,
+											EntityType.GIANT);
 								}
 							}
 							getSaveConfig().set("SERVER.ARENA.time", "night");
@@ -261,15 +265,19 @@ public class Main extends JavaPlugin {
 						getSaveConfig().set("SERVER.ARENA.countdown",
 								getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
 						zaworld.setTime(20000);
-						int zombie_x = (int) (Math.random()
-								* (Math.abs(getConfig().getInt("arena_pos1_x") - getConfig().getInt("arena_pos2_x"))))
-								+ Math.min(getConfig().getInt("arena_pos1_x"), getConfig().getInt("arena_pos2_x"));
-						int zombie_z = (int) (Math.random()
-								* (Math.abs(getConfig().getInt("arena_pos1_z") - getConfig().getInt("arena_pos2_z"))))
-								+ Math.min(getConfig().getInt("arena_pos1_z"), getConfig().getInt("arena_pos2_z"));
-						int zombie_y = (int) zaworld.getHighestBlockYAt(zombie_x, zombie_z);
-						Location zombie_location = new Location(zaworld, zombie_x, zombie_y, zombie_z);
-						Bukkit.getWorld("world").spawnEntity(zombie_location, EntityType.ZOMBIE);
+						if (getSaveConfig().getInt("SERVER.ARENA.countdown")
+								% getConfig().getInt("zombies_spawn_countdown") == 0) {
+							int zombie_x = (int) (Math.random() * (Math
+									.abs(getConfig().getInt("arena_pos1_x") - getConfig().getInt("arena_pos2_x"))))
+									+ Math.min(getConfig().getInt("arena_pos1_x"), getConfig().getInt("arena_pos2_x"));
+							int zombie_z = (int) (Math.random() * (Math
+									.abs(getConfig().getInt("arena_pos1_z") - getConfig().getInt("arena_pos2_z"))))
+									+ Math.min(getConfig().getInt("arena_pos1_z"), getConfig().getInt("arena_pos2_z"));
+							int zombie_y = (int) zaworld.getHighestBlockYAt(zombie_x, zombie_z);
+							Location zombie_location = new Location(zaworld, zombie_x, zombie_y, zombie_z);
+							Bukkit.getWorld(getConfig().getString("world")).spawnEntity(zombie_location,
+									EntityType.ZOMBIE);
+						}
 						if (getSaveConfig().getInt("SERVER.ARENA.phase") > 4
 								&& getConfig().getBoolean("spawn_giant") == true) {
 							int total = 0;
@@ -280,15 +288,13 @@ public class Main extends JavaPlugin {
 								}
 							}
 							if (total < 1) {
-								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-										+ getConfig().getString("message_giant_spawned"));
 								int x = Main.instance.getConfig().getInt("giant_x");
 								int y = Main.instance.getConfig().getInt("giant_y");
 								int z = Main.instance.getConfig().getInt("giant_z");
 								int yaw = Main.instance.getConfig().getInt("giant_yaw");
 								int pitch = Main.instance.getConfig().getInt("giant_pitch");
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
-								Bukkit.getWorld("world").spawnEntity(location, EntityType.GIANT);
+								Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location, EntityType.GIANT);
 							}
 						}
 						if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0
