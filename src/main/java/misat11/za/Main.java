@@ -212,7 +212,7 @@ public class Main extends JavaPlugin {
 				if (getConfig().getBoolean("enabled") == true) {
 					World zaworld = Bukkit.getWorld(getConfig().getString("world"));
 					if (getSaveConfig().isSet("SERVER.ARENA") == false) {
-						getSaveConfig().set("SERVER.ARENA.phase", 1);
+						getSaveConfig().set("SERVER.ARENA.phase", 0);
 						getSaveConfig().set("SERVER.ARENA.time", "day");
 						getSaveConfig().set("SERVER.ARENA.countdown", 60);
 						try {
@@ -242,10 +242,16 @@ public class Main extends JavaPlugin {
 									Location location = new Location(zaworld, x, y, z, yaw, pitch);
 									Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location,
 											EntityType.GIANT);
-								}
+									getSaveConfig().set("SERVER.ARENA.time", "night");
+									getSaveConfig().set("SERVER.ARENA.countdown", 1800);
+								} else {
+									getSaveConfig().set("SERVER.ARENA.time", "night");
+									getSaveConfig().set("SERVER.ARENA.countdown", 300);
+									}
+							} else {
+								getSaveConfig().set("SERVER.ARENA.time", "night");
+								getSaveConfig().set("SERVER.ARENA.countdown", 300);
 							}
-							getSaveConfig().set("SERVER.ARENA.time", "night");
-							getSaveConfig().set("SERVER.ARENA.countdown", 300);
 							int x = Main.instance.getConfig().getInt("spawn_x");
 							int y = Main.instance.getConfig().getInt("spawn_y");
 							int z = Main.instance.getConfig().getInt("spawn_z");
@@ -297,8 +303,7 @@ public class Main extends JavaPlugin {
 								Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location, EntityType.GIANT);
 							}
 						}
-						if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0
-								&& getSaveConfig().getInt("SERVER.ARENA.phase") < 5) {
+						if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0) {
 							getSaveConfig().set("SERVER.ARENA.time", "day");
 							getSaveConfig().set("SERVER.ARENA.countdown", 60);
 							int x = Main.instance.getConfig().getInt("spawn_x");
@@ -315,6 +320,17 @@ public class Main extends JavaPlugin {
 							Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
 									+ getConfig().getString("message_starting").replace("%time%",
 											"1 " + getConfig().getString("message_minute")));
+							if (getConfig().getBoolean("spawn_giant") == true && getSaveConfig().getInt("SERVER.ARENA.phase") == 5){
+								getSaveConfig().set("SERVER.ARENA.phase", 0);
+								getSaveConfig().set("SERVER.ARENA.time", "day");
+								getSaveConfig().set("SERVER.ARENA.countdown", 60);
+								for (LivingEntity f : zaworld.getLivingEntities()) {
+									if (f instanceof Giant) {
+										f.remove();
+										continue;
+									}
+								}
+							}
 						}
 					}
 					try {

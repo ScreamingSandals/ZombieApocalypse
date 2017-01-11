@@ -104,7 +104,7 @@ public class DeathListener implements Listener {
 							}
 							int oldpoints = Main.instance.getSaveConfig().getInt(killer2.getName() + ".play.points");
 							Main.instance.getSaveConfig().set(killer2.getName() + ".play.points", oldpoints + 100);
-							Main.instance.getSaveConfig().set("SERVER.ARENA.phase", 1);
+							Main.instance.getSaveConfig().set("SERVER.ARENA.phase", 0);
 							Main.instance.getSaveConfig().set("SERVER.ARENA.countdown", 60);
 							Main.instance.getSaveConfig().set("SERVER.ARENA.time", "day");
 							try {
