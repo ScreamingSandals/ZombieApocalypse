@@ -5,6 +5,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import misat11.za.commands.ZaCommand;
 import misat11.za.listener.DeathListener;
+import misat11.za.listener.GamemodeListener;
 import misat11.za.listener.JoinListener;
 import misat11.za.listener.LeaveListener;
 import misat11.za.listener.RespawnListener;
@@ -177,6 +178,7 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
 		Bukkit.getPluginManager().registerEvents(new onTeleportListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RespawnListener(), this);
+		Bukkit.getPluginManager().registerEvents(new GamemodeListener(), this);
 
 		this.getCommand("za").setExecutor(new ZaCommand());
 

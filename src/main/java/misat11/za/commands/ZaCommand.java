@@ -80,7 +80,7 @@ public class ZaCommand implements CommandExecutor {
 								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
 										.replace("%gift%", "Apple"));
 							} else {
-								ItemStack item = new ItemStack(Material.CARROT, 2);
+								ItemStack item = new ItemStack(Material.CARROT_ITEM, 2);
 								player.getInventory().addItem(item);
 								sender.sendMessage(Main.instance.getConfig().getString("message_gift_got")
 										.replace("%gift%", "Carrot"));
