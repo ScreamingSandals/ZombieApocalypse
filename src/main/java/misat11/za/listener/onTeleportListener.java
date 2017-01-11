@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -20,6 +21,7 @@ public class onTeleportListener implements Listener {
 			World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
 			if (event.getFrom() != zaworld) {
 				if (event.getPlayer().getWorld() == zaworld) {
+					event.getPlayer().setGameMode(GameMode.ADVENTURE);
 					Bukkit.broadcastMessage(
 							Main.instance.getConfig().getString("message_prefix") + " " + Main.instance.getConfig()
 									.getString("message_join").replace("%name%", event.getPlayer().getDisplayName()));
