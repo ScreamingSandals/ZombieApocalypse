@@ -26,6 +26,19 @@ public class ZaCommand implements CommandExecutor {
 			if (args.length > 0) {
 				if (args[0].equalsIgnoreCase("gift")) {
 					if (Main.instance.getConfig().getBoolean("enabled") == true) {
+						if (Main.instance.getConfig().getBoolean("enabled") == true) {
+							if (Main.instance.getSaveConfig().isSet(player.getName() + ".play") == false) {
+								Main.instance.getSaveConfig().set(player.getName() + ".play", true);
+								Main.instance.getSaveConfig().set(player.getName() + ".play.points", 100);
+								Main.instance.getSaveConfig().set(player.getName() + ".play.gift",
+										new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
+								try {
+									Main.instance.getSaveConfig().save(Main.instance.savef);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+						}
 						if (player.getWorld() == zaworld) {
 							String time = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
 							if (Main.instance.getSaveConfig().getString(player.getName() + ".play.gift").equals(time)) {
@@ -230,31 +243,111 @@ public class ZaCommand implements CommandExecutor {
 					} else {
 						sender.sendMessage("You have not any permissions!");
 					}
-				} else if (args[0].equalsIgnoreCase("setpos1")) {
+				} else if (args[0].equalsIgnoreCase("arena")) {
 					if (player.hasPermission("misat11.za.admin")) {
-						Location playerloc = player.getLocation();
-						Main.instance.getConfig().set("arena_pos1_x", playerloc.getBlockX());
-						Main.instance.getConfig().set("arena_pos1_z", playerloc.getBlockZ());
-						try {
-							Main.instance.getConfig().save(Main.instance.configf);
-						} catch (IOException e) {
-							e.printStackTrace();
+						if (player.getWorld() == zaworld) {
+							if (args.length > 1) {
+								if (args[1].equalsIgnoreCase("pos1")) {
+									if (args.length == 3) {
+										if (Main.instance.getConfig()
+												.isSet("arena_settings." + args[2].toString()) == false) {
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos1_x", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos1_z", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos2_x", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos2_z", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".countdown", 10);
+										}
+
+										Location ploc = player.getLocation();
+										Main.instance.getConfig().set(
+												"arena_settings." + args[2].toString() + ".pos1_x", ploc.getBlockX());
+										Main.instance.getConfig().set(
+												"arena_settings." + args[2].toString() + ".pos1_z", ploc.getBlockZ());
+
+										sender.sendMessage("Arena pos 1 set.");
+									} else {
+										sender.sendMessage("Too many arguments.");
+									}
+								} else if (args[1].equalsIgnoreCase("pos2")) {
+									if (args.length == 3) {
+										if (Main.instance.getConfig()
+												.isSet("arena_settings." + args[2].toString()) == false) {
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos1_x", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos1_z", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos2_x", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos2_z", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".countdown", 10);
+										}
+
+										Location ploc = player.getLocation();
+										Main.instance.getConfig().set(
+												"arena_settings." + args[2].toString() + ".pos2_x", ploc.getBlockX());
+										Main.instance.getConfig().set(
+												"arena_settings." + args[2].toString() + ".pos2_z", ploc.getBlockZ());
+
+										sender.sendMessage("Arena pos 2 set.");
+									} else {
+										sender.sendMessage("Too many arguments.");
+									}
+								} else if (args[1].equalsIgnoreCase("countdown")) {
+									if (args.length == 4) {
+										if (Main.instance.getConfig()
+												.isSet("arena_settings." + args[2].toString()) == false) {
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos1_x", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos1_z", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos2_x", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".pos2_z", 0);
+											Main.instance.getConfig()
+													.set("arena_settings." + args[2].toString() + ".countdown", 10);
+										}
+
+										Main.instance.getConfig().set(
+												"arena_settings." + args[2].toString() + ".countdown",
+												Integer.parseInt(args[3]));
+
+										sender.sendMessage("Countdown set.");
+									} else {
+										sender.sendMessage("Too many arguments.");
+									}
+								} else if (args[1].equalsIgnoreCase("delete")) {
+									if (args.length == 3) {
+										if (Main.instance.getConfig()
+												.isSet("arena_settings." + args[2].toString()) == true) {
+											Main.instance.getConfig().set("arena_settings." + args[2].toString(), null);
+										}
+
+										sender.sendMessage("Customize arena removed.");
+									} else {
+										sender.sendMessage("Too many arguments.");
+									}
+								} else {
+									sender.sendMessage("Too many arguments.");
+								}
+							} else {
+								sender.sendMessage("Too many arguments.");
+							}
+							try {
+								Main.instance.getConfig().save(Main.instance.configf);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else {
+							sender.sendMessage("You aren't in world where is set /za setspawnloc");
 						}
-						sender.sendMessage("Arena pos 1 set.");
-					} else {
-						sender.sendMessage("You have not any permissions!");
-					}
-				} else if (args[0].equalsIgnoreCase("setpos2")) {
-					if (player.hasPermission("misat11.za.admin")) {
-						Location playerloc = player.getLocation();
-						Main.instance.getConfig().set("arena_pos2_x", playerloc.getBlockX());
-						Main.instance.getConfig().set("arena_pos2_z", playerloc.getBlockZ());
-						try {
-							Main.instance.getConfig().save(Main.instance.configf);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						sender.sendMessage("Arena pos 2 set.");
 					} else {
 						sender.sendMessage("You have not any permissions!");
 					}
@@ -306,8 +399,8 @@ public class ZaCommand implements CommandExecutor {
 					sender.sendMessage("/za enablegame - " + Main.instance.getConfig().getString("help_enablegame"));
 					sender.sendMessage(
 							"/za enablegiantgame - " + Main.instance.getConfig().getString("help_enablegiantgame"));
-					sender.sendMessage("/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
-					sender.sendMessage("/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
+					sender.sendMessage("/za arena <pos1|pos2|countdown|delete> - "
+							+ Main.instance.getConfig().getString("help_arena"));
 				}
 			} else {
 				sender.sendMessage("ZombieApocalypse V" + Main.version + " by Misat11");
@@ -322,8 +415,8 @@ public class ZaCommand implements CommandExecutor {
 				sender.sendMessage("/za enablegame - " + Main.instance.getConfig().getString("help_enablegame"));
 				sender.sendMessage(
 						"/za enablegiantgame - " + Main.instance.getConfig().getString("help_enablegiantgame"));
-				sender.sendMessage("/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
-				sender.sendMessage("/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
+				sender.sendMessage("/za arena <pos1|pos2|countdown|delete> - "
+						+ Main.instance.getConfig().getString("help_arena"));
 			}
 		} else {
 			sender.sendMessage("It's only for players!");

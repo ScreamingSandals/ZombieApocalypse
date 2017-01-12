@@ -13,6 +13,7 @@ import misat11.za.listener.onTeleportListener;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,7 +36,7 @@ public class Main extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		version = "1.0.5";
+		version = "1.0.7";
 
 		createFiles();
 
@@ -61,11 +62,8 @@ public class Main extends JavaPlugin {
 			this.getConfig().set("help_phaseinfo",
 					"Display actual phase, countdown to end of phase and day after phase");
 		}
-		if (this.getConfig().isSet("help_setpos1") == false) {
-			this.getConfig().set("help_setpos1", "Admin Command: set arena pos 1");
-		}
-		if (this.getConfig().isSet("help_setpos2") == false) {
-			this.getConfig().set("help_setpos2", "Admin Command: set arena pos 2");
+		if (this.getConfig().isSet("help_arena") == false) {
+			this.getConfig().set("help_arena", "Admin Command: Settings of location where i'm putting zombies :)");
 		}
 		if (this.getConfig().isSet("help_setspawnloc") == false) {
 			this.getConfig().set("help_setspawnloc", "Admin Command: set spawn location");
@@ -114,18 +112,6 @@ public class Main extends JavaPlugin {
 		}
 		if (this.getConfig().isSet("giant_pitch") == false) {
 			this.getConfig().set("giant_pitch", 0);
-		}
-		if (this.getConfig().isSet("arena_pos1_x") == false) {
-			this.getConfig().set("arena_pos1_x", 0);
-		}
-		if (this.getConfig().isSet("arena_pos1_z") == false) {
-			this.getConfig().set("arena_pos1_z", 0);
-		}
-		if (this.getConfig().isSet("arena_pos2_x") == false) {
-			this.getConfig().set("arena_pos2_x", 0);
-		}
-		if (this.getConfig().isSet("arena_pos2_z") == false) {
-			this.getConfig().set("arena_pos2_z", 0);
 		}
 		if (this.getConfig().isSet("zombies_spawn_countdown") == false) {
 			this.getConfig().set("zombies_spawn_countdown", 10);
@@ -287,20 +273,25 @@ public class Main extends JavaPlugin {
 							getSaveConfig().set("SERVER.ARENA.countdown",
 									getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
 							zaworld.setTime(20000);
-							if (getSaveConfig().getInt("SERVER.ARENA.countdown")
-									% getConfig().getInt("zombies_spawn_countdown") < 1) {
-								int zombie_x = (int) (Math.random() * (Math
-										.abs(getConfig().getInt("arena_pos1_x") - getConfig().getInt("arena_pos2_x"))))
-										+ Math.min(getConfig().getInt("arena_pos1_x"),
-												getConfig().getInt("arena_pos2_x"));
-								int zombie_z = (int) (Math.random() * (Math
-										.abs(getConfig().getInt("arena_pos1_z") - getConfig().getInt("arena_pos2_z"))))
-										+ Math.min(getConfig().getInt("arena_pos1_z"),
-												getConfig().getInt("arena_pos2_z"));
-								int zombie_y = (int) zaworld.getHighestBlockYAt(zombie_x, zombie_z);
-								Location zombie_location = new Location(zaworld, zombie_x, zombie_y, zombie_z);
-								Bukkit.getWorld(getConfig().getString("world")).spawnEntity(zombie_location,
-										EntityType.ZOMBIE);
+							if (getConfig().isSet("arena_settings")) {
+								Set<String> arena_settings = getConfig().getConfigurationSection("arena_settings").getKeys(false);
+								for (String arena_setting : arena_settings) {
+									if (getSaveConfig().getInt("SERVER.ARENA.countdown")
+											% getConfig().getInt("arena_settings." + arena_setting + ".countdown") < 1) {
+										int zombie_x = (int) (Math.random() * (Math.abs(
+												getConfig().getInt("arena_settings." + arena_setting + ".pos1_x") - getConfig().getInt("arena_settings." + arena_setting + ".pos2_x"))))
+												+ Math.min((getConfig().getInt("arena_settings." + arena_setting + ".pos1_x")),
+														getConfig().getInt("arena_settings." + arena_setting + ".pos2_x"));
+										int zombie_z = (int) (Math.random() * (Math.abs(
+												getConfig().getInt("arena_settings." + arena_setting + ".pos1_z") - getConfig().getInt("arena_settings." + arena_setting + ".pos2_z"))))
+												+ Math.min(getConfig().getInt("arena_settings." + arena_setting + ".pos1_z"),
+														getConfig().getInt("arena_settings." + arena_setting + ".pos2_z"));
+										int zombie_y = (int) zaworld.getHighestBlockYAt(zombie_x, zombie_z);
+										Location zombie_location = new Location(zaworld, zombie_x, zombie_y, zombie_z);
+										Bukkit.getWorld(getConfig().getString("world")).spawnEntity(zombie_location,
+												EntityType.ZOMBIE);
+									}
+								}
 							}
 							if (getSaveConfig().getInt("SERVER.ARENA.phase") > 4
 									&& getConfig().getBoolean("spawn_giant") == true) {

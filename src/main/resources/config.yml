@@ -11,11 +11,7 @@ giant_y: 60
 giant_z: 0
 giant_yaw: 0
 giant_pitch: 0
-arena_pos1_x: 0
-arena_pos1_z: 0
-arena_pos2_x: 0
-arena_pos2_z: 0
-zombies_spawn_countdown: 10
+arena_settings: []
 message_prefix: "[ZA]"
 message_phase_night: "It's night of phase %phase%. Remaining until the end: %countdown%"
 message_phase_day: "It's day after phase %phase%. Remaining until the end: %countdown%"
@@ -48,7 +44,6 @@ help_gift: "Get daily gift to you"
 help_phaseinfo: "Display actual phase, countdown to end of phase and day after phase"
 help_setspawnloc: "Admin Command: set spawn location"
 help_setgiantloc: "Admin Command: set giant location"
-help_setpos1: "Admin Command: set arena pos 1"
-help_setpos2: "Admin Command: set arena pos 2"
+help_arena: "Admin Command: Settings of location where i'm putting zombies :)"
 help_enablegame: "Admin Command: enable/disable game"
 help_enablegiantgame: "Admin Command: enable/disable spawning giants"
