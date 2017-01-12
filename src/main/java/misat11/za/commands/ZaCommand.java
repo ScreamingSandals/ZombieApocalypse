@@ -28,10 +28,7 @@ public class ZaCommand implements CommandExecutor {
 					if (Main.instance.getConfig().getBoolean("enabled") == true) {
 						if (player.getWorld() == zaworld) {
 							String time = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
-							Bukkit.getLogger().info(time);
-							Bukkit.getLogger()
-									.info(Main.instance.getSaveConfig().getString(player.getName() + ".play.gift"));
-							if (Main.instance.getSaveConfig().getString(player.getName() + ".play.gift") == time) {
+							if (Main.instance.getSaveConfig().getString(player.getName() + ".play.gift").equals(time)) {
 								sender.sendMessage(Main.instance.getConfig().getString("message_gift_already_have"));
 							} else {
 								double d = Math.random();

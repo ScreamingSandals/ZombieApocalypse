@@ -13,7 +13,6 @@ import misat11.za.listener.onTeleportListener;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,6 +24,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Giant;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 
 public class Main extends JavaPlugin {
 
@@ -35,7 +35,7 @@ public class Main extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		version = "1.0.4";
+		version = "1.0.5";
 
 		createFiles();
 
@@ -334,6 +334,12 @@ public class Main extends JavaPlugin {
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
 										p.teleport(location);
+									}
+								}
+								for (LivingEntity f : zaworld.getLivingEntities()) {
+									if (f instanceof Zombie) {
+										f.remove();
+										continue;
 									}
 								}
 								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
