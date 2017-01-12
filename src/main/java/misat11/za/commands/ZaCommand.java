@@ -28,6 +28,9 @@ public class ZaCommand implements CommandExecutor {
 					if (Main.instance.getConfig().getBoolean("enabled") == true) {
 						if (player.getWorld() == zaworld) {
 							String time = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+							Bukkit.getLogger().info(time);
+							Bukkit.getLogger()
+									.info(Main.instance.getSaveConfig().getString(player.getName() + ".play.gift"));
 							if (Main.instance.getSaveConfig().getString(player.getName() + ".play.gift") == time) {
 								sender.sendMessage(Main.instance.getConfig().getString("message_gift_already_have"));
 							} else {
@@ -100,9 +103,8 @@ public class ZaCommand implements CommandExecutor {
 							e.printStackTrace();
 						}
 					}
-					sender.sendMessage("You have"
-							+ Integer.toString(Main.instance.getSaveConfig().getInt(player.getName() + ".play.points"))
-							+ "points.");
+					sender.sendMessage(Main.instance.getConfig().getString("message_have_points").replace("%points%",
+							Integer.toString(Main.instance.getSaveConfig().getInt(player.getName() + ".play.points"))));
 				} else if (args[0].equalsIgnoreCase("list")) {
 					String players = "";
 					int playerscount = 0;
@@ -173,6 +175,24 @@ public class ZaCommand implements CommandExecutor {
 							}
 						}
 					}
+				} else if (args[0].equalsIgnoreCase("phaseinfo")) {
+					if (Main.instance.getConfig().getBoolean("enabled") == true) {
+						if (Main.instance.getSaveConfig().getString("SERVER.ARENA.time") == "day") {
+							sender.sendMessage(Main.instance.getConfig().getString("message_phase_day")
+									.replace("%phase%",
+											Integer.toString(
+													Main.instance.getSaveConfig().getInt("SERVER.ARENA.phase")))
+									.replace("%countdown%", Integer
+											.toString(Main.instance.getSaveConfig().getInt("SERVER.ARENA.countdown"))));
+						} else {
+							sender.sendMessage(Main.instance.getConfig().getString("message_phase_night")
+									.replace("%phase%",
+											Integer.toString(
+													Main.instance.getSaveConfig().getInt("SERVER.ARENA.phase")))
+									.replace("%countdown%", Integer
+											.toString(Main.instance.getSaveConfig().getInt("SERVER.ARENA.countdown"))));
+						}
+					}
 					// TODO In version 1.1.0
 					// } else if (args[0].equalsIgnoreCase("shop")){
 
@@ -180,6 +200,7 @@ public class ZaCommand implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("setspawnloc")) {
 					if (player.hasPermission("misat11.za.admin")) {
 						Location playerloc = player.getLocation();
+						Main.instance.getConfig().set("world", playerloc.getWorld().getName());
 						Main.instance.getConfig().set("spawn_x", playerloc.getBlockX());
 						Main.instance.getConfig().set("spawn_y", playerloc.getBlockY());
 						Main.instance.getConfig().set("spawn_z", playerloc.getBlockZ());
@@ -190,7 +211,8 @@ public class ZaCommand implements CommandExecutor {
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						sender.sendMessage("Spawn of Arena set.");
+						sender.sendMessage(
+								"Spawn of Arena set. World of arena set to: " + playerloc.getWorld().getName());
 					} else {
 						sender.sendMessage("You have not any permissions!");
 					}
@@ -276,6 +298,7 @@ public class ZaCommand implements CommandExecutor {
 
 				} else {
 					sender.sendMessage("ZombieApocalypse V" + Main.version + " by Misat11");
+					sender.sendMessage("/za phaseinfo - " + Main.instance.getConfig().getString("help_phaseinfo"));
 					sender.sendMessage("/za spectate - " + Main.instance.getConfig().getString("help_spectate"));
 					sender.sendMessage("/za gift - " + Main.instance.getConfig().getString("help_gift"));
 					sender.sendMessage("/za points - " + Main.instance.getConfig().getString("help_points"));
@@ -286,13 +309,12 @@ public class ZaCommand implements CommandExecutor {
 					sender.sendMessage("/za enablegame - " + Main.instance.getConfig().getString("help_enablegame"));
 					sender.sendMessage(
 							"/za enablegiantgame - " + Main.instance.getConfig().getString("help_enablegiantgame"));
-					sender.sendMessage(
-							"/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
-					sender.sendMessage(
-							"/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
+					sender.sendMessage("/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
+					sender.sendMessage("/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
 				}
 			} else {
 				sender.sendMessage("ZombieApocalypse V" + Main.version + " by Misat11");
+				sender.sendMessage("/za phaseinfo - " + Main.instance.getConfig().getString("help_phaseinfo"));
 				sender.sendMessage("/za spectate - " + Main.instance.getConfig().getString("help_spectate"));
 				sender.sendMessage("/za gift - " + Main.instance.getConfig().getString("help_gift"));
 				sender.sendMessage("/za points - " + Main.instance.getConfig().getString("help_points"));
@@ -303,10 +325,8 @@ public class ZaCommand implements CommandExecutor {
 				sender.sendMessage("/za enablegame - " + Main.instance.getConfig().getString("help_enablegame"));
 				sender.sendMessage(
 						"/za enablegiantgame - " + Main.instance.getConfig().getString("help_enablegiantgame"));
-				sender.sendMessage(
-						"/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
-				sender.sendMessage(
-						"/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
+				sender.sendMessage("/za setpos1 - " + Main.instance.getConfig().getString("help_setpos1"));
+				sender.sendMessage("/za setpos2 - " + Main.instance.getConfig().getString("help_setpos2"));
 			}
 		} else {
 			sender.sendMessage("It's only for players!");

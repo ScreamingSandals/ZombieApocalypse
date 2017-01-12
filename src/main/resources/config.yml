@@ -17,6 +17,9 @@ arena_pos2_x: 0
 arena_pos2_z: 0
 zombies_spawn_countdown: 10
 message_prefix: "[ZA]"
+message_phase_night: "It's night of phase %phase%. Remaining until the end: %countdown%"
+message_phase_day: "It's day after phase %phase%. Remaining until the end: %countdown%"
+message_have_points: "You have %points% points."
 message_join: "%name% is join to game."
 message_leave: "%name% is leave the game."
 message_gift_got: "You got your Daily gift: %gift%"
@@ -42,6 +45,7 @@ help_list: "List of players in Arena"
 help_join: "Join to Arena"
 help_points: "Display your points"
 help_gift: "Get daily gift to you"
+help_phaseinfo: "Display actual phase, countdown to end of phase and day after phase"
 help_setspawnloc: "Admin Command: set spawn location"
 help_setgiantloc: "Admin Command: set giant location"
 help_setpos1: "Admin Command: set arena pos 1"

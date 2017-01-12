@@ -35,7 +35,7 @@ public class Main extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		version = "1.0.0";
+		version = "1.0.4";
 
 		createFiles();
 
@@ -56,6 +56,10 @@ public class Main extends JavaPlugin {
 		}
 		if (this.getConfig().isSet("help_gift") == false) {
 			this.getConfig().set("help_gift", "Get daily gift to you");
+		}
+		if (this.getConfig().isSet("help_phaseinfo") == false) {
+			this.getConfig().set("help_phaseinfo",
+					"Display actual phase, countdown to end of phase and day after phase");
 		}
 		if (this.getConfig().isSet("help_setpos1") == false) {
 			this.getConfig().set("help_setpos1", "Admin Command: set arena pos 1");
@@ -128,6 +132,17 @@ public class Main extends JavaPlugin {
 		}
 		if (this.getConfig().isSet("message_prefix") == false) {
 			this.getConfig().set("message_prefix", "[ZA]");
+		}
+		if (this.getConfig().isSet("message_phase_night") == false) {
+			this.getConfig().set("message_phase_night",
+					"It's night of phase %phase%. Remaining until the end: %countdown%");
+		}
+		if (this.getConfig().isSet("message_phase_day") == false) {
+			this.getConfig().set("message_phase_day",
+					"It's day after phase %phase%. Remaining until the end: %countdown%");
+		}
+		if (this.getConfig().isSet("message_have_points") == false) {
+			this.getConfig().set("message_have_points", "You have %points% points.");
 		}
 		if (this.getConfig().isSet("message_gift_got") == false) {
 			this.getConfig().set("message_gift_got", "You got your Daily gift: %gift%");
@@ -211,29 +226,92 @@ public class Main extends JavaPlugin {
 			public void run() {
 				if (getConfig().getBoolean("enabled") == true) {
 					World zaworld = Bukkit.getWorld(getConfig().getString("world"));
-					if (getSaveConfig().isSet("SERVER.ARENA") == false) {
-						getSaveConfig().set("SERVER.ARENA.phase", 0);
-						getSaveConfig().set("SERVER.ARENA.time", "day");
-						getSaveConfig().set("SERVER.ARENA.countdown", 60);
-						try {
-							getSaveConfig().save(savef);
-						} catch (IOException e) {
-							e.printStackTrace();
+					if (zaworld.getPlayers().size() > 0) {
+						if (getSaveConfig().isSet("SERVER.ARENA") == false) {
+							getSaveConfig().set("SERVER.ARENA.phase", 0);
+							getSaveConfig().set("SERVER.ARENA.time", "day");
+							getSaveConfig().set("SERVER.ARENA.countdown", 60);
+							try {
+								getSaveConfig().save(savef);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
-					}
-					if (getSaveConfig().getString("SERVER.ARENA.time") == "day") {
-						getSaveConfig().set("SERVER.ARENA.countdown",
-								getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
-						zaworld.setTime(0);
-						if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0) {
-							if (getConfig().getBoolean("spawn_giant") == true) {
-								if (getSaveConfig().getInt("SERVER.ARENA.phase") != 5) {
-									getSaveConfig().set("SERVER.ARENA.phase",
-											getSaveConfig().getInt("SERVER.ARENA.phase") + 1);
+						if (getSaveConfig().getString("SERVER.ARENA.time") == "day") {
+							getSaveConfig().set("SERVER.ARENA.countdown",
+									getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
+							zaworld.setTime(0);
+							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 1) {
+								if (getConfig().getBoolean("spawn_giant") == true) {
+									if (getSaveConfig().getInt("SERVER.ARENA.phase") != 5) {
+										getSaveConfig().set("SERVER.ARENA.phase",
+												getSaveConfig().getInt("SERVER.ARENA.phase") + 1);
+									}
+									if (getSaveConfig().getInt("SERVER.ARENA.phase") == 5) {
+										Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
+												+ getConfig().getString("message_giant_spawned"));
+										int x = Main.instance.getConfig().getInt("giant_x");
+										int y = Main.instance.getConfig().getInt("giant_y");
+										int z = Main.instance.getConfig().getInt("giant_z");
+										int yaw = Main.instance.getConfig().getInt("giant_yaw");
+										int pitch = Main.instance.getConfig().getInt("giant_pitch");
+										Location location = new Location(zaworld, x, y, z, yaw, pitch);
+										Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location,
+												EntityType.GIANT);
+										getSaveConfig().set("SERVER.ARENA.time", "night");
+										getSaveConfig().set("SERVER.ARENA.countdown", 1800);
+									} else {
+										getSaveConfig().set("SERVER.ARENA.time", "night");
+										getSaveConfig().set("SERVER.ARENA.countdown", 300);
+									}
+								} else {
+									getSaveConfig().set("SERVER.ARENA.time", "night");
+									getSaveConfig().set("SERVER.ARENA.countdown", 300);
 								}
-								if (getSaveConfig().getInt("SERVER.ARENA.phase") == 5) {
-									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-											+ getConfig().getString("message_giant_spawned"));
+								int x = Main.instance.getConfig().getInt("spawn_x");
+								int y = Main.instance.getConfig().getInt("spawn_y");
+								int z = Main.instance.getConfig().getInt("spawn_z");
+								int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+								int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+								Location location = new Location(zaworld, x, y, z, yaw, pitch);
+								for (Player p : Bukkit.getOnlinePlayers()) {
+									if (p.getWorld().equals(zaworld)) {
+										p.teleport(location);
+									}
+								}
+								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
+										+ getConfig().getString("message_phase_start").replace("%number%",
+												Integer.toString(getSaveConfig().getInt("SERVER.ARENA.phase"))));
+							}
+						} else {
+							getSaveConfig().set("SERVER.ARENA.countdown",
+									getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
+							zaworld.setTime(20000);
+							if (getSaveConfig().getInt("SERVER.ARENA.countdown")
+									% getConfig().getInt("zombies_spawn_countdown") < 1) {
+								int zombie_x = (int) (Math.random() * (Math
+										.abs(getConfig().getInt("arena_pos1_x") - getConfig().getInt("arena_pos2_x"))))
+										+ Math.min(getConfig().getInt("arena_pos1_x"),
+												getConfig().getInt("arena_pos2_x"));
+								int zombie_z = (int) (Math.random() * (Math
+										.abs(getConfig().getInt("arena_pos1_z") - getConfig().getInt("arena_pos2_z"))))
+										+ Math.min(getConfig().getInt("arena_pos1_z"),
+												getConfig().getInt("arena_pos2_z"));
+								int zombie_y = (int) zaworld.getHighestBlockYAt(zombie_x, zombie_z);
+								Location zombie_location = new Location(zaworld, zombie_x, zombie_y, zombie_z);
+								Bukkit.getWorld(getConfig().getString("world")).spawnEntity(zombie_location,
+										EntityType.ZOMBIE);
+							}
+							if (getSaveConfig().getInt("SERVER.ARENA.phase") > 4
+									&& getConfig().getBoolean("spawn_giant") == true) {
+								int total = 0;
+								for (LivingEntity f : zaworld.getLivingEntities()) {
+									if (f instanceof Giant) {
+										total++;
+										continue;
+									}
+								}
+								if (total < 1) {
 									int x = Main.instance.getConfig().getInt("giant_x");
 									int y = Main.instance.getConfig().getInt("giant_y");
 									int z = Main.instance.getConfig().getInt("giant_z");
@@ -242,101 +320,44 @@ public class Main extends JavaPlugin {
 									Location location = new Location(zaworld, x, y, z, yaw, pitch);
 									Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location,
 											EntityType.GIANT);
-									getSaveConfig().set("SERVER.ARENA.time", "night");
-									getSaveConfig().set("SERVER.ARENA.countdown", 1800);
-								} else {
-									getSaveConfig().set("SERVER.ARENA.time", "night");
-									getSaveConfig().set("SERVER.ARENA.countdown", 300);
-									}
-							} else {
-								getSaveConfig().set("SERVER.ARENA.time", "night");
-								getSaveConfig().set("SERVER.ARENA.countdown", 300);
-							}
-							int x = Main.instance.getConfig().getInt("spawn_x");
-							int y = Main.instance.getConfig().getInt("spawn_y");
-							int z = Main.instance.getConfig().getInt("spawn_z");
-							int yaw = Main.instance.getConfig().getInt("spawn_yaw");
-							int pitch = Main.instance.getConfig().getInt("spawn_pitch");
-							Location location = new Location(zaworld, x, y, z, yaw, pitch);
-							for (Player p : Bukkit.getOnlinePlayers()) {
-								if (p.getWorld().equals(zaworld)) {
-									p.teleport(location);
 								}
 							}
-							Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-									+ getConfig().getString("message_phase_start").replace("%number%",
-											Integer.toString(getSaveConfig().getInt("SERVER.ARENA.phase"))));
-						}
-					} else {
-						getSaveConfig().set("SERVER.ARENA.countdown",
-								getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
-						zaworld.setTime(20000);
-						if (getSaveConfig().getInt("SERVER.ARENA.countdown")
-								% getConfig().getInt("zombies_spawn_countdown") == 0) {
-							int zombie_x = (int) (Math.random() * (Math
-									.abs(getConfig().getInt("arena_pos1_x") - getConfig().getInt("arena_pos2_x"))))
-									+ Math.min(getConfig().getInt("arena_pos1_x"), getConfig().getInt("arena_pos2_x"));
-							int zombie_z = (int) (Math.random() * (Math
-									.abs(getConfig().getInt("arena_pos1_z") - getConfig().getInt("arena_pos2_z"))))
-									+ Math.min(getConfig().getInt("arena_pos1_z"), getConfig().getInt("arena_pos2_z"));
-							int zombie_y = (int) zaworld.getHighestBlockYAt(zombie_x, zombie_z);
-							Location zombie_location = new Location(zaworld, zombie_x, zombie_y, zombie_z);
-							Bukkit.getWorld(getConfig().getString("world")).spawnEntity(zombie_location,
-									EntityType.ZOMBIE);
-						}
-						if (getSaveConfig().getInt("SERVER.ARENA.phase") > 4
-								&& getConfig().getBoolean("spawn_giant") == true) {
-							int total = 0;
-							for (LivingEntity f : zaworld.getLivingEntities()) {
-								if (f instanceof Giant) {
-									total++;
-									continue;
-								}
-							}
-							if (total < 1) {
-								int x = Main.instance.getConfig().getInt("giant_x");
-								int y = Main.instance.getConfig().getInt("giant_y");
-								int z = Main.instance.getConfig().getInt("giant_z");
-								int yaw = Main.instance.getConfig().getInt("giant_yaw");
-								int pitch = Main.instance.getConfig().getInt("giant_pitch");
-								Location location = new Location(zaworld, x, y, z, yaw, pitch);
-								Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location, EntityType.GIANT);
-							}
-						}
-						if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 0) {
-							getSaveConfig().set("SERVER.ARENA.time", "day");
-							getSaveConfig().set("SERVER.ARENA.countdown", 60);
-							int x = Main.instance.getConfig().getInt("spawn_x");
-							int y = Main.instance.getConfig().getInt("spawn_y");
-							int z = Main.instance.getConfig().getInt("spawn_z");
-							int yaw = Main.instance.getConfig().getInt("spawn_yaw");
-							int pitch = Main.instance.getConfig().getInt("spawn_pitch");
-							Location location = new Location(zaworld, x, y, z, yaw, pitch);
-							for (Player p : Bukkit.getOnlinePlayers()) {
-								if (p.getWorld().equals(zaworld)) {
-									p.teleport(location);
-								}
-							}
-							Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-									+ getConfig().getString("message_starting").replace("%time%",
-											"1 " + getConfig().getString("message_minute")));
-							if (getConfig().getBoolean("spawn_giant") == true && getSaveConfig().getInt("SERVER.ARENA.phase") == 5){
-								getSaveConfig().set("SERVER.ARENA.phase", 0);
+							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 1) {
 								getSaveConfig().set("SERVER.ARENA.time", "day");
 								getSaveConfig().set("SERVER.ARENA.countdown", 60);
-								for (LivingEntity f : zaworld.getLivingEntities()) {
-									if (f instanceof Giant) {
-										f.remove();
-										continue;
+								int x = Main.instance.getConfig().getInt("spawn_x");
+								int y = Main.instance.getConfig().getInt("spawn_y");
+								int z = Main.instance.getConfig().getInt("spawn_z");
+								int yaw = Main.instance.getConfig().getInt("spawn_yaw");
+								int pitch = Main.instance.getConfig().getInt("spawn_pitch");
+								Location location = new Location(zaworld, x, y, z, yaw, pitch);
+								for (Player p : Bukkit.getOnlinePlayers()) {
+									if (p.getWorld().equals(zaworld)) {
+										p.teleport(location);
+									}
+								}
+								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
+										+ getConfig().getString("message_starting").replace("%time%",
+												"1 " + getConfig().getString("message_minute")));
+								if (getConfig().getBoolean("spawn_giant") == true
+										&& getSaveConfig().getInt("SERVER.ARENA.phase") == 5) {
+									getSaveConfig().set("SERVER.ARENA.phase", 0);
+									getSaveConfig().set("SERVER.ARENA.time", "day");
+									getSaveConfig().set("SERVER.ARENA.countdown", 60);
+									for (LivingEntity f : zaworld.getLivingEntities()) {
+										if (f instanceof Giant) {
+											f.remove();
+											continue;
+										}
 									}
 								}
 							}
 						}
-					}
-					try {
-						getSaveConfig().save(savef);
-					} catch (IOException e) {
-						e.printStackTrace();
+						try {
+							getSaveConfig().save(savef);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

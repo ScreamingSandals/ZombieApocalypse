@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Giant;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -81,7 +83,7 @@ public class DeathListener implements Listener {
 						}
 						int newpoints = Main.instance.getSaveConfig().getInt(player.getName() + ".play.points");
 						player.sendMessage(Main.instance.getConfig().getString("message_player_miss_points")
-								.replace("%killer%", killer.getName()).replace("%points%", "5")
+								.replace("%killer%", "MONSTER").replace("%points%", "5")
 								.replace("%newpoints%", Integer.toString(newpoints)));
 					}
 				}
@@ -111,6 +113,12 @@ public class DeathListener implements Listener {
 								Main.instance.getSaveConfig().save(Main.instance.savef);
 							} catch (IOException e) {
 								e.printStackTrace();
+							}
+							for (LivingEntity f : zaworld.getLivingEntities()) {
+								if (f instanceof Giant) {
+									f.remove();
+									continue;
+								}
 							}
 							Bukkit.broadcastMessage(Main.instance.getConfig().getString("message_prefix") + " "
 									+ Main.instance.getConfig().getString("message_giant_killed"));
