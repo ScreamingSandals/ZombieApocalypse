@@ -37,7 +37,7 @@ public class Main extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		version = "1.0.8";
+		version = "1.0.9";
 		snapshot = false;
 
 		isSpigot = getIsSpigot();

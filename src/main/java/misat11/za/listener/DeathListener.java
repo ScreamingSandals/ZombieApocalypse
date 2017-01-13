@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 
@@ -25,7 +26,7 @@ public class DeathListener implements Listener {
 			World zaworld = Bukkit.getWorld(Main.instance.getConfig().getString("world"));
 			if (event.getEntity() instanceof Player) {
 				if (event.getEntity().getWorld() == zaworld) {
-					Player player = (Player) Bukkit.getPlayer(event.getEntity().getName());
+					final Player player = (Player) Bukkit.getPlayer(event.getEntity().getName());
 					if (Main.instance.getSaveConfig().isSet(player.getName() + ".play") == false) {
 						Main.instance.getSaveConfig().set(player.getName() + ".play", true);
 						Main.instance.getSaveConfig().set(player.getName() + ".play.points", 100);
@@ -87,7 +88,12 @@ public class DeathListener implements Listener {
 								.replace("%newpoints%", Integer.toString(newpoints)));
 					}
 					if (Main.isSpigot == true) {
-						player.spigot().respawn();
+				          new BukkitRunnable() {
+
+				              public void run() {
+				                player.spigot().respawn();
+				              }
+				            }.runTaskLater(Main.instance, 20L);
 					}
 				}
 			} else {
