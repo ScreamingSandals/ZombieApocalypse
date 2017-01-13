@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -37,7 +38,7 @@ public class Main extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		version = "1.0.9";
+		version = "1.0.10";
 		snapshot = false;
 
 		isSpigot = getIsSpigot();
@@ -134,7 +135,9 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										p.teleport(location);
+										if (p.getGameMode() != GameMode.CREATIVE){
+											p.teleport(location);
+										}
 									}
 								}
 								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
@@ -205,7 +208,9 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										p.teleport(location);
+										if (p.getGameMode() != GameMode.CREATIVE){
+											p.teleport(location);
+										}
 									}
 								}
 								for (LivingEntity f : zaworld.getLivingEntities()) {
