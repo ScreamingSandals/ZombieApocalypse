@@ -368,6 +368,13 @@ public class ZaCommand implements CommandExecutor {
 					} else {
 						sender.sendMessage("You have not any permissions!");
 					}
+				} else if (args[0].equalsIgnoreCase("reload")) {
+					if (player.hasPermission("misat11.za.admin")) {
+						Main.instance.createFiles();
+						sender.sendMessage("Config reloaded.");
+					} else {
+						sender.sendMessage("You have not any permissions!");
+					}
 				} else if (args[0].equalsIgnoreCase("enablegiantgame")) {
 					if (player.hasPermission("misat11.za.admin")) {
 						if (Main.instance.getConfig().getBoolean("spawn_giant") == false) {

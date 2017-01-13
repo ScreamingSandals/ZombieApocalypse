@@ -86,6 +86,9 @@ public class DeathListener implements Listener {
 								.replace("%killer%", "MONSTER").replace("%points%", "5")
 								.replace("%newpoints%", Integer.toString(newpoints)));
 					}
+					if (Main.isSpigot == true) {
+						player.spigot().respawn();
+					}
 				}
 			} else {
 				if (event.getEntity().getWorld() == zaworld) {
