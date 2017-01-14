@@ -10,6 +10,7 @@ import misat11.za.listener.JoinListener;
 import misat11.za.listener.LeaveListener;
 import misat11.za.listener.RespawnListener;
 import misat11.za.listener.onTeleportListener;
+import misat11.za.utils.SoundGen;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +39,8 @@ public class Main extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
-		version = "1.0.10";
-		snapshot = false;
+		version = "1.1.0_pre1";
+		snapshot = true;
 
 		isSpigot = getIsSpigot();
 
@@ -49,9 +50,9 @@ public class Main extends JavaPlugin {
 		Bukkit.getLogger().info("*                  *");
 		Bukkit.getLogger().info("*      V" + version + "      *");
 		Bukkit.getLogger().info("*                  *");
-		if (snapshot == true){
+		if (snapshot == true) {
 			Bukkit.getLogger().info("* SNAPSHOT VERSION *");
-		}else{
+		} else {
 			Bukkit.getLogger().info("*  STABLE VERSION  *");
 		}
 		Bukkit.getLogger().info("*                  *");
@@ -100,6 +101,27 @@ public class Main extends JavaPlugin {
 							getSaveConfig().set("SERVER.ARENA.countdown",
 									getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
 							zaworld.setTime(0);
+							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 6
+									&& getSaveConfig().getInt("SERVER.ARENA.countdown") > 0) {
+								for (Player p : Bukkit.getOnlinePlayers()) {
+									if (p.getWorld().equals(zaworld)) {
+										p.playSound(p.getLocation(),
+												SoundGen.get("ORB_PICKUP", "ENTITY_EXPERIENCE_ORB_PICKUP"),
+												Float.valueOf("1.0"), Float.valueOf("1.0"));
+									}
+								}
+								if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 1) {
+									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
+											+ getConfig().getString("message_starting").replace("%time%",
+													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
+															+ getConfig().getString("message_second")));
+								} else {
+									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
+											+ getConfig().getString("message_starting").replace("%time%",
+													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
+															+ getConfig().getString("message_seconds")));
+								}
+							}
 							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 1) {
 								if (getConfig().getBoolean("spawn_giant") == true) {
 									if (getSaveConfig().getInt("SERVER.ARENA.phase") != 5) {
@@ -135,7 +157,7 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE){
+										if (p.getGameMode() != GameMode.CREATIVE) {
 											p.teleport(location);
 										}
 									}
@@ -143,6 +165,12 @@ public class Main extends JavaPlugin {
 								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
 										+ getConfig().getString("message_phase_start").replace("%number%",
 												Integer.toString(getSaveConfig().getInt("SERVER.ARENA.phase"))));
+								for (Player p : Bukkit.getOnlinePlayers()) {
+									if (p.getWorld().equals(zaworld)) {
+										p.playSound(p.getLocation(), SoundGen.get("LEVEL_UP", "ENTITY_PLAYER_LEVELUP"),
+												Float.valueOf("1.0"), Float.valueOf("1.0"));
+									}
+								}
 							}
 						} else {
 							getSaveConfig().set("SERVER.ARENA.countdown",
@@ -208,7 +236,7 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE){
+										if (p.getGameMode() != GameMode.CREATIVE) {
 											p.teleport(location);
 										}
 									}
