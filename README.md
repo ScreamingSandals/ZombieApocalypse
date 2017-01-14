@@ -11,6 +11,7 @@ ZA is a minigame for bukkit and spigot from version 1.8. To run this minigame ne
 
 ## Tutorial
 
+For editing game you need a permission: misat11.za.admin
 ### Create game
 > 1) Create and build a world that can spawn monsters. 
 >
@@ -47,3 +48,5 @@ Giant game is a type of Zombie Apocalypse with giant. 5 phase lasts 30 minutes. 
 
 ### Planned features
 > - Shop
+>
+> - Vault hook
