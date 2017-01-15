@@ -1,8 +1,9 @@
 
 package misat11.za.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+
+import misat11.za.Main;
 
 public class SoundGen {
 
@@ -10,7 +11,7 @@ public class SoundGen {
     Sound finalSound = null;
 
     try {
-      if (Bukkit.getVersion().contains("1.8")) {
+      if (Main.s_version.startsWith("v1_8")) {
         finalSound = Sound.valueOf(v18);
       } else {
         finalSound = Sound.valueOf(v19);

@@ -3,6 +3,7 @@ package misat11.za.commands;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -334,6 +335,19 @@ public class ZaCommand implements CommandExecutor {
 									} else {
 										sender.sendMessage("Too many arguments.");
 									}
+								} else if (args[1].equalsIgnoreCase("list")) {
+									String list = "";
+									Set<String> arena_settings = Main.instance.getConfig()
+											.getConfigurationSection("arena_settings").getKeys(false);
+									for (String arena_setting : arena_settings) {
+										if (list.equals("")) {
+											list = arena_setting;
+										} else {
+											list = list + ", " + arena_setting;
+										}
+									}
+									sender.sendMessage("List of zombie arena spawns:");
+									sender.sendMessage(list);
 								} else {
 									sender.sendMessage("Too many arguments.");
 								}

@@ -5,6 +5,7 @@ spawn_y: 60
 spawn_z: 0
 spawn_yaw: 0
 spawn_pitch: 0
+teleport_on_start_end: true
 spawn_giant: true
 giant_x: 0
 giant_y: 60
@@ -36,6 +37,7 @@ message_second: "second"
 message_arena_teleport: "You are teleported to arena."
 message_arena_already_in: "You are already in arena."
 message_players_in_arena: "In arena is %count% players."
+message_get_vault_money: "For your benefit in game you will get $%money% into your account Vault Economy."
 help_spectate: "Change from player to spectator and from spectator to player."
 help_list: "List of players in Arena"
 help_join: "Join to Arena"

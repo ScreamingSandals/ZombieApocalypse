@@ -1,5 +1,6 @@
 package misat11.za;
 
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -11,12 +12,15 @@ import misat11.za.listener.LeaveListener;
 import misat11.za.listener.RespawnListener;
 import misat11.za.listener.onTeleportListener;
 import misat11.za.utils.SoundGen;
+import misat11.za.utils.Title;
+import net.milkbowl.vault.economy.Economy;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -34,21 +38,35 @@ public class Main extends JavaPlugin {
 	public File configf, savef;
 	public FileConfiguration config, save;
 	public static Main instance;
-	public static String version;
-	public static boolean isSpigot, snapshot;
+	public static String version, s_version;
+	public static boolean isSpigot, snapshot, isVault;
+	public static Economy econ = null;
 
 	public void onEnable() {
 		instance = this;
-		version = "1.1.0_pre1";
+		version = "1.1.0_pre2";
 		snapshot = true;
 
 		isSpigot = getIsSpigot();
+		s_version = loadVersion();
+
+		if (!getServer().getPluginManager().isPluginEnabled("Vault")) {
+			isVault = false;
+		} else {
+			setupEconomy();
+			isVault = true;
+		}
 
 		Bukkit.getLogger().info("********************");
 		Bukkit.getLogger().info("* ZombieApocalypse *");
 		Bukkit.getLogger().info("*    by Misat11    *");
 		Bukkit.getLogger().info("*                  *");
-		Bukkit.getLogger().info("*      V" + version + "      *");
+		if (version.length() == 10) {
+			Bukkit.getLogger().info("*                  *");
+			Bukkit.getLogger().info("*    V" + version + "   *");
+		} else {
+			Bukkit.getLogger().info("*      V" + version + "      *");
+		}
 		Bukkit.getLogger().info("*                  *");
 		if (snapshot == true) {
 			Bukkit.getLogger().info("* SNAPSHOT VERSION *");
@@ -56,6 +74,12 @@ public class Main extends JavaPlugin {
 			Bukkit.getLogger().info("*  STABLE VERSION  *");
 		}
 		Bukkit.getLogger().info("*                  *");
+
+		if (isVault == true) {
+			Bukkit.getLogger().info("*                  *");
+			Bukkit.getLogger().info("*   Vault hooked   *");
+			Bukkit.getLogger().info("*                  *");
+		}
 
 		if (isSpigot == false) {
 			Bukkit.getLogger().info("*                  *");
@@ -97,7 +121,7 @@ public class Main extends JavaPlugin {
 								e.printStackTrace();
 							}
 						}
-						if (getSaveConfig().getString("SERVER.ARENA.time") == "day") {
+						if (getSaveConfig().getString("SERVER.ARENA.time").equals("day")) {
 							getSaveConfig().set("SERVER.ARENA.countdown",
 									getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
 							zaworld.setTime(0);
@@ -108,18 +132,20 @@ public class Main extends JavaPlugin {
 										p.playSound(p.getLocation(),
 												SoundGen.get("ORB_PICKUP", "ENTITY_EXPERIENCE_ORB_PICKUP"),
 												Float.valueOf("1.0"), Float.valueOf("1.0"));
+										Title.send(p, Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown")),
+												"", 0, 20, 0);
 									}
 								}
 								if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 1) {
 									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
 											+ getConfig().getString("message_starting").replace("%time%",
 													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
-															+ getConfig().getString("message_second")));
+															+ "" + getConfig().getString("message_second")));
 								} else {
 									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
 											+ getConfig().getString("message_starting").replace("%time%",
 													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
-															+ getConfig().getString("message_seconds")));
+															+ "" + getConfig().getString("message_seconds")));
 								}
 							}
 							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 1) {
@@ -157,7 +183,7 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE) {
+										if (p.getGameMode() != GameMode.CREATIVE && getConfig().getBoolean("teleport_on_start_end") == true) {
 											p.teleport(location);
 										}
 									}
@@ -168,7 +194,8 @@ public class Main extends JavaPlugin {
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
 										p.playSound(p.getLocation(), SoundGen.get("LEVEL_UP", "ENTITY_PLAYER_LEVELUP"),
-												Float.valueOf("1.0"), Float.valueOf("1.0"));
+											Float.valueOf("1.0"), Float.valueOf("1.0"));
+											Title.send(p, ChatColor.DARK_GREEN.toString() + "ZOMBIE!!!", "", 0, 20, 0);
 									}
 								}
 							}
@@ -236,7 +263,7 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE) {
+										if (p.getGameMode() != GameMode.CREATIVE && getConfig().getBoolean("teleport_on_start_end") == true) {
 											p.teleport(location);
 										}
 									}
@@ -359,6 +386,9 @@ public class Main extends JavaPlugin {
 		if (this.getConfig().isSet("spawn_pitch") == false) {
 			this.getConfig().set("spawn_pitch", 0);
 		}
+		if (this.getConfig().isSet("teleport_on_start_end") == false) {
+			this.getConfig().set("teleport_on_start_end", true);
+		}
 		if (this.getConfig().isSet("spawn_giant") == false) {
 			this.getConfig().set("spawn_giant", true);
 		}
@@ -432,6 +462,10 @@ public class Main extends JavaPlugin {
 			this.getConfig().set("message_player_miss_points",
 					"You killed by %killer% and miss %points% points. Your points: %newpoints%");
 		}
+		if (this.getConfig().isSet("message_get_vault_money") == false) {
+			this.getConfig().set("message_get_vault_money",
+					"For your benefit in game you will get $%money% into your account Vault Economy.");
+		}
 		if (this.getConfig().isSet("message_starting") == false) {
 			this.getConfig().set("message_starting", "Zombie Apocalypse starting in %time%");
 		}
@@ -470,5 +504,23 @@ public class Main extends JavaPlugin {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	private boolean setupEconomy() {
+		if (getServer().getPluginManager().getPlugin("Vault") == null) {
+			return false;
+		}
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) {
+			return false;
+		}
+
+		econ = rsp.getProvider();
+		return econ != null;
+	}
+
+	private String loadVersion() {
+	    String packName = Bukkit.getServer().getClass().getPackage().getName();
+	    return packName.substring(packName.lastIndexOf('.') + 1);
 	}
 }

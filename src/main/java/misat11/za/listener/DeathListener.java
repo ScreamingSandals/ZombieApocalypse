@@ -74,6 +74,10 @@ public class DeathListener implements Listener {
 						killer2.sendMessage(Main.instance.getConfig().getString("message_player_get_points")
 								.replace("%points%", "10").replace("%entity%", player.getDisplayName())
 								.replace("%newpoints%", Integer.toString(newpoints2)));
+						if (Main.isVault == true && oldpoints2 % 100 != 0 && newpoints2 % 100 == 0) {
+							killer2.sendMessage(Main.instance.getConfig().getString("message_get_vault_money").replace("%money%", "10"));
+							Main.econ.depositPlayer(killer2, 10.00);
+						}
 					} else {
 						int oldpoints = Main.instance.getSaveConfig().getInt(player.getName() + ".play.points");
 						Main.instance.getSaveConfig().set(player.getName() + ".play.points", oldpoints - 5);
@@ -88,12 +92,12 @@ public class DeathListener implements Listener {
 								.replace("%newpoints%", Integer.toString(newpoints)));
 					}
 					if (Main.isSpigot == true) {
-				          new BukkitRunnable() {
+						new BukkitRunnable() {
 
-				              public void run() {
-				                player.spigot().respawn();
-				              }
-				            }.runTaskLater(Main.instance, 20L);
+							public void run() {
+								player.spigot().respawn();
+							}
+						}.runTaskLater(Main.instance, 20L);
 					}
 				}
 			} else {
@@ -122,6 +126,10 @@ public class DeathListener implements Listener {
 								Main.instance.getSaveConfig().save(Main.instance.savef);
 							} catch (IOException e) {
 								e.printStackTrace();
+							}
+							if (Main.isVault == true) {
+								killer2.sendMessage(Main.instance.getConfig().getString("message_get_vault_money").replace("%money%", "50"));
+								Main.econ.depositPlayer(killer2, 50.00);
 							}
 							for (LivingEntity f : zaworld.getLivingEntities()) {
 								if (f instanceof Giant) {
@@ -158,6 +166,10 @@ public class DeathListener implements Listener {
 							killer2.sendMessage(Main.instance.getConfig().getString("message_player_get_points")
 									.replace("%entity%", event.getEntity().toString()).replace("%points%", "5")
 									.replace("%newpoints%", Integer.toString(newpoints)));
+							if (Main.isVault == true && oldpoints % 100 != 0 && newpoints % 100 == 0) {
+								killer2.sendMessage(Main.instance.getConfig().getString("message_get_vault_money").replace("%money%", "10"));
+								Main.econ.depositPlayer(killer2, 10.00);
+							}
 						}
 					}
 				}

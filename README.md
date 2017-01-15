@@ -2,7 +2,7 @@
 Simple bukkit/spigot minigame with zombies.
 
 ####Actual stable version: 1.0.10
-####DEV VERSION: 1.1.0_pre1
+####DEV VERSION: 1.1.0_pre2
 
 It's for minecraft version 1.8 - 1.11.2
 
@@ -50,6 +50,6 @@ Giant game is a type of Zombie Apocalypse with giant. 5 phase lasts 30 minutes. 
 ### Planned features
 > - Shop
 >
-> - Vault hook
+> - Vault hook (in 1.1.0_pre2)
 >
 > - Sound effects (In 1.1.0_pre1)
