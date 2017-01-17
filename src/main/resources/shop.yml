@@ -1,0 +1,64 @@
+enable: true
+shop-items:
+  antiteleportaura:
+    name: "Anti Teleport Aura"
+    type: "tpaura"
+    item: "EYE_OF_ENDER"
+    item-damage: 0
+    points: 200
+  goldenapple:
+    name: "Golden apple"
+    type: "give"
+    item: "GOLDEN_APPLE"
+    item-damage: 0
+    points: 50
+  goldenapple_enchant:
+    name: "God apple"
+    type: "give"
+    item: "GOLDEN_APPLE"
+    item-damage: 1
+    points: 100
+  ak47:
+    name: "AK-47"
+    type: "crackshot"
+    weapon: "AK-47"
+    item: "IRON_BARDING"
+    item-damage: 0
+    points: 60
+  carbine:
+    name: "Carbine"
+    type: "crackshot"
+    weapon: "Carbine"
+    item: "IRON_BARDING"
+    item-damage: 0
+    points: 60
+  apple:
+    name: "Apple"
+    type: "give"
+    item: "APPLE"
+    item-damage: 0
+    points: 20
+  carrot:
+    name: "Carrot"
+    type: "give"
+    item: "CARROT_ITEM"
+    item-damage: 0
+    points: 10
+  diamond_sword:
+    name: "Diamond sword"
+    type: "give"
+    item: "DIAMOND_SWORD"
+    item-damage: 0
+    points: 80
+  golden_sword:
+    name: "Golden sword"
+    type: "give"
+    item: "GOLD_SWORD"
+    item-damage: 0
+    points: 70
+  lapis_lazuli:
+    name: "Lapis Lazuli"
+    type: "give"
+    item: "INK_SACK"
+    item-damage: 4
+    points: 50

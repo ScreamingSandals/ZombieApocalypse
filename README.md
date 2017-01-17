@@ -1,8 +1,9 @@
 # Zombie Apocalypse
 Simple bukkit/spigot minigame with zombies.
 
-####Actual stable version: 1.0.10
-####DEV VERSION: 1.1.0_pre2
+#####More info is on our spigotmc.org site: https://www.spigotmc.org/resources/zombieapocalypse.34779/
+
+####Actual stable version: 1.1.0
 
 It's for minecraft version 1.8 - 1.11.2
 
@@ -46,10 +47,16 @@ Giant game is a type of Zombie Apocalypse with giant. 5 phase lasts 30 minutes. 
 > - Points for killing - /za points
 >
 > - Daily gift - /za gift
-
-### Planned features
+>
 > - Shop
 >
-> - Vault hook (in 1.1.0_pre2)
+> - Vault hook
 >
-> - Sound effects (In 1.1.0_pre1)
+> - Sound effects
+>
+> - Title on start
+
+### Planned features
+> - Bungeecord support
+>
+> - Scoreboard

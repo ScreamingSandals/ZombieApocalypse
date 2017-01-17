@@ -11,6 +11,7 @@ import misat11.za.listener.JoinListener;
 import misat11.za.listener.LeaveListener;
 import misat11.za.listener.RespawnListener;
 import misat11.za.listener.onTeleportListener;
+import misat11.za.utils.Menu;
 import misat11.za.utils.SoundGen;
 import misat11.za.utils.Title;
 import net.milkbowl.vault.economy.Economy;
@@ -35,19 +36,21 @@ import org.bukkit.entity.Zombie;
 
 public class Main extends JavaPlugin {
 
-	public File configf, savef;
-	public FileConfiguration config, save;
+	public File configf, savef, shopconfigf;
+	public FileConfiguration config, save, shopconfig;
 	public static Main instance;
 	public static String version, s_version;
-	public static boolean isSpigot, snapshot, isVault;
+	public static boolean isSpigot, snapshot, isVault, isCrackshot;
 	public static Economy econ = null;
+	private Menu menu;
 
 	public void onEnable() {
 		instance = this;
-		version = "1.1.0_pre2";
-		snapshot = true;
+		version = "1.1.0";
+		snapshot = false;
 
 		isSpigot = getIsSpigot();
+		isCrackshot = getIsCrackshot();
 		s_version = loadVersion();
 
 		if (!getServer().getPluginManager().isPluginEnabled("Vault")) {
@@ -56,6 +59,23 @@ public class Main extends JavaPlugin {
 			setupEconomy();
 			isVault = true;
 		}
+
+		createFiles();
+
+		try {
+			menu = new Menu(this);
+		} catch (Exception e) {
+			Bukkit.getLogger().info("Your shop.yml is invalid!!!");
+		}
+
+		Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
+		Bukkit.getPluginManager().registerEvents(new LeaveListener(), this);
+		Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
+		Bukkit.getPluginManager().registerEvents(new onTeleportListener(), this);
+		Bukkit.getPluginManager().registerEvents(new RespawnListener(), this);
+		Bukkit.getPluginManager().registerEvents(new GamemodeListener(), this);
+
+		this.getCommand("za").setExecutor(new ZaCommand());
 
 		Bukkit.getLogger().info("********************");
 		Bukkit.getLogger().info("* ZombieApocalypse *");
@@ -81,6 +101,13 @@ public class Main extends JavaPlugin {
 			Bukkit.getLogger().info("*                  *");
 		}
 
+		if (isCrackshot == true) {
+			Bukkit.getLogger().info("*                  *");
+			Bukkit.getLogger().info("*    CrackShot     *");
+			Bukkit.getLogger().info("*      hooked      *");
+			Bukkit.getLogger().info("*                  *");
+		}
+
 		if (isSpigot == false) {
 			Bukkit.getLogger().info("*                  *");
 			Bukkit.getLogger().info("*     WARNING:     *");
@@ -93,17 +120,6 @@ public class Main extends JavaPlugin {
 
 		Bukkit.getLogger().info("*                  *");
 		Bukkit.getLogger().info("********************");
-
-		createFiles();
-
-		Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
-		Bukkit.getPluginManager().registerEvents(new LeaveListener(), this);
-		Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
-		Bukkit.getPluginManager().registerEvents(new onTeleportListener(), this);
-		Bukkit.getPluginManager().registerEvents(new RespawnListener(), this);
-		Bukkit.getPluginManager().registerEvents(new GamemodeListener(), this);
-
-		this.getCommand("za").setExecutor(new ZaCommand());
 
 		BukkitScheduler scheduler = getServer().getScheduler();
 		scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
@@ -132,20 +148,21 @@ public class Main extends JavaPlugin {
 										p.playSound(p.getLocation(),
 												SoundGen.get("ORB_PICKUP", "ENTITY_EXPERIENCE_ORB_PICKUP"),
 												Float.valueOf("1.0"), Float.valueOf("1.0"));
-										Title.send(p, Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown")),
-												"", 0, 20, 0);
+										Title.send(p,
+												Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown")), "",
+												0, 20, 0);
 									}
 								}
 								if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 1) {
 									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
 											+ getConfig().getString("message_starting").replace("%time%",
 													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
-															+ "" + getConfig().getString("message_second")));
+															+ " " + getConfig().getString("message_second")));
 								} else {
 									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
 											+ getConfig().getString("message_starting").replace("%time%",
 													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
-															+ "" + getConfig().getString("message_seconds")));
+															+ " " + getConfig().getString("message_seconds")));
 								}
 							}
 							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 1) {
@@ -183,7 +200,17 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE && getConfig().getBoolean("teleport_on_start_end") == true) {
+										if (p.getGameMode() != GameMode.CREATIVE
+												&& getConfig().getBoolean("teleport_on_start_end") == true) {
+											if (Main.instance.getSaveConfig().isSet(p.getName() + ".play.tpaura")) {
+												if (Main.instance.getSaveConfig()
+														.getInt(p.getName() + ".play.tpaura") > 0) {
+													Main.instance.getSaveConfig().set(p.getName() + ".play.tpaura",
+															Main.instance.getSaveConfig()
+																	.getInt(p.getName() + ".play.tpaura") - 1);
+													continue;
+												}
+											}
 											p.teleport(location);
 										}
 									}
@@ -194,8 +221,8 @@ public class Main extends JavaPlugin {
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
 										p.playSound(p.getLocation(), SoundGen.get("LEVEL_UP", "ENTITY_PLAYER_LEVELUP"),
-											Float.valueOf("1.0"), Float.valueOf("1.0"));
-											Title.send(p, ChatColor.DARK_GREEN.toString() + "ZOMBIE!!!", "", 0, 20, 0);
+												Float.valueOf("1.0"), Float.valueOf("1.0"));
+										Title.send(p, ChatColor.DARK_GREEN.toString() + "ZOMBIE!!!", "", 0, 20, 0);
 									}
 								}
 							}
@@ -263,7 +290,17 @@ public class Main extends JavaPlugin {
 								Location location = new Location(zaworld, x, y, z, yaw, pitch);
 								for (Player p : Bukkit.getOnlinePlayers()) {
 									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE && getConfig().getBoolean("teleport_on_start_end") == true) {
+										if (p.getGameMode() != GameMode.CREATIVE
+												&& getConfig().getBoolean("teleport_on_start_end") == true) {
+											if (Main.instance.getSaveConfig().isSet(p.getName() + ".play.tpaura")) {
+												if (Main.instance.getSaveConfig()
+														.getInt(p.getName() + ".play.tpaura") > 0) {
+													Main.instance.getSaveConfig().set(p.getName() + ".play.tpaura",
+															Main.instance.getSaveConfig()
+																	.getInt(p.getName() + ".play.tpaura") - 1);
+													continue;
+												}
+											}
 											p.teleport(location);
 										}
 									}
@@ -306,10 +343,15 @@ public class Main extends JavaPlugin {
 		return this.save;
 	}
 
+	public FileConfiguration getShopConfig() {
+		return this.shopconfig;
+	}
+
 	public void createFiles() {
 
 		savef = new File(getDataFolder(), "save.yml");
 		configf = new File(getDataFolder(), "config.yml");
+		shopconfigf = new File(getDataFolder(), "shop.yml");
 
 		if (!configf.exists()) {
 			configf.getParentFile().mkdirs();
@@ -319,12 +361,17 @@ public class Main extends JavaPlugin {
 			savef.getParentFile().mkdirs();
 			saveResource("save.yml", false);
 		}
-
+		if (!shopconfigf.exists()) {
+			shopconfigf.getParentFile().mkdirs();
+			saveResource("shop.yml", false);
+		}
 		config = new YamlConfiguration();
 		save = new YamlConfiguration();
+		shopconfig = new YamlConfiguration();
 		try {
 			config.load(configf);
 			save.load(savef);
+			shopconfig.load(shopconfigf);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InvalidConfigurationException e) {
@@ -343,8 +390,14 @@ public class Main extends JavaPlugin {
 		if (this.getConfig().isSet("help_join") == false) {
 			this.getConfig().set("help_join", "Join to Arena");
 		}
+		if (this.getConfig().isSet("help_shop") == false) {
+			this.getConfig().set("help_shop", "Open shop menu");
+		}
 		if (this.getConfig().isSet("help_points") == false) {
 			this.getConfig().set("help_points", "Display your points");
+		}
+		if (this.getConfig().isSet("help_tpaura") == false) {
+			this.getConfig().set("help_tpaura", "Display count of your AntiTeleportAura");
 		}
 		if (this.getConfig().isSet("help_gift") == false) {
 			this.getConfig().set("help_gift", "Get daily gift to you");
@@ -490,8 +543,32 @@ public class Main extends JavaPlugin {
 		if (this.getConfig().isSet("message_players_in_arena") == false) {
 			this.getConfig().set("message_players_in_arena", "In arena is %count% players.");
 		}
+		if (this.getConfig().isSet("message_buy_succes") == false) {
+			this.getConfig().set("message_buy_succes",
+					"Successfully purchased %item%. We've got points detected: %yourpoints%");
+		}
+		if (this.getConfig().isSet("message_buy_no_points") == false) {
+			this.getConfig().set("message_buy_no_points",
+					"You can not get a %item% because you have a few points. Your points are: %yourpoints%");
+		}
+		if (this.getConfig().isSet("message_have_tpaura") == false) {
+			this.getConfig().set("message_have_tpaura", "Count of your AntiTeleportAura is %tpaura%.");
+		}
+		if (this.getConfig().isSet("message_dont_have_tpaura") == false) {
+			this.getConfig().set("message_dont_have_tpaura",
+					"You don't have AntiTeleportAura. You can buy by /za shop");
+		}
 		try {
 			getConfig().save(configf);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (this.getShopConfig().isSet("enable") == false) {
+			this.getShopConfig().set("enable", true);
+		}
+		try {
+			getShopConfig().save(shopconfigf);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -502,6 +579,14 @@ public class Main extends JavaPlugin {
 			Package spigotPackage = Package.getPackage("org.spigotmc");
 			return (spigotPackage != null);
 		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean getIsCrackshot() {
+		if (getServer().getPluginManager().getPlugin("CrackShot") != null) {
+			return true;
+		} else {
 			return false;
 		}
 	}
@@ -520,7 +605,11 @@ public class Main extends JavaPlugin {
 	}
 
 	private String loadVersion() {
-	    String packName = Bukkit.getServer().getClass().getPackage().getName();
-	    return packName.substring(packName.lastIndexOf('.') + 1);
+		String packName = Bukkit.getServer().getClass().getPackage().getName();
+		return packName.substring(packName.lastIndexOf('.') + 1);
+	}
+
+	public void openMenu(Player p) {
+		menu.show(p);
 	}
 }

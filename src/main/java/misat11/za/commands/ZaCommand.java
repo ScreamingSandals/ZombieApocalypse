@@ -116,6 +116,16 @@ public class ZaCommand implements CommandExecutor {
 					}
 					sender.sendMessage(Main.instance.getConfig().getString("message_have_points").replace("%points%",
 							Integer.toString(Main.instance.getSaveConfig().getInt(player.getName() + ".play.points"))));
+
+				} else if (args[0].equalsIgnoreCase("tpaura")) {
+					if (Main.instance.getSaveConfig().isSet(player.getName() + ".play.tpaura") == false
+							|| Main.instance.getSaveConfig().getInt(player.getName() + ".play.tpaura") < 1) {
+						sender.sendMessage(Main.instance.getConfig().getString("message_dont_have_tpaura"));
+					} else {
+						sender.sendMessage(Main.instance.getConfig().getString("message_have_tpaura")
+								.replace("%tpaura%", Integer.toString(
+										Main.instance.getSaveConfig().getInt(player.getName() + ".play.tpaura"))));
+					}
 				} else if (args[0].equalsIgnoreCase("list")) {
 					String players = "";
 					int playerscount = 0;
@@ -204,8 +214,11 @@ public class ZaCommand implements CommandExecutor {
 											.toString(Main.instance.getSaveConfig().getInt("SERVER.ARENA.countdown"))));
 						}
 					}
-					// TODO In version 1.1.0
-					// } else if (args[0].equalsIgnoreCase("shop")){
+				} else if (args[0].equalsIgnoreCase("shop")) {
+					if (Main.instance.getConfig().getBoolean("enabled") == true && player.getWorld() == zaworld
+							&& Main.instance.getShopConfig().getBoolean("enable") == true) {
+						Main.instance.openMenu(player);
+					}
 
 					// ADMIN COMMANDS
 				} else if (args[0].equalsIgnoreCase("setspawnloc")) {
@@ -384,8 +397,9 @@ public class ZaCommand implements CommandExecutor {
 					}
 				} else if (args[0].equalsIgnoreCase("reload")) {
 					if (player.hasPermission("misat11.za.admin")) {
-						Main.instance.createFiles();
-						sender.sendMessage("Config reloaded.");
+						Main.instance.getPluginLoader().disablePlugin(Main.instance);
+						Main.instance.getPluginLoader().enablePlugin(Main.instance);
+						sender.sendMessage("Plugin reloaded.");
 					} else {
 						sender.sendMessage("You have not any permissions!");
 					}
@@ -414,6 +428,9 @@ public class ZaCommand implements CommandExecutor {
 					sender.sendMessage("/za gift - " + Main.instance.getConfig().getString("help_gift"));
 					sender.sendMessage("/za points - " + Main.instance.getConfig().getString("help_points"));
 					sender.sendMessage("/za join - " + Main.instance.getConfig().getString("help_join"));
+					if (Main.instance.getShopConfig().getBoolean("enable") == true) {
+						sender.sendMessage("/za shop - " + Main.instance.getConfig().getString("help_shop"));
+					}
 					sender.sendMessage("/za list - " + Main.instance.getConfig().getString("help_list"));
 					sender.sendMessage("/za setspawnloc - " + Main.instance.getConfig().getString("help_setspawnloc"));
 					sender.sendMessage("/za setgiantloc - " + Main.instance.getConfig().getString("help_setgiantloc"));
@@ -429,7 +446,11 @@ public class ZaCommand implements CommandExecutor {
 				sender.sendMessage("/za spectate - " + Main.instance.getConfig().getString("help_spectate"));
 				sender.sendMessage("/za gift - " + Main.instance.getConfig().getString("help_gift"));
 				sender.sendMessage("/za points - " + Main.instance.getConfig().getString("help_points"));
+				sender.sendMessage("/za tpaura - " + Main.instance.getConfig().getString("help_tpaura"));
 				sender.sendMessage("/za join - " + Main.instance.getConfig().getString("help_join"));
+				if (Main.instance.getShopConfig().getBoolean("enable") == true) {
+					sender.sendMessage("/za shop - " + Main.instance.getConfig().getString("help_shop"));
+				}
 				sender.sendMessage("/za list - " + Main.instance.getConfig().getString("help_list"));
 				sender.sendMessage("/za setspawnloc - " + Main.instance.getConfig().getString("help_setspawnloc"));
 				sender.sendMessage("/za setgiantloc - " + Main.instance.getConfig().getString("help_setgiantloc"));
