@@ -1,7 +1,8 @@
 name: ZombieApocalypse
 main: misat11.za.Main
-version: 1.1.0
+version: 1.1.1
 author: Misat11
+api-version: 1.13
 
 commands:
   za:
