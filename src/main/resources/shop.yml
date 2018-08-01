@@ -18,20 +18,6 @@ shop-items:
     item: "GOLDEN_APPLE"
     item-damage: 1
     points: 100
-  ak47:
-    name: "AK-47"
-    type: "crackshot"
-    weapon: "AK-47"
-    item: "IRON_BARDING"
-    item-damage: 0
-    points: 60
-  carbine:
-    name: "Carbine"
-    type: "crackshot"
-    weapon: "Carbine"
-    item: "IRON_BARDING"
-    item-damage: 0
-    points: 60
   apple:
     name: "Apple"
     type: "give"

@@ -2,55 +2,33 @@ package misat11.za;
 
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import misat11.za.commands.ZaCommand;
-import misat11.za.listener.DeathListener;
-import misat11.za.listener.GamemodeListener;
-import misat11.za.listener.JoinListener;
-import misat11.za.listener.LeaveListener;
-import misat11.za.listener.RespawnListener;
-import misat11.za.listener.onTeleportListener;
-import misat11.za.utils.Menu;
-import misat11.za.utils.SoundGen;
-import misat11.za.utils.Title;
 import net.milkbowl.vault.economy.Economy;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Giant;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 
 public class Main extends JavaPlugin {
 
-	public File configf, savef, shopconfigf;
-	public FileConfiguration config, save, shopconfig;
+	public File configf, shopconfigf;
+	public FileConfiguration config, shopconfig;
 	public static Main instance;
-	public static String version, s_version;
+	public static String version;
 	public static boolean isSpigot, snapshot, isVault;
 	public static Economy econ = null;
-	private Menu menu;
 
 	public void onEnable() {
 		instance = this;
-		version = "1.1.0";
-		snapshot = false;
+		version = "2.0.0-pre";
+		snapshot = true;
 
 		isSpigot = getIsSpigot();
-		s_version = loadVersion();
 
 		if (!getServer().getPluginManager().isPluginEnabled("Vault")) {
 			isVault = false;
@@ -60,19 +38,6 @@ public class Main extends JavaPlugin {
 		}
 
 		createFiles();
-
-		try {
-			menu = new Menu(this);
-		} catch (Exception e) {
-			Bukkit.getLogger().info("Your shop.yml is invalid!!!");
-		}
-
-		Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
-		Bukkit.getPluginManager().registerEvents(new LeaveListener(), this);
-		Bukkit.getPluginManager().registerEvents(new DeathListener(), this);
-		Bukkit.getPluginManager().registerEvents(new onTeleportListener(), this);
-		Bukkit.getPluginManager().registerEvents(new RespawnListener(), this);
-		Bukkit.getPluginManager().registerEvents(new GamemodeListener(), this);
 
 		this.getCommand("za").setExecutor(new ZaCommand());
 
@@ -113,226 +78,7 @@ public class Main extends JavaPlugin {
 		Bukkit.getLogger().info("*                  *");
 		Bukkit.getLogger().info("********************");
 
-		BukkitScheduler scheduler = getServer().getScheduler();
-		scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
-			public void run() {
-				if (getConfig().getBoolean("enabled") == true) {
-					World zaworld = Bukkit.getWorld(getConfig().getString("world"));
-					if (zaworld.getPlayers().size() > 0) {
-						if (getSaveConfig().isSet("SERVER.ARENA") == false) {
-							getSaveConfig().set("SERVER.ARENA.phase", 0);
-							getSaveConfig().set("SERVER.ARENA.time", "day");
-							getSaveConfig().set("SERVER.ARENA.countdown", 60);
-							try {
-								getSaveConfig().save(savef);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-						if (getSaveConfig().getString("SERVER.ARENA.time").equals("day")) {
-							getSaveConfig().set("SERVER.ARENA.countdown",
-									getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
-							zaworld.setTime(0);
-							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 6
-									&& getSaveConfig().getInt("SERVER.ARENA.countdown") > 0) {
-								for (Player p : Bukkit.getOnlinePlayers()) {
-									if (p.getWorld().equals(zaworld)) {
-										p.playSound(p.getLocation(),
-												SoundGen.get("ORB_PICKUP", "ENTITY_EXPERIENCE_ORB_PICKUP"),
-												Float.valueOf("1.0"), Float.valueOf("1.0"));
-										Title.send(p,
-												Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown")), "",
-												0, 20, 0);
-									}
-								}
-								if (getSaveConfig().getInt("SERVER.ARENA.countdown") == 1) {
-									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-											+ getConfig().getString("message_starting").replace("%time%",
-													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
-															+ " " + getConfig().getString("message_second")));
-								} else {
-									Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-											+ getConfig().getString("message_starting").replace("%time%",
-													Integer.toString(getSaveConfig().getInt("SERVER.ARENA.countdown"))
-															+ " " + getConfig().getString("message_seconds")));
-								}
-							}
-							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 1) {
-								if (getConfig().getBoolean("spawn_giant") == true) {
-									if (getSaveConfig().getInt("SERVER.ARENA.phase") != 5) {
-										getSaveConfig().set("SERVER.ARENA.phase",
-												getSaveConfig().getInt("SERVER.ARENA.phase") + 1);
-									}
-									if (getSaveConfig().getInt("SERVER.ARENA.phase") == 5) {
-										Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-												+ getConfig().getString("message_giant_spawned"));
-										int x = Main.instance.getConfig().getInt("giant_x");
-										int y = Main.instance.getConfig().getInt("giant_y");
-										int z = Main.instance.getConfig().getInt("giant_z");
-										int yaw = Main.instance.getConfig().getInt("giant_yaw");
-										int pitch = Main.instance.getConfig().getInt("giant_pitch");
-										Location location = new Location(zaworld, x, y, z, yaw, pitch);
-										Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location,
-												EntityType.GIANT);
-										getSaveConfig().set("SERVER.ARENA.time", "night");
-										getSaveConfig().set("SERVER.ARENA.countdown", 1800);
-									} else {
-										getSaveConfig().set("SERVER.ARENA.time", "night");
-										getSaveConfig().set("SERVER.ARENA.countdown", 300);
-									}
-								} else {
-									getSaveConfig().set("SERVER.ARENA.time", "night");
-									getSaveConfig().set("SERVER.ARENA.countdown", 300);
-								}
-								int x = Main.instance.getConfig().getInt("spawn_x");
-								int y = Main.instance.getConfig().getInt("spawn_y");
-								int z = Main.instance.getConfig().getInt("spawn_z");
-								int yaw = Main.instance.getConfig().getInt("spawn_yaw");
-								int pitch = Main.instance.getConfig().getInt("spawn_pitch");
-								Location location = new Location(zaworld, x, y, z, yaw, pitch);
-								for (Player p : Bukkit.getOnlinePlayers()) {
-									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE
-												&& getConfig().getBoolean("teleport_on_start_end") == true) {
-											if (Main.instance.getSaveConfig().isSet(p.getName() + ".play.tpaura")) {
-												if (Main.instance.getSaveConfig()
-														.getInt(p.getName() + ".play.tpaura") > 0) {
-													Main.instance.getSaveConfig().set(p.getName() + ".play.tpaura",
-															Main.instance.getSaveConfig()
-																	.getInt(p.getName() + ".play.tpaura") - 1);
-													continue;
-												}
-											}
-											p.teleport(location);
-										}
-									}
-								}
-								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-										+ getConfig().getString("message_phase_start").replace("%number%",
-												Integer.toString(getSaveConfig().getInt("SERVER.ARENA.phase"))));
-								for (Player p : Bukkit.getOnlinePlayers()) {
-									if (p.getWorld().equals(zaworld)) {
-										p.playSound(p.getLocation(), SoundGen.get("LEVEL_UP", "ENTITY_PLAYER_LEVELUP"),
-												Float.valueOf("1.0"), Float.valueOf("1.0"));
-										Title.send(p, ChatColor.DARK_GREEN.toString() + "ZOMBIE!!!", "", 0, 20, 0);
-									}
-								}
-							}
-						} else {
-							getSaveConfig().set("SERVER.ARENA.countdown",
-									getSaveConfig().getInt("SERVER.ARENA.countdown") - 1);
-							zaworld.setTime(20000);
-							if (getConfig().isSet("arena_settings")) {
-								Set<String> arena_settings = getConfig().getConfigurationSection("arena_settings")
-										.getKeys(false);
-								for (String arena_setting : arena_settings) {
-									if (getSaveConfig().getInt("SERVER.ARENA.countdown") % getConfig()
-											.getInt("arena_settings." + arena_setting + ".countdown") < 1) {
-										int zombie_x = (int) (Math.random() * (Math.abs(getConfig()
-												.getInt("arena_settings." + arena_setting + ".pos1_x")
-												- getConfig().getInt("arena_settings." + arena_setting + ".pos2_x"))))
-												+ Math.min(
-														(getConfig()
-																.getInt("arena_settings." + arena_setting + ".pos1_x")),
-														getConfig()
-																.getInt("arena_settings." + arena_setting + ".pos2_x"));
-										int zombie_z = (int) (Math.random() * (Math.abs(getConfig()
-												.getInt("arena_settings." + arena_setting + ".pos1_z")
-												- getConfig().getInt("arena_settings." + arena_setting + ".pos2_z"))))
-												+ Math.min(
-														getConfig()
-																.getInt("arena_settings." + arena_setting + ".pos1_z"),
-														getConfig()
-																.getInt("arena_settings." + arena_setting + ".pos2_z"));
-										int zombie_y = (int) zaworld.getHighestBlockYAt(zombie_x, zombie_z);
-										Location zombie_location = new Location(zaworld, zombie_x, zombie_y, zombie_z);
-										Bukkit.getWorld(getConfig().getString("world")).spawnEntity(zombie_location,
-												EntityType.ZOMBIE);
-									}
-								}
-							}
-							if (getSaveConfig().getInt("SERVER.ARENA.phase") > 4
-									&& getConfig().getBoolean("spawn_giant") == true) {
-								int total = 0;
-								for (LivingEntity f : zaworld.getLivingEntities()) {
-									if (f instanceof Giant) {
-										total++;
-										continue;
-									}
-								}
-								if (total < 1) {
-									int x = Main.instance.getConfig().getInt("giant_x");
-									int y = Main.instance.getConfig().getInt("giant_y");
-									int z = Main.instance.getConfig().getInt("giant_z");
-									int yaw = Main.instance.getConfig().getInt("giant_yaw");
-									int pitch = Main.instance.getConfig().getInt("giant_pitch");
-									Location location = new Location(zaworld, x, y, z, yaw, pitch);
-									Bukkit.getWorld(getConfig().getString("world")).spawnEntity(location,
-											EntityType.GIANT);
-								}
-							}
-							if (getSaveConfig().getInt("SERVER.ARENA.countdown") < 1) {
-								getSaveConfig().set("SERVER.ARENA.time", "day");
-								getSaveConfig().set("SERVER.ARENA.countdown", 60);
-								int x = Main.instance.getConfig().getInt("spawn_x");
-								int y = Main.instance.getConfig().getInt("spawn_y");
-								int z = Main.instance.getConfig().getInt("spawn_z");
-								int yaw = Main.instance.getConfig().getInt("spawn_yaw");
-								int pitch = Main.instance.getConfig().getInt("spawn_pitch");
-								Location location = new Location(zaworld, x, y, z, yaw, pitch);
-								for (Player p : Bukkit.getOnlinePlayers()) {
-									if (p.getWorld().equals(zaworld)) {
-										if (p.getGameMode() != GameMode.CREATIVE
-												&& getConfig().getBoolean("teleport_on_start_end") == true) {
-											if (Main.instance.getSaveConfig().isSet(p.getName() + ".play.tpaura")) {
-												if (Main.instance.getSaveConfig()
-														.getInt(p.getName() + ".play.tpaura") > 0) {
-													Main.instance.getSaveConfig().set(p.getName() + ".play.tpaura",
-															Main.instance.getSaveConfig()
-																	.getInt(p.getName() + ".play.tpaura") - 1);
-													continue;
-												}
-											}
-											p.teleport(location);
-										}
-									}
-								}
-								for (LivingEntity f : zaworld.getLivingEntities()) {
-									if (f instanceof Zombie) {
-										f.remove();
-										continue;
-									}
-								}
-								Bukkit.broadcastMessage(getConfig().getString("message_prefix") + " "
-										+ getConfig().getString("message_starting").replace("%time%",
-												"1 " + getConfig().getString("message_minute")));
-								if (getConfig().getBoolean("spawn_giant") == true
-										&& getSaveConfig().getInt("SERVER.ARENA.phase") == 5) {
-									getSaveConfig().set("SERVER.ARENA.phase", 0);
-									getSaveConfig().set("SERVER.ARENA.time", "day");
-									getSaveConfig().set("SERVER.ARENA.countdown", 60);
-									for (LivingEntity f : zaworld.getLivingEntities()) {
-										if (f instanceof Giant) {
-											f.remove();
-											continue;
-										}
-									}
-								}
-							}
-						}
-						try {
-							getSaveConfig().save(savef);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}, 0L, 20L);
-	}
-
-	public FileConfiguration getSaveConfig() {
-		return this.save;
+		
 	}
 
 	public FileConfiguration getShopConfig() {
@@ -341,7 +87,6 @@ public class Main extends JavaPlugin {
 
 	public void createFiles() {
 
-		savef = new File(getDataFolder(), "save.yml");
 		configf = new File(getDataFolder(), "config.yml");
 		shopconfigf = new File(getDataFolder(), "shop.yml");
 
@@ -349,20 +94,14 @@ public class Main extends JavaPlugin {
 			configf.getParentFile().mkdirs();
 			saveResource("config.yml", false);
 		}
-		if (!savef.exists()) {
-			savef.getParentFile().mkdirs();
-			saveResource("save.yml", false);
-		}
 		if (!shopconfigf.exists()) {
 			shopconfigf.getParentFile().mkdirs();
 			saveResource("shop.yml", false);
 		}
 		config = new YamlConfiguration();
-		save = new YamlConfiguration();
 		shopconfig = new YamlConfiguration();
 		try {
 			config.load(configf);
-			save.load(savef);
 			shopconfig.load(shopconfigf);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -586,14 +325,5 @@ public class Main extends JavaPlugin {
 
 		econ = rsp.getProvider();
 		return econ != null;
-	}
-
-	private String loadVersion() {
-		String packName = Bukkit.getServer().getClass().getPackage().getName();
-		return packName.substring(packName.lastIndexOf('.') + 1);
-	}
-
-	public void openMenu(Player p) {
-		menu.show(p);
 	}
 }

@@ -7,15 +7,11 @@ import misat11.za.Main;
 
 public class SoundGen {
 
-  public static Sound get(String v18, String v19) {
+  public static Sound get(String name) {
     Sound finalSound = null;
 
     try {
-      if (Main.s_version.startsWith("v1_8")) {
-        finalSound = Sound.valueOf(v18);
-      } else {
-        finalSound = Sound.valueOf(v19);
-      }
+        finalSound = Sound.valueOf(name);
     } catch (Exception ex) {
     	
     }
