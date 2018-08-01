@@ -40,7 +40,7 @@ public class Main extends JavaPlugin {
 	public FileConfiguration config, save, shopconfig;
 	public static Main instance;
 	public static String version, s_version;
-	public static boolean isSpigot, snapshot, isVault, isCrackshot;
+	public static boolean isSpigot, snapshot, isVault;
 	public static Economy econ = null;
 	private Menu menu;
 
@@ -50,7 +50,6 @@ public class Main extends JavaPlugin {
 		snapshot = false;
 
 		isSpigot = getIsSpigot();
-		isCrackshot = getIsCrackshot();
 		s_version = loadVersion();
 
 		if (!getServer().getPluginManager().isPluginEnabled("Vault")) {
@@ -98,13 +97,6 @@ public class Main extends JavaPlugin {
 		if (isVault == true) {
 			Bukkit.getLogger().info("*                  *");
 			Bukkit.getLogger().info("*   Vault hooked   *");
-			Bukkit.getLogger().info("*                  *");
-		}
-
-		if (isCrackshot == true) {
-			Bukkit.getLogger().info("*                  *");
-			Bukkit.getLogger().info("*    CrackShot     *");
-			Bukkit.getLogger().info("*      hooked      *");
 			Bukkit.getLogger().info("*                  *");
 		}
 
@@ -579,14 +571,6 @@ public class Main extends JavaPlugin {
 			Package spigotPackage = Package.getPackage("org.spigotmc");
 			return (spigotPackage != null);
 		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private boolean getIsCrackshot() {
-		if (getServer().getPluginManager().getPlugin("CrackShot") != null) {
-			return true;
-		} else {
 			return false;
 		}
 	}

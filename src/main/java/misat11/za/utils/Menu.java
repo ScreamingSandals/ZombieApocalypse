@@ -30,19 +30,13 @@ public class Menu implements Listener {
 		Set<String> s = Main.instance.getShopConfig().getConfigurationSection("shop-items").getKeys(false);
 
 		for (String i : s) {
-			if (Main.instance.getShopConfig().getString("shop-items." + i + ".type") == "crackshot"
-					&& Main.isCrackshot == false) {
-
-			} else {
-				inv.setItem(lastpos,
-						createItem(Main.instance.getShopConfig().getString("shop-items." + i + ".item"),
-								Main.instance.getShopConfig().getInt("shop-items." + i + ".item-damage"),
-								Main.instance.getShopConfig().getString("shop-items." + i + ".name"),
-								Integer.toString(Main.instance.getShopConfig().getInt("shop-items." + i + ".points")))
-						);
-				addIds(Integer.toString(lastpos), i);
-				lastpos = lastpos + 1;
-			}
+			inv.setItem(lastpos,
+					createItem(Main.instance.getShopConfig().getString("shop-items." + i + ".item"),
+							Main.instance.getShopConfig().getInt("shop-items." + i + ".item-damage"),
+							Main.instance.getShopConfig().getString("shop-items." + i + ".name"),
+							Integer.toString(Main.instance.getShopConfig().getInt("shop-items." + i + ".points"))));
+			addIds(Integer.toString(lastpos), i);
+			lastpos = lastpos + 1;
 		}
 
 		Bukkit.getServer().getPluginManager().registerEvents(this, p);
@@ -56,12 +50,12 @@ public class Menu implements Listener {
 		i.setItemMeta(im);
 		return i;
 	}
-	
-	public void addIds(String key, String value){
+
+	public void addIds(String key, String value) {
 		this.ids.put(key, value);
 	}
-	
-	public String getIds(String key){
+
+	public String getIds(String key) {
 		return this.ids.get(key);
 	}
 

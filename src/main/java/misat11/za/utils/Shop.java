@@ -5,8 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.shampaggon.crackshot.CSUtility;
-
 import misat11.za.Main;
 
 public class Shop {
@@ -30,19 +28,6 @@ public class Shop {
 					Main.instance.getSaveConfig().set(p.getName() + ".play.points",
 							Main.instance.getSaveConfig().getInt(p.getName() + ".play.points")
 									- Main.instance.getShopConfig().getInt("shop-items." + item + ".points"));
-					return true;
-				} else if (Main.instance.getShopConfig().getString("shop-items." + item + ".type")
-						.equals("crackshot")) {
-					if (Main.isCrackshot == false) {
-						return false;
-					}
-					CSUtility CrackShotAPI = new CSUtility();
-					ItemStack gun = CrackShotAPI.generateWeapon(
-							Main.instance.getShopConfig().getString("shop-items." + item + ".weapon"));
-					Main.instance.getSaveConfig().set(p.getName() + ".play.points",
-							Main.instance.getSaveConfig().getInt(p.getName() + ".play.points")
-									- Main.instance.getShopConfig().getInt("shop-items." + item + ".points"));
-					p.getInventory().addItem(gun);
 					return true;
 				} else {
 					p.getInventory()
