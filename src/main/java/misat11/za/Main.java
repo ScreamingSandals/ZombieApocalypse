@@ -4,10 +4,12 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import misat11.za.commands.ZaCommand;
+import misat11.za.game.Game;
 import net.milkbowl.vault.economy.Economy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -16,12 +18,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Main extends JavaPlugin {
 
-	public File configf, shopconfigf;
-	public FileConfiguration config, shopconfig;
+	public File configf, arenasf, playersf, shopconfigf;
+	public FileConfiguration config, arenaconfig, playersconfig, shopconfig;
 	public static Main instance;
 	public static String version;
 	public static boolean isSpigot, snapshot, isVault;
 	public static Economy econ = null;
+	public static HashMap<String, Game> games = new HashMap<String, Game>();
 
 	public void onEnable() {
 		instance = this;
@@ -81,27 +84,37 @@ public class Main extends JavaPlugin {
 		
 	}
 
-	public FileConfiguration getShopConfig() {
-		return this.shopconfig;
-	}
-
 	public void createFiles() {
 
 		configf = new File(getDataFolder(), "config.yml");
+		arenasf = new File(getDataFolder(), "arenas.yml");
+		playersf = new File(getDataFolder(), "players.yml");
 		shopconfigf = new File(getDataFolder(), "shop.yml");
 
 		if (!configf.exists()) {
 			configf.getParentFile().mkdirs();
 			saveResource("config.yml", false);
 		}
+		if (!arenasf.exists()) {
+			arenasf.getParentFile().mkdirs();
+			saveResource("arenas.yml", false);
+		}
+		if (!playersf.exists()) {
+			playersf.getParentFile().mkdirs();
+			saveResource("players.yml", false);
+		}
 		if (!shopconfigf.exists()) {
 			shopconfigf.getParentFile().mkdirs();
 			saveResource("shop.yml", false);
 		}
 		config = new YamlConfiguration();
+		arenaconfig = new YamlConfiguration();
+		playersconfig = new YamlConfiguration();
 		shopconfig = new YamlConfiguration();
 		try {
 			config.load(configf);
+			arenaconfig.load(arenasf);
+			playersconfig.load(playersf);
 			shopconfig.load(shopconfigf);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -295,11 +308,11 @@ public class Main extends JavaPlugin {
 			e.printStackTrace();
 		}
 
-		if (this.getShopConfig().isSet("enable") == false) {
-			this.getShopConfig().set("enable", true);
+		if (this.shopconfig.isSet("enable") == false) {
+			this.shopconfig.set("enable", true);
 		}
 		try {
-			getShopConfig().save(shopconfigf);
+			shopconfig.save(shopconfigf);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
