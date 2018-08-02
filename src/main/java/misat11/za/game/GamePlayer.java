@@ -93,7 +93,7 @@ public class GamePlayer {
 
 	public void saveGamePlayerData() {
 		String saveCfgGroup = player.getName().toLowerCase();
-		File file = new File(Main.instance.getDataFolder().toString() + "/players/" + saveCfgGroup + ".yml");
+		File file = new File(Main.getInstance().getDataFolder().toString() + "/players/" + saveCfgGroup + ".yml");
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
@@ -115,7 +115,7 @@ public class GamePlayer {
 
 	public void loadGamePlayerData() {
 		String saveCfgGroup = player.getName().toLowerCase();
-		File file = new File(Main.instance.getDataFolder().toString() + "/players/" + saveCfgGroup + ".yml");
+		File file = new File(Main.getInstance().getDataFolder().toString() + "/players/" + saveCfgGroup + ".yml");
 		if (!file.exists()) {
 			try {
 				file.createNewFile();

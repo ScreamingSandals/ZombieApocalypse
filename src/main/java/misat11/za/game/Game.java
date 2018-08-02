@@ -5,14 +5,17 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
+import misat11.za.utils.I18n;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-public class Game {
+public class Game extends BukkitRunnable {
 
 	private String name;
 	private Location pos1;
@@ -27,7 +30,7 @@ public class Game {
 	private int phasesLoaded = 0;
 
 	// STATUS
-	private GameStatus status;
+	private GameStatus status = GameStatus.DISABLED;
 	private int inPhase = 0;
 	private int countdown = 0;
 
@@ -104,14 +107,33 @@ public class Game {
 	}
 
 	public void joinPlayer(GamePlayer player) {
+		boolean isEmpty = players.isEmpty();
 		if (!players.contains(player)) {
 			players.add(player);
+		}
+
+		String message = I18n._("join").replace("%name%", player.player.getDisplayName());
+		for (GamePlayer p : players)
+			p.player.sendMessage(message);
+
+		if (isEmpty) {
+			runTaskTimer(Main.getInstance(), 0, 20);
 		}
 	}
 
 	public void leavePlayer(GamePlayer player) {
 		if (players.contains(player)) {
 			players.remove(player);
+		}
+
+		String message = I18n._("leave").replace("%name%", player.player.getDisplayName());
+		for (GamePlayer p : players)
+			p.player.sendMessage(message);
+		if (players.isEmpty()) {
+			cancel();
+			inPhase = 0;
+			status = GameStatus.WAITING;
+			countdown = 0;
 		}
 	}
 
@@ -134,8 +156,8 @@ public class Game {
 			game.phasesLoaded++;
 			game.phases.put(game.phasesLoaded, pi);
 		}
-		game.status = GameStatus.WAITING;
-		Main.instance.getLogger().info("Arena " + name + " loaded!");
+		game.start();
+		Main.getInstance().getLogger().info("Arena " + name + " loaded!");
 		return game;
 	}
 
@@ -184,7 +206,39 @@ public class Game {
 	}
 
 	public void start() {
+		if (status == GameStatus.DISABLED) {
+			status = GameStatus.WAITING;
+		}
+	}
 
+	public void joinToGame(Player player) {
+		GamePlayer gPlayer = Main.getPlayerGameProfile(player);
+		gPlayer.changeGame(this);
+	}
+
+	public void leaveFromGame(Player player) {
+		if (Main.isPlayerInGame(player)) {
+			GamePlayer gPlayer = Main.getPlayerGameProfile(player);
+
+			if (gPlayer.getGame() == this) {
+				gPlayer.changeGame(null);
+			}
+		}
+	}
+
+	public void run() {
+		if (status == GameStatus.WAITING) {
+			status = GameStatus.RUNNING_PAUSE;
+		}
+		countdown++;
+		if (status == GameStatus.RUNNING_IN_PHASE) {
+			if (countdown > pauseCountdown) {
+				status = GameStatus.RUNNING_PAUSE;
+				
+			}
+		} else if (status == GameStatus.RUNNING_PAUSE) {
+			
+		}
 	}
 
 }

@@ -21,87 +21,64 @@ public class PlayerListener implements Listener {
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (event.getEntity() instanceof Player) {
 			Player victim = (Player) event.getEntity();
-			if (Main.playersInGame.containsKey(victim)) {
-				GamePlayer gPlayer = Main.playersInGame.get(victim);
-				if (gPlayer.isInGame()) {
-					
-				}
+			if (Main.isPlayerInGame(victim)) {
+
 			}
 		}
 		Player killer = event.getEntity().getKiller();
 		if (killer != null) {
-			if (Main.playersInGame.containsKey(killer)) {
-				GamePlayer gPlayer = Main.playersInGame.get(killer);
-				if (gPlayer.isInGame()) {
-					
-				}
+			if (Main.isPlayerInGame(killer)) {
+
 			}
 		}
 	}
 
 	@EventHandler
 	public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
-		if (event.isCancelled()) return;
-		if (Main.playersInGame.containsKey(event.getPlayer())) {
-			GamePlayer gPlayer = Main.playersInGame.get(event.getPlayer());
-			if (gPlayer.isInGame()) {
-				if (event.getNewGameMode() != GameMode.ADVENTURE) {
-					event.getPlayer().setGameMode(GameMode.ADVENTURE);
-				}
+		if (event.isCancelled())
+			return;
+		if (Main.isPlayerInGame(event.getPlayer())) {
+			if (event.getNewGameMode() != GameMode.ADVENTURE) {
+				event.getPlayer().setGameMode(GameMode.ADVENTURE);
 			}
 		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		if (Main.playersInGame.containsKey(event.getPlayer())) {
-			GamePlayer gPlayer = Main.playersInGame.get(event.getPlayer());
-			if (gPlayer.isInGame()) {
+		if (Main.isPlayerGameProfileRegistered(event.getPlayer())) {
+			GamePlayer gPlayer = Main.getPlayerGameProfile(event.getPlayer());
+			if (gPlayer.isInGame())
 				gPlayer.changeGame(null);
-			}
-			Main.playersInGame.remove(event.getPlayer());
+			Main.unloadPlayerGameProfile(event.getPlayer());
 		}
 	}
 
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		if (Main.playersInGame.containsKey(event.getPlayer())) {
-			GamePlayer gPlayer = Main.playersInGame.get(event.getPlayer());
-			if (gPlayer.isInGame()) {
-				event.setRespawnLocation(gPlayer.getGame().getSpawn());
-			}
-		}
+		if (Main.isPlayerInGame(event.getPlayer()))
+			event.setRespawnLocation(Main.getPlayerGameProfile(event.getPlayer()).getGame().getSpawn());
 	}
 
 	@EventHandler
 	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
-		if (Main.playersInGame.containsKey(event.getPlayer())) {
-			GamePlayer gPlayer = Main.playersInGame.get(event.getPlayer());
-			if (gPlayer.isInGame()) {
-				gPlayer.changeGame(null);
-			}
-		}
+		if (Main.isPlayerInGame(event.getPlayer()))
+			Main.getPlayerGameProfile(event.getPlayer()).changeGame(null);
 	}
-	
+
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (event.isCancelled()) return;
-		if (Main.playersInGame.containsKey(event.getPlayer())) {
-			GamePlayer gPlayer = Main.playersInGame.get(event.getPlayer());
-			if (gPlayer.isInGame()) {
-				event.setCancelled(true);
-			}
-		}
+		if (event.isCancelled())
+			return;
+		if (Main.isPlayerInGame(event.getPlayer()))
+			event.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (event.isCancelled()) return;
-		if (Main.playersInGame.containsKey(event.getPlayer())) {
-			GamePlayer gPlayer = Main.playersInGame.get(event.getPlayer());
-			if (gPlayer.isInGame()) {
-				event.setCancelled(true);
-			}
-		}
+		if (event.isCancelled())
+			return;
+		if (Main.isPlayerInGame(event.getPlayer()))
+			event.setCancelled(true);
 	}
 }
