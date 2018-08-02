@@ -1,18 +1,3 @@
-enabled: false
-world: "zaworld"
-spawn_x: 0
-spawn_y: 60
-spawn_z: 0
-spawn_yaw: 0
-spawn_pitch: 0
-teleport_on_start_end: true
-spawn_giant: true
-giant_x: 0
-giant_y: 60
-giant_z: 0
-giant_yaw: 0
-giant_pitch: 0
-arena_settings: []
 message_prefix: "[ZA]"
 message_phase_night: "It's night of phase %phase%. Remaining until the end: %countdown%"
 message_phase_day: "It's day after phase %phase%. Remaining until the end: %countdown%"
