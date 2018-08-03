@@ -92,6 +92,8 @@ public class Game extends BukkitRunnable {
 		if (!players.contains(player)) {
 			players.add(player);
 		}
+		
+		player.player.teleport(spawn);
 
 		String message = I18n._("join").replace("%name%", player.player.getDisplayName());
 		for (GamePlayer p : players)
@@ -189,6 +191,12 @@ public class Game extends BukkitRunnable {
 		if (status == GameStatus.DISABLED) {
 			status = GameStatus.WAITING;
 		}
+	}
+	
+	public void stop() {
+		this.cancel();
+		for (GamePlayer p : players) 
+			p.changeGame(null);
 	}
 
 	public void joinToGame(Player player) {

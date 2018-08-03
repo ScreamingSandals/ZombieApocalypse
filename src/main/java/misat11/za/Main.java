@@ -167,6 +167,12 @@ public class Main extends JavaPlugin {
 		}
 
 	}
+	
+	public void onDisable() {
+		for (Game game : games.values()) {
+			game.stop();
+		}
+	}
 
 	private boolean setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
