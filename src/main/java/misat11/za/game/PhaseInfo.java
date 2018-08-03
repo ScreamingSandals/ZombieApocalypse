@@ -2,35 +2,64 @@ package misat11.za.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffectType;
 
 public class PhaseInfo {
-	
+
 	private int countdown;
 	private List<MonsterInfo> monsters = new ArrayList<MonsterInfo>();
-	
+
 	public PhaseInfo(int countdown) {
 		this.countdown = countdown;
 	}
-	
+
 	public void addMonster(MonsterInfo info) {
 		this.monsters.add(info);
 	}
-	
+
 	public void removeMonster(MonsterInfo info) {
 		if (this.monsters.contains(info)) {
 			this.monsters.remove(info);
 		}
 	}
-	
+
 	public int getCountdown() {
 		return this.countdown;
 	}
-	
+
 	public void setCountdown(int countdown) {
 		this.countdown = countdown;
 	}
-	
-	public void phaseRun() {
-		
+
+	public void phaseRun(int currentlyPhaseTime, Game game) {
+		for (MonsterInfo monster : monsters) {
+			double num = currentlyPhaseTime / monster.getCountdown();
+			if (num == (int) num) {
+				EntityType type = monster.getEntityType();
+				Entity ent = game.getWorld().spawnEntity(getRandomLocation(game.getPos1(), game.getPos2()), type);
+				if (!(ent instanceof LivingEntity)) {
+					ent.remove(); // Maybe in game config is not living entity but for example boat
+				}
+				LivingEntity entity = (LivingEntity) ent;
+				entity.addPotionEffect(
+						PotionEffectType.FIRE_RESISTANCE.createEffect(this.countdown - currentlyPhaseTime, 1));
+			}
+		}
+	}
+
+	private Location getRandomLocation(Location a, Location b) {
+		return new Location(a.getWorld(), rd(Math.min(a.getX(), b.getX()), Math.max(a.getX(), b.getX())),
+				rd(Math.min(a.getY(), b.getY()), Math.max(a.getY(), b.getY())),
+				rd(Math.min(a.getZ(), b.getZ()), Math.max(a.getZ(), b.getZ())));
+	}
+
+	private double rd(double a, double b) {
+		return a + ThreadLocalRandom.current().nextDouble(Math.abs(b - a + 1));
 	}
 }

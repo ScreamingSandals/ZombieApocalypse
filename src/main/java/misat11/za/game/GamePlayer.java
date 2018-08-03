@@ -17,7 +17,8 @@ public class GamePlayer {
 	public final Player player;
 	public int lvl = 1;
 	public int xp = 0;
-	public int points = 0;
+	public int coins = 0;
+	public int teleportAura = 0;
 	private Game game = null;
 
 	private StoredInventory oldinventory = new StoredInventory();
@@ -89,6 +90,7 @@ public class GamePlayer {
 
 		player.updateInventory();
 		player.teleport(oldinventory.left);
+		player.resetPlayerTime();
 	}
 
 	public void saveGamePlayerData() {
@@ -102,9 +104,10 @@ public class GamePlayer {
 			}
 		}
 		FileConfiguration pconfig = new YamlConfiguration();
-		pconfig.set("points", points);
+		pconfig.set("coins", coins);
 		pconfig.set("lvl", lvl);
 		pconfig.set("xp", xp);
+		pconfig.set("teleportAura", teleportAura);
 
 		try {
 			pconfig.save(file);
@@ -131,12 +134,14 @@ public class GamePlayer {
 		} catch (InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-		if (pconfig.isSet("points"))
-			points = pconfig.getInt("points");
+		if (pconfig.isSet("coins"))
+			coins = pconfig.getInt("coins");
 		if (pconfig.isSet("lvl"))
 			lvl = pconfig.getInt("lvl");
 		if (pconfig.isSet("xp"))
 			xp = pconfig.getInt("xp");
+		if (pconfig.isSet("teleportAura"))
+			teleportAura = pconfig.getInt("teleportAura");
 
 		saveGamePlayerData();
 	}

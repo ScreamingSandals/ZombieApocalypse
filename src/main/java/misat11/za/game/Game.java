@@ -1,6 +1,7 @@
 package misat11.za.game;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -13,7 +14,6 @@ import misat11.za.utils.I18n;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 public class Game extends BukkitRunnable {
 
@@ -21,13 +21,10 @@ public class Game extends BukkitRunnable {
 	private Location pos1;
 	private Location pos2;
 	private Location spawn;
-	private int spawnProtect;
-	private TreeMap<Integer, PhaseInfo> phases = new TreeMap<Integer, PhaseInfo>();
+	private PhaseInfo[] phases;
 	private int pauseCountdown;
 	private List<GamePlayer> players = new ArrayList<GamePlayer>();
-	private int zombieSpawnInterval;
 	private World world;
-	private int phasesLoaded = 0;
 
 	// STATUS
 	private GameStatus status = GameStatus.DISABLED;
@@ -74,19 +71,11 @@ public class Game extends BukkitRunnable {
 		this.spawn = spawn;
 	}
 
-	public int getSpawnProtect() {
-		return spawnProtect;
-	}
-
-	public void setSpawnProtect(int spawnProtect) {
-		this.spawnProtect = spawnProtect;
-	}
-
-	public TreeMap<Integer, PhaseInfo> getPhases() {
+	public PhaseInfo[] getPhases() {
 		return phases;
 	}
 
-	public void setPhases(TreeMap<Integer, PhaseInfo> phases) {
+	public void setPhases(PhaseInfo[] phases) {
 		this.phases = phases;
 	}
 
@@ -96,14 +85,6 @@ public class Game extends BukkitRunnable {
 
 	public void setPauseCountdown(int pauseCountdown) {
 		this.pauseCountdown = pauseCountdown;
-	}
-
-	public int getZombieSpawnInterval() {
-		return zombieSpawnInterval;
-	}
-
-	public void setZombieSpawnInterval(int zombieSpawnInterval) {
-		this.zombieSpawnInterval = zombieSpawnInterval;
 	}
 
 	public void joinPlayer(GamePlayer player) {
@@ -141,21 +122,20 @@ public class Game extends BukkitRunnable {
 		Game game = new Game();
 		game.name = name;
 		game.pauseCountdown = configMap.getInt("pauseCountdown");
-		game.spawnProtect = configMap.getInt("spawnProtect");
-		game.zombieSpawnInterval = configMap.getInt("zombieSpawnInterval");
 		game.world = Bukkit.getWorld(configMap.getString("world"));
 		game.pos1 = readLocationFromString(game.world, configMap.getString("pos1"));
 		game.pos2 = readLocationFromString(game.world, configMap.getString("pos2"));
 		game.spawn = readLocationFromString(game.world, configMap.getString("spawn"));
+		List<PhaseInfo> phasel = new ArrayList<PhaseInfo>();
 		for (String phaseN : configMap.getConfigurationSection("phases").getKeys(false)) {
 			ConfigurationSection phase = configMap.getConfigurationSection("phases").getConfigurationSection(phaseN);
 			PhaseInfo pi = new PhaseInfo(phase.getInt("countdown"));
 			for (String monsterN : phase.getConfigurationSection("monsters").getKeys(false)) {
 				pi.addMonster(new MonsterInfo(phase.getInt("monsters." + monsterN), EntityType.valueOf(monsterN)));
 			}
-			game.phasesLoaded++;
-			game.phases.put(game.phasesLoaded, pi);
+			phasel.add(pi);
 		}
+		game.phases = phasel.toArray(new PhaseInfo[phasel.size()]);
 		game.start();
 		Main.getInstance().getLogger().info("Arena " + name + " loaded!");
 		return game;
@@ -232,12 +212,41 @@ public class Game extends BukkitRunnable {
 		}
 		countdown++;
 		if (status == GameStatus.RUNNING_IN_PHASE) {
-			if (countdown > pauseCountdown) {
+			if (countdown > phases[inPhase].getCountdown()) {
 				status = GameStatus.RUNNING_PAUSE;
-				
+				countdown = 0;
+				if ((inPhase + 1) >= phases.length) {
+					inPhase = 0;
+				} else {
+					inPhase++;
+				}
+				for (GamePlayer p : players)
+					p.player.setPlayerTime(6000L, false);
+			} else {
+				phases[inPhase].phaseRun(countdown, this);
 			}
 		} else if (status == GameStatus.RUNNING_PAUSE) {
-			
+			if (countdown > pauseCountdown) {
+				status = GameStatus.RUNNING_IN_PHASE;
+				countdown = 0;
+				String title = I18n._("zombie_start_title", false);
+				String subtitle = I18n._("zombie_start_subtitle", false);
+				for (GamePlayer p : players) {
+					p.player.setPlayerTime(14000L, false);
+					p.player.sendTitle(title, subtitle, 0, 20, 0);
+					if (p.teleportAura != 0) {
+						p.teleportAura--;
+					} else {
+						p.player.teleport(spawn);
+					}
+				}
+			} else {
+				if (countdown >= (pauseCountdown - 5)) {
+					String title = ChatColor.YELLOW.toString() + Integer.toString(pauseCountdown - countdown);
+					for (GamePlayer p : players)
+						p.player.sendTitle(title, "", 0, 20, 0);
+				}
+			}
 		}
 	}
 

@@ -189,6 +189,12 @@ public class Configurator {
 			config.set("message_dont_have_tpaura",
 					"You don't have AntiTeleportAura. You can buy by /za shop");
 		}
+		if (config.isSet("message_zombie_start_title") == false) {
+			config.set("message_zombie_start_title", "§2ZOMBIES!!!");
+		}
+		if (config.isSet("message_zombie_start_subtitle") == false) {
+			config.set("message_zombie_start_subtitle", "Game starting! Good luck!");
+		}
 		try {
 			config.save(configf);
 		} catch (IOException e) {
