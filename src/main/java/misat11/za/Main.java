@@ -7,6 +7,7 @@ import misat11.za.commands.ZaCommand;
 import misat11.za.game.Game;
 import misat11.za.game.GamePlayer;
 import misat11.za.listener.PlayerListener;
+import misat11.za.listener.ZombieListener;
 import misat11.za.utils.Configurator;
 import net.milkbowl.vault.economy.Economy;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class Main extends JavaPlugin {
@@ -23,12 +25,13 @@ public class Main extends JavaPlugin {
 	private Economy econ = null;
 	private HashMap<String, Game> games = new HashMap<String, Game>();
 	private HashMap<Player, GamePlayer> playersInGame = new HashMap<Player, GamePlayer>();
+	private HashMap<Entity, Game> entitiesInGame = new HashMap<Entity, Game>();
 	private Configurator configurator;
 
 	public static Main getInstance() {
 		return instance;
 	}
-	
+
 	public static Configurator getConfigurator() {
 		return instance.configurator;
 	}
@@ -67,6 +70,19 @@ public class Main extends JavaPlugin {
 
 	public static void removeGame(Game game) {
 		instance.games.remove(game.getName());
+	}
+
+	public static Game getInGameEntity(Entity entity) {
+		return instance.entitiesInGame.containsKey(entity) ? instance.entitiesInGame.get(entity) : null;
+	}
+	
+	public static void registerGameEntity(Entity entity, Game game) {
+		instance.entitiesInGame.put(entity, game);
+	}
+	
+	public static void unregisterGameEntity(Entity entity) {
+		if (instance.entitiesInGame.containsKey(entity))
+			instance.entitiesInGame.remove(entity);
 	}
 
 	public static boolean isPlayerInGame(Player player) {
@@ -120,6 +136,7 @@ public class Main extends JavaPlugin {
 
 		getCommand("za").setExecutor(new ZaCommand());
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+		getServer().getPluginManager().registerEvents(new ZombieListener(), this);
 
 		Bukkit.getLogger().info("********************");
 		Bukkit.getLogger().info("* ZombieApocalypse *");
@@ -167,7 +184,7 @@ public class Main extends JavaPlugin {
 		}
 
 	}
-	
+
 	public void onDisable() {
 		for (Game game : games.values()) {
 			game.stop();

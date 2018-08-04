@@ -10,10 +10,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffectType;
 
+import misat11.za.Main;
+
 public class PhaseInfo {
 
 	private int countdown;
 	private List<MonsterInfo> monsters = new ArrayList<MonsterInfo>();
+	private List<Entity> spawnedEntities = new ArrayList<Entity>();
 
 	public PhaseInfo(int countdown) {
 		this.countdown = countdown;
@@ -47,10 +50,18 @@ public class PhaseInfo {
 					ent.remove(); // Maybe in game config is not living entity but for example boat
 				}
 				LivingEntity entity = (LivingEntity) ent;
-				entity.addPotionEffect(
-						PotionEffectType.FIRE_RESISTANCE.createEffect(this.countdown - currentlyPhaseTime, 1));
+				spawnedEntities.add(entity);
+				Main.registerGameEntity(entity, game);
 			}
 		}
+	}
+
+	public void phaseEnd() {
+		for (Entity entity : spawnedEntities) {
+			Main.unregisterGameEntity(entity);
+			entity.setFireTicks(2000);
+		}
+		spawnedEntities.clear();
 	}
 
 	private Location getRandomLocation(Location a, Location b) {

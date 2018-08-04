@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import misat11.za.Main;
 import misat11.za.utils.I18n;
@@ -15,7 +16,7 @@ import misat11.za.utils.I18n;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Game extends BukkitRunnable {
+public class Game {
 
 	private String name;
 	private Location pos1;
@@ -30,6 +31,7 @@ public class Game extends BukkitRunnable {
 	private GameStatus status = GameStatus.DISABLED;
 	private int inPhase = 0;
 	private int countdown = 0;
+	private BukkitTask task;
 
 	private Game() {
 
@@ -92,15 +94,16 @@ public class Game extends BukkitRunnable {
 		if (!players.contains(player)) {
 			players.add(player);
 		}
-		
+
 		player.player.teleport(spawn);
+		player.player.setPlayerTime(status == GameStatus.RUNNING_PAUSE ? 6000L : 14000L, false);
 
 		String message = I18n._("join").replace("%name%", player.player.getDisplayName());
 		for (GamePlayer p : players)
 			p.player.sendMessage(message);
 
 		if (isEmpty) {
-			runTaskTimer(Main.getInstance(), 0, 20);
+			runTask();
 		}
 	}
 
@@ -113,7 +116,10 @@ public class Game extends BukkitRunnable {
 		for (GamePlayer p : players)
 			p.player.sendMessage(message);
 		if (players.isEmpty()) {
-			cancel();
+			cancelTask();
+			if (status == GameStatus.RUNNING_IN_PHASE) {
+				phases[inPhase].phaseEnd();
+			}
 			inPhase = 0;
 			status = GameStatus.WAITING;
 			countdown = 0;
@@ -192,10 +198,10 @@ public class Game extends BukkitRunnable {
 			status = GameStatus.WAITING;
 		}
 	}
-	
+
 	public void stop() {
-		this.cancel();
-		for (GamePlayer p : players) 
+		cancelTask();
+		for (GamePlayer p : players)
 			p.changeGame(null);
 	}
 
@@ -221,6 +227,7 @@ public class Game extends BukkitRunnable {
 		countdown++;
 		if (status == GameStatus.RUNNING_IN_PHASE) {
 			if (countdown > phases[inPhase].getCountdown()) {
+				phases[inPhase].phaseEnd();
 				status = GameStatus.RUNNING_PAUSE;
 				countdown = 0;
 				if ((inPhase + 1) >= phases.length) {
@@ -255,6 +262,35 @@ public class Game extends BukkitRunnable {
 						p.player.sendTitle(title, "", 0, 20, 0);
 				}
 			}
+		}
+	}
+
+	public GameStatus getStatus() {
+		return status;
+	}
+
+	private void runTask() {
+		if (task != null) {
+			if (!task.isCancelled()) {
+				task.cancel();
+			}
+			task = null;
+		}
+		task = (new BukkitRunnable() {
+
+			public void run() {
+				Game.this.run();
+			}
+
+		}.runTaskTimer(Main.getInstance(), 0, 20));
+	}
+
+	private void cancelTask() {
+		if (task != null) {
+			if (!task.isCancelled()) {
+				task.cancel();
+			}
+			task = null;
 		}
 	}
 

@@ -6,11 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 import misat11.za.game.GamePlayer;
@@ -18,17 +19,38 @@ import misat11.za.game.GamePlayer;
 public class PlayerListener implements Listener {
 
 	@EventHandler
-	public void onEntityDeath(EntityDeathEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player victim = (Player) event.getEntity();
-			if (Main.isPlayerInGame(victim)) {
-
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		final Player victim = (Player) event.getEntity();
+		if (Main.isPlayerInGame(victim)) {
+			event.setDeathMessage(null);
+			GamePlayer gKiller = null;
+			GamePlayer gVictim = Main.getPlayerGameProfile(victim);
+			Player killer = victim.getKiller();
+			if (killer != null) {
+				gKiller = Main.getPlayerGameProfile(killer);
 			}
-		}
-		Player killer = event.getEntity().getKiller();
-		if (killer != null) {
-			if (Main.isPlayerInGame(killer)) {
-
+			if (gKiller != null) {
+				int nc = gVictim.coins - 10;
+				int subtract = 10;
+				if (nc < 0) {
+					subtract = 10 - Math.abs(nc);
+				}
+				gVictim.coins -= subtract;
+				gKiller.coins += subtract;
+			} else {
+				int nc = gVictim.coins - 5;
+				int subtract = 5;
+				if (nc < 0) {
+					subtract = 5 - Math.abs(nc);
+				}
+				gVictim.coins -= subtract;
+			}
+			if (Main.isSpigot()) {
+				new BukkitRunnable() {
+					public void run() {
+						victim.spigot().respawn();
+					}
+				}.runTaskLater(Main.getInstance(), 20L);
 			}
 		}
 	}
@@ -81,4 +103,5 @@ public class PlayerListener implements Listener {
 		if (Main.isPlayerInGame(event.getPlayer()))
 			event.setCancelled(true);
 	}
+
 }

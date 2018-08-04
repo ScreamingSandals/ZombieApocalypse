@@ -8,6 +8,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 
 import misat11.za.Main;
@@ -35,10 +37,12 @@ public class GamePlayer {
 			this.restoreInv();
 		} else if (this.game == null && game != null) {
 			this.storeInv();
+			this.clean();
 			this.game = game;
 			this.game.joinPlayer(this);
 		} else if (this.game != null && game != null) {
 			this.game.leavePlayer(this);
+			this.clean();
 			this.game = game;
 			this.game.joinPlayer(this);
 		}
@@ -118,6 +122,36 @@ public class GamePlayer {
 			e.printStackTrace();
 		}
 	}
+	
+	  public void clean() {
+
+		    PlayerInventory inv = this.player.getInventory();
+		    inv.setArmorContents(new ItemStack[4]);
+		    inv.setContents(new ItemStack[]{});
+
+		    this.player.setAllowFlight(false);
+		    this.player.setFlying(false);
+		    this.player.setExp(0.0F);
+		    this.player.setLevel(0);
+		    this.player.setSneaking(false);
+		    this.player.setSprinting(false);
+		    this.player.setFoodLevel(20);
+		    this.player.setSaturation(10);
+		    this.player.setExhaustion(0);
+		    this.player.setHealth(20.0D);
+		    this.player.setFireTicks(0);
+		    this.player.setGameMode(GameMode.ADVENTURE);
+
+		    if (this.player.isInsideVehicle()) {
+		      this.player.leaveVehicle();
+		    }
+
+		    for (PotionEffect e : this.player.getActivePotionEffects()) {
+		      this.player.removePotionEffect(e.getType());
+		    }
+
+		    this.player.updateInventory();
+		  }
 
 	public void loadGamePlayerData() {
 		String saveCfgGroup = player.getName().toLowerCase();
