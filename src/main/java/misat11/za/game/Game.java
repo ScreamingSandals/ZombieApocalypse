@@ -4,6 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -32,6 +36,7 @@ public class Game {
 	private int inPhase = 0;
 	private int countdown = 0;
 	private BukkitTask task;
+	private BossBar bossbar;
 
 	private Game() {
 
@@ -96,7 +101,7 @@ public class Game {
 		}
 
 		player.player.teleport(spawn);
-		player.player.setPlayerTime(status == GameStatus.RUNNING_PAUSE ? 6000L : 14000L, false);
+		player.player.setPlayerTime(status == GameStatus.RUNNING_IN_PHASE ? 14000L : 6000L, false);
 
 		String message = I18n._("join").replace("%name%", player.player.getDisplayName());
 		for (GamePlayer p : players)
@@ -113,6 +118,9 @@ public class Game {
 		}
 
 		String message = I18n._("leave").replace("%name%", player.player.getDisplayName());
+		if (status == GameStatus.RUNNING_IN_PHASE) {
+			bossbar.removePlayer(player.player);
+		}
 		for (GamePlayer p : players)
 			p.player.sendMessage(message);
 		if (players.isEmpty()) {
@@ -235,10 +243,13 @@ public class Game {
 				} else {
 					inPhase++;
 				}
+				bossbar.setVisible(false);
+				bossbar.removeAll();
 				for (GamePlayer p : players)
 					p.player.setPlayerTime(6000L, false);
 			} else {
 				phases[inPhase].phaseRun(countdown, this);
+				bossbar.setProgress((double) countdown / (double) phases[inPhase].getCountdown());
 			}
 		} else if (status == GameStatus.RUNNING_PAUSE) {
 			if (countdown > pauseCountdown) {
@@ -246,18 +257,22 @@ public class Game {
 				countdown = 0;
 				String title = I18n._("zombie_start_title", false);
 				String subtitle = I18n._("zombie_start_subtitle", false);
+				bossbar = Bukkit.createBossBar(title, BarColor.GREEN, BarStyle.SEGMENTED_20);
 				for (GamePlayer p : players) {
 					p.player.setPlayerTime(14000L, false);
 					p.player.sendTitle(title, subtitle, 0, 20, 0);
+					bossbar.addPlayer(p.player);
 					if (p.teleportAura != 0) {
 						p.teleportAura--;
 					} else {
 						p.player.teleport(spawn);
 					}
+					bossbar.setProgress(0);
+					bossbar.setVisible(true);
 				}
 			} else {
-				if (countdown >= (pauseCountdown - 5)) {
-					String title = ChatColor.YELLOW.toString() + Integer.toString(pauseCountdown - countdown);
+				if (countdown >= (pauseCountdown - 4)) {
+					String title = ChatColor.YELLOW.toString() + Integer.toString(pauseCountdown - countdown + 1);
 					for (GamePlayer p : players)
 						p.player.sendTitle(title, "", 0, 20, 0);
 				}

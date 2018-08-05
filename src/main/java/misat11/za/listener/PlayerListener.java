@@ -1,11 +1,14 @@
 package misat11.za.listener;
 
 import org.bukkit.GameMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
@@ -15,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 import misat11.za.game.GamePlayer;
+import misat11.za.utils.I18n;
 
 public class PlayerListener implements Listener {
 
@@ -22,7 +26,6 @@ public class PlayerListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		final Player victim = (Player) event.getEntity();
 		if (Main.isPlayerInGame(victim)) {
-			event.setDeathMessage(null);
 			GamePlayer gKiller = null;
 			GamePlayer gVictim = Main.getPlayerGameProfile(victim);
 			Player killer = victim.getKiller();
@@ -37,6 +40,14 @@ public class PlayerListener implements Listener {
 				}
 				gVictim.coins -= subtract;
 				gKiller.coins += subtract;
+				String vMessage = I18n._("player_miss_points").replace("%killer%", killer.getDisplayName())
+						.replace("%points%", Integer.toString(subtract))
+						.replace("%newpoints%", Integer.toString(gVictim.coins));
+				victim.sendMessage(vMessage);
+				String kMessage = I18n._("player_get_points").replace("%entity%", victim.getDisplayName())
+						.replace("%points%", Integer.toString(subtract))
+						.replace("%newpoints%", Integer.toString(gKiller.coins));
+				killer.sendMessage(kMessage);
 			} else {
 				int nc = gVictim.coins - 5;
 				int subtract = 5;
@@ -44,6 +55,20 @@ public class PlayerListener implements Listener {
 					subtract = 5 - Math.abs(nc);
 				}
 				gVictim.coins -= subtract;
+				String vMessage;
+				if (victim.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+					Entity dKiller = ((EntityDamageByEntityEvent) victim.getLastDamageCause()).getDamager();
+					vMessage = I18n._("player_miss_points")
+							.replace("%killer%",
+									dKiller.getCustomName() != null ? dKiller.getCustomName() : dKiller.getName())
+							.replace("%points%", Integer.toString(subtract))
+							.replace("%newpoints%", Integer.toString(gVictim.coins));
+				} else {
+					vMessage = I18n._("player_miss_points_without_entity")
+							.replace("%points%", Integer.toString(subtract))
+							.replace("%newpoints%", Integer.toString(gVictim.coins));
+				}
+				victim.sendMessage(vMessage);
 			}
 			if (Main.isSpigot()) {
 				new BukkitRunnable() {

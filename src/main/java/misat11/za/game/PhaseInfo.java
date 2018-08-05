@@ -16,7 +16,7 @@ public class PhaseInfo {
 
 	private int countdown;
 	private List<MonsterInfo> monsters = new ArrayList<MonsterInfo>();
-	private List<Entity> spawnedEntities = new ArrayList<Entity>();
+	private List<LivingEntity> spawnedEntities = new ArrayList<LivingEntity>();
 
 	public PhaseInfo(int countdown) {
 		this.countdown = countdown;
@@ -42,8 +42,7 @@ public class PhaseInfo {
 
 	public void phaseRun(int currentlyPhaseTime, Game game) {
 		for (MonsterInfo monster : monsters) {
-			double num = currentlyPhaseTime / monster.getCountdown();
-			if (num == (int) num) {
+			if ((currentlyPhaseTime % monster.getCountdown()) == 0) {
 				EntityType type = monster.getEntityType();
 				Entity ent = game.getWorld().spawnEntity(getRandomLocation(game.getPos1(), game.getPos2()), type);
 				if (!(ent instanceof LivingEntity)) {
@@ -57,8 +56,9 @@ public class PhaseInfo {
 	}
 
 	public void phaseEnd() {
-		for (Entity entity : spawnedEntities) {
+		for (LivingEntity entity : spawnedEntities) {
 			Main.unregisterGameEntity(entity);
+			entity.setHealth(3);
 			entity.setFireTicks(2000);
 		}
 		spawnedEntities.clear();

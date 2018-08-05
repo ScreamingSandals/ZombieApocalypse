@@ -13,6 +13,7 @@ import misat11.za.Main;
 import misat11.za.game.Game;
 import misat11.za.game.GamePlayer;
 import misat11.za.game.GameStatus;
+import misat11.za.utils.I18n;
 
 public class ZombieListener implements Listener {
 	@EventHandler
@@ -36,11 +37,19 @@ public class ZombieListener implements Listener {
 
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
+		if (event.getEntity() instanceof Player)
+			return;
+
 		if (event.getEntity().getKiller() != null) {
 			Player killer = (Player) event.getEntity().getKiller();
 			if (Main.isPlayerInGame(killer)) {
 				GamePlayer gKiller = Main.getPlayerGameProfile(killer);
-				
+				gKiller.coins += 5;
+				String kMessage = I18n._("player_get_points").replace("%entity%", event.getEntity().getCustomName() != null ? event.getEntity().getCustomName() : event.getEntity().getName())
+						.replace("%points%", Integer.toString(5))
+						.replace("%newpoints%", Integer.toString(gKiller.coins));
+				killer.sendMessage(kMessage);
+
 			}
 		}
 	}

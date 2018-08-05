@@ -146,6 +146,10 @@ public class Configurator {
 			config.set("message_player_miss_points",
 					"You killed by %killer% and miss %points% points. Your points: %newpoints%");
 		}
+		if (config.isSet("message_player_miss_points_without_entity") == false) {
+			config.set("message_player_miss_points_without_entity",
+					"You died and miss %points% points. Your points: %newpoints%");
+		}
 		if (config.isSet("message_get_vault_money") == false) {
 			config.set("message_get_vault_money",
 					"For your benefit in game you will get $%money% into your account Vault Economy.");
