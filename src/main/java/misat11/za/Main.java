@@ -9,8 +9,10 @@ import misat11.za.game.GamePlayer;
 import misat11.za.listener.PlayerListener;
 import misat11.za.listener.ZombieListener;
 import misat11.za.utils.Configurator;
+import misat11.za.utils.I18n;
 import net.milkbowl.vault.economy.Economy;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -133,6 +135,8 @@ public class Main extends JavaPlugin {
 		configurator = new Configurator(this);
 
 		configurator.createFiles();
+		
+		I18n.load();
 
 		getCommand("za").setExecutor(new ZaCommand());
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
@@ -174,12 +178,16 @@ public class Main extends JavaPlugin {
 
 		Bukkit.getLogger().info("*                  *");
 		Bukkit.getLogger().info("********************");
-
-		if (configurator.arenaconfig.isSet("arenas")) {
-			Set<String> arenas = configurator.arenaconfig.getConfigurationSection("arenas").getKeys(false);
-			for (String arena : arenas) {
-				games.put(arena,
-						Game.loadGame(arena, configurator.arenaconfig.getConfigurationSection("arenas." + arena)));
+		
+		File folder = new File(getDataFolder().toString(), "arenas");
+		if (folder.exists()) {
+			File[] listOfFiles = folder.listFiles();
+			if (listOfFiles.length > 0) {
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile()) {
+						Game.loadGame(listOfFiles[i]);
+					}
+				}
 			}
 		}
 

@@ -1,0 +1,25 @@
+lang_name: "English"
+
+prefix: "[ZA]"
+
+zombie_start_title: "§2Zombies!!!"
+zombie_start_subtitle: "§aPhase started! Good luck"
+zombie_pause_title: "§cPause"
+zombie_pause_subtitle: "§cIt's a pause! Now prepare for the next phase!"
+
+join: "%name% §ajoined to arena!"
+leave: "%name% §cleft the arena!"
+player_miss_points: "§cYou're killed by §7%killer%§c and lost §7%coins%§c coins! Your currently status: §7%newcoins%"
+player_miss_points_without_entity: "§cYou died and lost §7%coins%§c coins! Your currently statu: §7%newcoins%"
+player_get_points: "§aYou killed §7%entity%§a and got §7%coins%§a coins! Your currently statu: §7%newcoins%"
+
+unknown_command: "§cCommand unknown! Tyoe §4/za help §cfor help!"
+
+admin_command_success: "§aCommand executed successfully!"
+admin_command_must_be_in_same_world: "§cAll commands must be called from one world!"
+admin_command_invalid_countdown: "§cDeduction must be within 10 < x < 600 seconds!"
+admin_command_spawn_must_be_in_area: "§cSpawn must be placed inside the arena (pos1 and pos2 coordinates)!"
+admin_command_set_pos1_pos2_first: "§cBefore setting spawn, please set the pos1 and pos2 coordinates (Determining the size and position of the arena)!"
+admin_command_pos1_pos2_difference_must_be_higher: "§cThe height difference between pos1 and pos2 is too small! The minimum is 5 cubes!"
+admin_command_phase_not_exists: "§cThe selected phase does not exist!"
+admin_command_game_saved_and_started: "§aThe game has been successfully saved and running! Now you can join and play in the arena!"

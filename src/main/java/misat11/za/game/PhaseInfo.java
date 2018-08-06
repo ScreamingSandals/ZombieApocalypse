@@ -31,6 +31,10 @@ public class PhaseInfo {
 			this.monsters.remove(info);
 		}
 	}
+	
+	public List<MonsterInfo> getMonsters(){
+		return monsters;
+	}
 
 	public int getCountdown() {
 		return this.countdown;

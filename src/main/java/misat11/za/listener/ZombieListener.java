@@ -46,8 +46,8 @@ public class ZombieListener implements Listener {
 				GamePlayer gKiller = Main.getPlayerGameProfile(killer);
 				gKiller.coins += 5;
 				String kMessage = I18n._("player_get_points").replace("%entity%", event.getEntity().getCustomName() != null ? event.getEntity().getCustomName() : event.getEntity().getName())
-						.replace("%points%", Integer.toString(5))
-						.replace("%newpoints%", Integer.toString(gKiller.coins));
+						.replace("%coins%", Integer.toString(5))
+						.replace("%newcoins%", Integer.toString(gKiller.coins));
 				killer.sendMessage(kMessage);
 
 			}

@@ -41,12 +41,12 @@ public class PlayerListener implements Listener {
 				gVictim.coins -= subtract;
 				gKiller.coins += subtract;
 				String vMessage = I18n._("player_miss_points").replace("%killer%", killer.getDisplayName())
-						.replace("%points%", Integer.toString(subtract))
-						.replace("%newpoints%", Integer.toString(gVictim.coins));
+						.replace("%coins%", Integer.toString(subtract))
+						.replace("%newcoins%", Integer.toString(gVictim.coins));
 				victim.sendMessage(vMessage);
 				String kMessage = I18n._("player_get_points").replace("%entity%", victim.getDisplayName())
-						.replace("%points%", Integer.toString(subtract))
-						.replace("%newpoints%", Integer.toString(gKiller.coins));
+						.replace("%coins%", Integer.toString(subtract))
+						.replace("%newcoins%", Integer.toString(gKiller.coins));
 				killer.sendMessage(kMessage);
 			} else {
 				int nc = gVictim.coins - 5;
@@ -61,12 +61,12 @@ public class PlayerListener implements Listener {
 					vMessage = I18n._("player_miss_points")
 							.replace("%killer%",
 									dKiller.getCustomName() != null ? dKiller.getCustomName() : dKiller.getName())
-							.replace("%points%", Integer.toString(subtract))
-							.replace("%newpoints%", Integer.toString(gVictim.coins));
+							.replace("%coins%", Integer.toString(subtract))
+							.replace("%newcoins%", Integer.toString(gVictim.coins));
 				} else {
 					vMessage = I18n._("player_miss_points_without_entity")
-							.replace("%points%", Integer.toString(subtract))
-							.replace("%newpoints%", Integer.toString(gVictim.coins));
+							.replace("%coins%", Integer.toString(subtract))
+							.replace("%newcoins%", Integer.toString(gVictim.coins));
 				}
 				victim.sendMessage(vMessage);
 			}

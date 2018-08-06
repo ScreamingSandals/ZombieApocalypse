@@ -1,0 +1,25 @@
+lang_name: "Čeština"
+
+prefix: "[ZA]"
+
+zombie_start_title: "§2Zombies!!!"
+zombie_start_subtitle: "§aVlna začala! Hodně štěstí"
+zombie_pause_title: "§cPauza"
+zombie_pause_subtitle: "§cPrávě je pauza! Nyní se připrav na další vlnu!"
+
+join: "%name% §ase připojil do arény!"
+leave: "%name% §copustil arénu!"
+player_miss_points: "§cZabil tě §7%killer%§c a sebral ti §7%coins%§c mincí! Tvůj aktuální stav: §7%newcoins%"
+player_miss_points_without_entity: "§cZemřel jsi a ztratil jsi §7%coins%§c mincí! Tvůj aktuální stav: §7%newcoins%"
+player_get_points: "§aZabil jsi §7%entity%§a a získal jsi §7%coins%§a mincí! Tvůj aktuální stav: §7%newcoins%"
+
+unknown_command: "§cPříkaz neznámý! Zadej §4/za help §cpro nápovědu!"
+
+admin_command_success: "§aPříkaz proveden! Změna zapsána!"
+admin_command_must_be_in_same_world: "§cVšechny příkazy musí být provedeny z jednoho světa!"
+admin_command_invalid_countdown: "§cOdpočet musí být v rozmezí 10 < x < 600 sekund!"
+admin_command_spawn_must_be_in_area: "§cSpawn musí být umístěn uvnitř arény (souřadnic pos1 a pos2)!"
+admin_command_set_pos1_pos2_first: "§cPřed nastavením spawnu prosím nastavte souřadnice pos1 a pos2 (Určující velikost a polohu arény)!"
+admin_command_pos1_pos2_difference_must_be_higher: "§cVýškový rozdíl mezi souřadnicí pos1 a pos2 je moc malý! Minimum je 5 kostiček!"
+admin_command_phase_not_exists: "§cZvolená fáze neexistuje!"
+admin_command_game_saved_and_started: "§aHra byla úspěšně uložena a spuštěna! Nyní se můžete do arény připojit a hrát!"

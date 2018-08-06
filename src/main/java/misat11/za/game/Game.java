@@ -5,10 +5,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,6 +19,8 @@ import org.bukkit.scheduler.BukkitTask;
 import misat11.za.Main;
 import misat11.za.utils.I18n;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +52,12 @@ public class Game {
 
 	public World getWorld() {
 		return world;
+	}
+
+	public void setWorld(World world) {
+		if (this.world == null) {
+			this.world = world;
+		}
 	}
 
 	public void setName(String name) {
@@ -95,6 +105,10 @@ public class Game {
 	}
 
 	public void joinPlayer(GamePlayer player) {
+		if (status == GameStatus.DISABLED) {
+			player.changeGame(null);
+			return;
+		}
 		boolean isEmpty = players.isEmpty();
 		if (!players.contains(player)) {
 			players.add(player);
@@ -109,10 +123,15 @@ public class Game {
 
 		if (isEmpty) {
 			runTask();
+		} else {
+			bossbar.addPlayer(player.player);
 		}
 	}
 
 	public void leavePlayer(GamePlayer player) {
+		if (status == GameStatus.DISABLED) {
+			return;
+		}
 		if (players.contains(player)) {
 			players.remove(player);
 		}
@@ -134,9 +153,23 @@ public class Game {
 		}
 	}
 
-	public static Game loadGame(String name, ConfigurationSection configMap) {
+	public static Game loadGame(File file) {
+		if (!file.exists()) {
+			return null;
+		}
+		FileConfiguration configMap = new YamlConfiguration();
+		try {
+			configMap.load(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+			return null;
+		}
+
 		Game game = new Game();
-		game.name = name;
+		game.name = configMap.getString("name");
 		game.pauseCountdown = configMap.getInt("pauseCountdown");
 		game.world = Bukkit.getWorld(configMap.getString("world"));
 		game.pos1 = readLocationFromString(game.world, configMap.getString("pos1"));
@@ -153,7 +186,8 @@ public class Game {
 		}
 		game.phases = phasel.toArray(new PhaseInfo[phasel.size()]);
 		game.start();
-		Main.getInstance().getLogger().info("Arena " + name + " loaded!");
+		Main.getInstance().getLogger().info("Arena " + game.name + " loaded!");
+		Main.addGame(game);
 		return game;
 	}
 
@@ -194,6 +228,48 @@ public class Game {
 				+ location.getPitch();
 	}
 
+	public void saveToConfig() {
+		File dir = new File(Main.getInstance().getDataFolder(), "arenas");
+		if (!dir.exists())
+			dir.mkdir();
+		File file = new File(dir, name + ".yml");
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		FileConfiguration configMap = new YamlConfiguration();
+		try {
+			configMap.load(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
+		configMap.set("name", name);
+		configMap.set("pauseCountdown", pauseCountdown);
+		configMap.set("world", world.getName());
+		configMap.set("pos1", setLocationToString(pos1));
+		configMap.set("pos2", setLocationToString(pos2));
+		configMap.set("spawn", setLocationToString(spawn));
+		int lid = 0;
+		for (PhaseInfo phase : phases) {
+			configMap.set("phases." + lid + ".countdown", phase.getCountdown());
+			for (MonsterInfo minfo : phase.getMonsters()) {
+				configMap.set("phases." + lid + ".monsters." + minfo.getEntityType().name(), minfo.getCountdown());
+			}
+			lid++;
+		}
+
+		try {
+			configMap.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static Game createGame(String name) {
 		Game game = new Game();
 		game.name = name;
@@ -211,14 +287,21 @@ public class Game {
 		cancelTask();
 		for (GamePlayer p : players)
 			p.changeGame(null);
+		status = GameStatus.DISABLED;
 	}
 
 	public void joinToGame(Player player) {
+		if (status == GameStatus.DISABLED) {
+			return;
+		}
 		GamePlayer gPlayer = Main.getPlayerGameProfile(player);
 		gPlayer.changeGame(this);
 	}
 
 	public void leaveFromGame(Player player) {
+		if (status == GameStatus.DISABLED) {
+			return;
+		}
 		if (Main.isPlayerInGame(player)) {
 			GamePlayer gPlayer = Main.getPlayerGameProfile(player);
 
@@ -231,11 +314,17 @@ public class Game {
 	public void run() {
 		if (status == GameStatus.WAITING) {
 			status = GameStatus.RUNNING_PAUSE;
+			String title = I18n._("zombie_pause_subtitle", false);
+			bossbar = Bukkit.createBossBar(title, BarColor.RED, BarStyle.SEGMENTED_20);
+			for (GamePlayer p : players)
+				bossbar.addPlayer(p.player);
 		}
 		countdown++;
 		if (status == GameStatus.RUNNING_IN_PHASE) {
 			if (countdown > phases[inPhase].getCountdown()) {
 				phases[inPhase].phaseEnd();
+				bossbar.setProgress(0);
+				bossbar.setColor(BarColor.RED);
 				status = GameStatus.RUNNING_PAUSE;
 				countdown = 0;
 				if ((inPhase + 1) >= phases.length) {
@@ -243,10 +332,12 @@ public class Game {
 				} else {
 					inPhase++;
 				}
-				bossbar.setVisible(false);
-				bossbar.removeAll();
-				for (GamePlayer p : players)
+				for (GamePlayer p : players) {
+					String title = I18n._("zombie_pause_title", false);
+					String subtitle = I18n._("zombie_pause_subtitle", false);
+					p.player.sendTitle(title, subtitle, 0, 20, 0);
 					p.player.setPlayerTime(6000L, false);
+				}
 			} else {
 				phases[inPhase].phaseRun(countdown, this);
 				bossbar.setProgress((double) countdown / (double) phases[inPhase].getCountdown());
@@ -255,20 +346,18 @@ public class Game {
 			if (countdown > pauseCountdown) {
 				status = GameStatus.RUNNING_IN_PHASE;
 				countdown = 0;
-				String title = I18n._("zombie_start_title", false);
-				String subtitle = I18n._("zombie_start_subtitle", false);
-				bossbar = Bukkit.createBossBar(title, BarColor.GREEN, BarStyle.SEGMENTED_20);
+				bossbar.setProgress(0);
+				bossbar.setColor(BarColor.GREEN);
 				for (GamePlayer p : players) {
 					p.player.setPlayerTime(14000L, false);
+					String title = I18n._("zombie_start_title", false);
+					String subtitle = I18n._("zombie_start_subtitle", false);
 					p.player.sendTitle(title, subtitle, 0, 20, 0);
-					bossbar.addPlayer(p.player);
 					if (p.teleportAura != 0) {
 						p.teleportAura--;
 					} else {
 						p.player.teleport(spawn);
 					}
-					bossbar.setProgress(0);
-					bossbar.setVisible(true);
 				}
 			} else {
 				if (countdown >= (pauseCountdown - 4)) {
@@ -276,6 +365,7 @@ public class Game {
 					for (GamePlayer p : players)
 						p.player.sendTitle(title, "", 0, 20, 0);
 				}
+				bossbar.setProgress((double) countdown / (double) pauseCountdown);
 			}
 		}
 	}
