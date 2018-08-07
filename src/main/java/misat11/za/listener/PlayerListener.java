@@ -8,10 +8,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,7 +27,7 @@ public class PlayerListener implements Listener {
 		final Player victim = (Player) event.getEntity();
 		if (Main.isPlayerInGame(victim)) {
 			GamePlayer gKiller = null;
-			GamePlayer gVictim = Main.getPlayerGameProfile(victim);
+			final GamePlayer gVictim = Main.getPlayerGameProfile(victim);
 			Player killer = victim.getKiller();
 			if (killer != null) {
 				gKiller = Main.getPlayerGameProfile(killer);
@@ -48,6 +48,7 @@ public class PlayerListener implements Listener {
 						.replace("%coins%", Integer.toString(subtract))
 						.replace("%newcoins%", Integer.toString(gKiller.coins));
 				killer.sendMessage(kMessage);
+				Main.depositPlayer(killer, 1);
 			} else {
 				int nc = gVictim.coins - 5;
 				int subtract = 5;
@@ -74,6 +75,7 @@ public class PlayerListener implements Listener {
 				new BukkitRunnable() {
 					public void run() {
 						victim.spigot().respawn();
+						victim.setLevel(gVictim.lvl);
 					}
 				}.runTaskLater(Main.getInstance(), 20L);
 			}
@@ -127,6 +129,16 @@ public class PlayerListener implements Listener {
 			return;
 		if (Main.isPlayerInGame(event.getPlayer()))
 			event.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void onLvlChange(PlayerLevelChangeEvent event) {
+		if (Main.isPlayerInGame(event.getPlayer())) {
+			GamePlayer gPlayer = Main.getPlayerGameProfile(event.getPlayer());
+			if (event.getNewLevel() > event.getOldLevel()) {
+				gPlayer.lvl = event.getNewLevel();
+			}
+		}
 	}
 
 }

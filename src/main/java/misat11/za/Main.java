@@ -6,15 +6,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import misat11.za.commands.ZaCommand;
 import misat11.za.game.Game;
 import misat11.za.game.GamePlayer;
+import misat11.za.game.GameStatus;
 import misat11.za.listener.PlayerListener;
+import misat11.za.listener.VillagerListener;
 import misat11.za.listener.ZombieListener;
 import misat11.za.utils.Configurator;
 import misat11.za.utils.I18n;
+import misat11.za.utils.Menu;
 import net.milkbowl.vault.economy.Economy;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -29,6 +31,7 @@ public class Main extends JavaPlugin {
 	private HashMap<Player, GamePlayer> playersInGame = new HashMap<Player, GamePlayer>();
 	private HashMap<Entity, Game> entitiesInGame = new HashMap<Entity, Game>();
 	private Configurator configurator;
+	private Menu menu;
 
 	public static Main getInstance() {
 		return instance;
@@ -54,8 +57,10 @@ public class Main extends JavaPlugin {
 		return instance.isSpigot;
 	}
 
-	public static Economy getEcon() {
-		return instance.econ;
+	public static void depositPlayer(Player player, double coins) {
+		if (isVault()) {
+			Main.instance.econ.depositPlayer(player, coins);
+		}
 	}
 
 	public static Game getGame(String string) {
@@ -77,11 +82,11 @@ public class Main extends JavaPlugin {
 	public static Game getInGameEntity(Entity entity) {
 		return instance.entitiesInGame.containsKey(entity) ? instance.entitiesInGame.get(entity) : null;
 	}
-	
+
 	public static void registerGameEntity(Entity entity, Game game) {
 		instance.entitiesInGame.put(entity, game);
 	}
-	
+
 	public static void unregisterGameEntity(Entity entity) {
 		if (instance.entitiesInGame.containsKey(entity))
 			instance.entitiesInGame.remove(entity);
@@ -113,6 +118,17 @@ public class Main extends JavaPlugin {
 		return instance.playersInGame.containsKey(player);
 	}
 
+	public static void sendGameListInfo(Player player) {
+		for (Game game : instance.games.values()) {
+			player.sendMessage((game.getStatus() == GameStatus.DISABLED ? "§c" : "§a") + game.getName() + "§f "
+					+ game.countPlayers());
+		}
+	}
+	
+	public static void openStore(Player player) {
+		instance.menu.show(player);
+	}
+
 	public void onEnable() {
 		instance = this;
 		version = this.getDescription().getVersion();
@@ -135,12 +151,14 @@ public class Main extends JavaPlugin {
 		configurator = new Configurator(this);
 
 		configurator.createFiles();
-		
+
 		I18n.load();
 
 		getCommand("za").setExecutor(new ZaCommand());
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getPluginManager().registerEvents(new ZombieListener(), this);
+		getServer().getPluginManager().registerEvents(new VillagerListener(), this);
+		menu = new Menu(this);
 
 		Bukkit.getLogger().info("********************");
 		Bukkit.getLogger().info("* ZombieApocalypse *");
@@ -178,7 +196,7 @@ public class Main extends JavaPlugin {
 
 		Bukkit.getLogger().info("*                  *");
 		Bukkit.getLogger().info("********************");
-		
+
 		File folder = new File(getDataFolder().toString(), "arenas");
 		if (folder.exists()) {
 			File[] listOfFiles = folder.listFiles();

@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionEffectType;
 
 import misat11.za.Main;
 
@@ -31,8 +30,8 @@ public class PhaseInfo {
 			this.monsters.remove(info);
 		}
 	}
-	
-	public List<MonsterInfo> getMonsters(){
+
+	public List<MonsterInfo> getMonsters() {
 		return monsters;
 	}
 
@@ -55,6 +54,22 @@ public class PhaseInfo {
 				LivingEntity entity = (LivingEntity) ent;
 				spawnedEntities.add(entity);
 				Main.registerGameEntity(entity, game);
+			}
+		}
+		if (!game.getSmallArenas().isEmpty()) {
+			for (SmallArena arena : game.getSmallArenas()) {
+				for (MonsterInfo monster : monsters) {
+					if ((currentlyPhaseTime % monster.getCountdown()) == 0) {
+						EntityType type = monster.getEntityType();
+						Entity ent = game.getWorld().spawnEntity(getRandomLocation(arena.pos1, arena.pos2), type);
+						if (!(ent instanceof LivingEntity)) {
+							ent.remove(); // Maybe in game config is not living entity but for example boat
+						}
+						LivingEntity entity = (LivingEntity) ent;
+						spawnedEntities.add(entity);
+						Main.registerGameEntity(entity, game);
+					}
+				}
 			}
 		}
 	}

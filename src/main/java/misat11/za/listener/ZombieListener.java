@@ -49,7 +49,7 @@ public class ZombieListener implements Listener {
 						.replace("%coins%", Integer.toString(5))
 						.replace("%newcoins%", Integer.toString(gKiller.coins));
 				killer.sendMessage(kMessage);
-
+				Main.depositPlayer(killer, 1);
 			}
 		}
 	}

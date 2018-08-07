@@ -3,7 +3,7 @@ shop-items:
   antiteleportaura:
     name: "Anti Teleport Aura"
     type: "tpaura"
-    item: "EYE_OF_ENDER"
+    item: "ENDER_EYE"
     item-damage: 0
     points: 200
   goldenapple:
@@ -15,8 +15,8 @@ shop-items:
   goldenapple_enchant:
     name: "God apple"
     type: "give"
-    item: "GOLDEN_APPLE"
-    item-damage: 1
+    item: "ENCHANTED_GOLDEN_APPLE"
+    item-damage: 0
     points: 100
   apple:
     name: "Apple"
@@ -27,7 +27,7 @@ shop-items:
   carrot:
     name: "Carrot"
     type: "give"
-    item: "CARROT_ITEM"
+    item: "CARROT"
     item-damage: 0
     points: 10
   diamond_sword:
@@ -39,12 +39,12 @@ shop-items:
   golden_sword:
     name: "Golden sword"
     type: "give"
-    item: "GOLD_SWORD"
+    item: "GOLDEN_SWORD"
     item-damage: 0
     points: 70
   lapis_lazuli:
     name: "Lapis Lazuli"
     type: "give"
-    item: "INK_SACK"
-    item-damage: 4
+    item: "LAPIS_LAZULI"
+    item-damage: 0
     points: 50
