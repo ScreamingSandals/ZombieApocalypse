@@ -185,7 +185,7 @@ public class Game {
 			status = GameStatus.WAITING;
 			countdown = 0;
 			for (GameStore store : gameStore) {
-				store.kill();
+				store.forceKill();
 			}
 		}
 	}
@@ -355,7 +355,8 @@ public class Game {
 
 	public void stop() {
 		cancelTask();
-		for (GamePlayer p : players)
+		List<GamePlayer> clonedPlayers = (List<GamePlayer>) ((ArrayList<GamePlayer>) players).clone();
+		for (GamePlayer p : clonedPlayers)
 			p.changeGame(null);
 		status = GameStatus.DISABLED;
 	}
@@ -425,17 +426,19 @@ public class Game {
 			}
 		} else if (status == GameStatus.RUNNING_PAUSE) {
 			if (countdown > pauseCountdown) {
-				if (inPhase == -1) {
-					status = GameStatus.RUNNING_BOSS_GAME;
-				} else {
-					status = GameStatus.RUNNING_IN_PHASE;
-				}
-				countdown = 0;
 				String title = I18n._("zombie_start_title", false);
 				String subtitle = I18n._("zombie_start_subtitle", false);
+				if (inPhase == -1) {
+					status = GameStatus.RUNNING_BOSS_GAME;
+					bossbar.setColor(BarColor.PURPLE);
+					subtitle = I18n._("giant_start_subtitle", false);
+				} else {
+					status = GameStatus.RUNNING_IN_PHASE;
+					bossbar.setColor(BarColor.GREEN);
+				}
+				countdown = 0;
 				bossbar.setTitle(subtitle);
 				bossbar.setProgress(0);
-				bossbar.setColor(BarColor.GREEN);
 				for (GamePlayer p : players) {
 					p.player.setPlayerTime(14000L, false);
 					p.player.sendTitle(title, subtitle, 0, 20, 0);

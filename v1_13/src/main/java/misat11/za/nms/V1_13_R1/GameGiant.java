@@ -40,7 +40,7 @@ public class GameGiant extends EntityGiantZombie
 
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.3);
         this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(16.0);
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(5.0);
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0);
     }
 
     @Override

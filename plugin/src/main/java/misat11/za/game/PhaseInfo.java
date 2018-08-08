@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 
@@ -75,10 +76,17 @@ public class PhaseInfo {
 	}
 
 	public void phaseEnd() {
-		for (LivingEntity entity : spawnedEntities) {
+		for (final LivingEntity entity : spawnedEntities) {
 			Main.unregisterGameEntity(entity);
-			entity.setHealth(3);
 			entity.setFireTicks(2000);
+			new BukkitRunnable() {
+				
+				@Override
+				public void run() {
+					entity.setHealth(0);
+					
+				}
+			}.runTaskLater(Main.getInstance(), 60);
 		}
 		spawnedEntities.clear();
 	}

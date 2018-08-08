@@ -22,6 +22,13 @@ public class GameStore {
 
 	public void kill() {
 		if (entity != null) {
+			entity.setAI(true);
+			entity = null;
+		}
+	}
+
+	public void forceKill() {
+		if (entity != null) {
 			entity.setHealth(0);
 			entity = null;
 		}

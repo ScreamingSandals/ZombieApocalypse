@@ -31,6 +31,9 @@ public class ZaCommand implements CommandExecutor {
 				} else if (args[0].equalsIgnoreCase("coins")) {
 					GamePlayer gPlayer = Main.getPlayerGameProfile(player);
 					sender.sendMessage(I18n._("have_coins").replace("%coins%", Integer.toString(gPlayer.coins)));
+				} else if (args[0].equalsIgnoreCase("antiteleport")) {
+					GamePlayer gPlayer = Main.getPlayerGameProfile(player);
+					sender.sendMessage(I18n._("have_antiteleports").replace("%antiteleport%", Integer.toString(gPlayer.teleportAura)));
 				} else if (args[0].equalsIgnoreCase("join")) {
 					if (args.length > 1) {
 						String arenaN = args[1];
@@ -130,6 +133,7 @@ public class ZaCommand implements CommandExecutor {
 		player.sendMessage(I18n._("help_za_leave", false));
 		player.sendMessage(I18n._("help_za_list", false));
 		player.sendMessage(I18n._("help_za_coins", false));
+		player.sendMessage(I18n._("help_za_antiteleport", false));
 		if (player.hasPermission("misat11.za.admin")) {
 			player.sendMessage(I18n._("help_za_admin_add", false));
 			player.sendMessage(I18n._("help_za_admin_spawn", false));
@@ -148,6 +152,8 @@ public class ZaCommand implements CommandExecutor {
 			player.sendMessage(I18n._("help_za_admin_small_pos2", false));
 			player.sendMessage(I18n._("help_za_admin_store_add", false));
 			player.sendMessage(I18n._("help_za_admin_store_remove", false));
+			player.sendMessage(I18n._("help_za_admin_bossgame_set", false));
+			player.sendMessage(I18n._("help_za_admin_bossgame_reset", false));
 			player.sendMessage(I18n._("help_za_admin_save", false));
 			player.sendMessage(I18n._("help_za_admin_remove", false));
 			player.sendMessage(I18n._("help_za_admin_edit", false));

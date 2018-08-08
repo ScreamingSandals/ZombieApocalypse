@@ -71,6 +71,7 @@ public class PlayerListener implements Listener {
 				}
 				victim.sendMessage(vMessage);
 			}
+			event.setKeepInventory(true);
 			if (Main.isSpigot()) {
 				new BukkitRunnable() {
 					public void run() {

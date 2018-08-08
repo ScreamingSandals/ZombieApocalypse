@@ -33,15 +33,17 @@ public class GamePlayer {
 		if (this.game != null && game == null) {
 			this.game.leavePlayer(this);
 			this.game = null;
+			this.saveInventory();
+			this.clean();
 			this.restoreInv();
 		} else if (this.game == null && game != null) {
 			this.storeInv();
 			this.clean();
+			this.restoreInventory();
 			this.game = game;
 			this.game.joinPlayer(this);
 		} else if (this.game != null && game != null) {
 			this.game.leavePlayer(this);
-			this.clean();
 			this.game = game;
 			this.game.joinPlayer(this);
 		}
@@ -110,6 +112,13 @@ public class GamePlayer {
 			}
 		}
 		FileConfiguration pconfig = new YamlConfiguration();
+		try {
+			pconfig.load(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 		pconfig.set("coins", coins);
 		pconfig.set("lvl", lvl);
 		pconfig.set("teleportAura", teleportAura);
@@ -120,36 +129,36 @@ public class GamePlayer {
 			e.printStackTrace();
 		}
 	}
-	
-	  public void clean() {
 
-		    PlayerInventory inv = this.player.getInventory();
-		    inv.setArmorContents(new ItemStack[4]);
-		    inv.setContents(new ItemStack[]{});
+	public void clean() {
 
-		    this.player.setAllowFlight(false);
-		    this.player.setFlying(false);
-		    this.player.setExp(0.0F);
-		    this.player.setLevel(0);
-		    this.player.setSneaking(false);
-		    this.player.setSprinting(false);
-		    this.player.setFoodLevel(20);
-		    this.player.setSaturation(10);
-		    this.player.setExhaustion(0);
-		    this.player.setHealth(20.0D);
-		    this.player.setFireTicks(0);
-		    this.player.setGameMode(GameMode.ADVENTURE);
+		PlayerInventory inv = this.player.getInventory();
+		inv.setArmorContents(new ItemStack[4]);
+		inv.setContents(new ItemStack[] {});
 
-		    if (this.player.isInsideVehicle()) {
-		      this.player.leaveVehicle();
-		    }
+		this.player.setAllowFlight(false);
+		this.player.setFlying(false);
+		this.player.setExp(0.0F);
+		this.player.setLevel(0);
+		this.player.setSneaking(false);
+		this.player.setSprinting(false);
+		this.player.setFoodLevel(20);
+		this.player.setSaturation(10);
+		this.player.setExhaustion(0);
+		this.player.setHealth(20.0D);
+		this.player.setFireTicks(0);
+		this.player.setGameMode(GameMode.ADVENTURE);
 
-		    for (PotionEffect e : this.player.getActivePotionEffects()) {
-		      this.player.removePotionEffect(e.getType());
-		    }
+		if (this.player.isInsideVehicle()) {
+			this.player.leaveVehicle();
+		}
 
-		    this.player.updateInventory();
-		  }
+		for (PotionEffect e : this.player.getActivePotionEffects()) {
+			this.player.removePotionEffect(e.getType());
+		}
+
+		this.player.updateInventory();
+	}
 
 	public void loadGamePlayerData() {
 		String saveCfgGroup = player.getName().toLowerCase();
@@ -181,4 +190,66 @@ public class GamePlayer {
 
 		saveGamePlayerData();
 	}
+
+	public void saveInventory() {
+		String saveCfgGroup = player.getName().toLowerCase();
+		File dir = new File(Main.getInstance().getDataFolder(), "players");
+		if (!dir.exists())
+			dir.mkdir();
+		File file = new File(dir, saveCfgGroup + ".yml");
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		FileConfiguration c = new YamlConfiguration();
+		try {
+			c.load(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
+		c.set("inventory.armor", player.getInventory().getArmorContents());
+		c.set("inventory.content", player.getInventory().getContents());
+		try {
+			c.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void restoreInventory() {
+		String saveCfgGroup = player.getName().toLowerCase();
+		File dir = new File(Main.getInstance().getDataFolder(), "players");
+		if (!dir.exists())
+			dir.mkdir();
+		File file = new File(dir, saveCfgGroup + ".yml");
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		FileConfiguration c = new YamlConfiguration();
+		try {
+			c.load(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
+		if (c.get("inventory.armor") != null) {
+			ItemStack[] armor = c.getList("inventory.armor").toArray(new ItemStack[0]);
+			player.getInventory().setArmorContents(armor);
+		}
+		if (c.get("inventory.content") != null) {
+			ItemStack[] content = c.getList("inventory.content").toArray(new ItemStack[0]);
+			player.getInventory().setContents(content);
+		}
+	}
+
 }
