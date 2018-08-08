@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import misat11.za.Main;
+import misat11.za.utils.GiantSpawn;
 import misat11.za.utils.I18n;
 
 import java.io.File;
@@ -457,7 +458,7 @@ public class Game {
 			}
 		} else if (status == GameStatus.RUNNING_BOSS_GAME) {
 			if (bossEntity == null) {
-				bossEntity = (LivingEntity) world.spawnEntity(boss, EntityType.GIANT); // TODO add AI
+				bossEntity = GiantSpawn.spawnGiant(boss);
 			} else if (bossEntity.isDead()) {
 				String title = I18n._("zombie_pause_title", false);
 				String subtitle = I18n._("zombie_pause_subtitle", false);

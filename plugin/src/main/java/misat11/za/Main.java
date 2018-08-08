@@ -16,6 +16,7 @@ import misat11.za.utils.Menu;
 import net.milkbowl.vault.economy.Economy;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -24,8 +25,8 @@ import org.bukkit.entity.Player;
 
 public class Main extends JavaPlugin {
 	private static Main instance;
-	private String version;
-	private boolean isSpigot, snapshot, isVault;
+	private String version, nmsVersion;
+	private boolean isSpigot, snapshot, isVault, isNMS;
 	private Economy econ = null;
 	private HashMap<String, Game> games = new HashMap<String, Game>();
 	private HashMap<Player, GamePlayer> playersInGame = new HashMap<Player, GamePlayer>();
@@ -55,6 +56,14 @@ public class Main extends JavaPlugin {
 
 	public static boolean isSpigot() {
 		return instance.isSpigot;
+	}
+
+	public static boolean isNMS() {
+		return instance.isNMS;
+	}
+
+	public static String getNMSVersion() {
+		return isNMS() ? instance.nmsVersion : null;
 	}
 
 	public static void depositPlayer(Player player, double coins) {
@@ -124,7 +133,7 @@ public class Main extends JavaPlugin {
 					+ game.countPlayers());
 		}
 	}
-	
+
 	public static void openStore(Player player) {
 		instance.menu.show(player);
 	}
@@ -139,6 +148,29 @@ public class Main extends JavaPlugin {
 			isSpigot = (spigotPackage != null);
 		} catch (Exception e) {
 			isSpigot = false;
+		}
+
+		try {
+			Package nmsPackage = Package.getPackage("org.bukkit.craftbukkit");
+			isNMS = (nmsPackage != null);
+		} catch (Exception e) {
+			isNMS = false;
+		}
+
+		if (isNMS) {
+			String packName = Bukkit.getServer().getClass().getPackage().getName();
+			nmsVersion = packName.substring(packName.lastIndexOf('.') + 1);
+			try {
+				Class<?> clazz = Class.forName("misat11.za.nms." + nmsVersion.toUpperCase() + ".NMSUtils");
+				Method load = clazz.getMethod("load");
+				load.invoke(null);
+				getLogger().info("Loaded nms library for version: " + nmsVersion);
+			} catch (Exception ex) {
+				isNMS = false;
+				getLogger().severe("Failed to find nms library for this server version! Disabling NMS library!");
+			}
+		} else {
+			getLogger().warning("You aren't using server with NMS support! Some features maybe not working.");
 		}
 
 		if (!getServer().getPluginManager().isPluginEnabled("Vault")) {

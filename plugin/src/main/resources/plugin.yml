@@ -3,6 +3,7 @@ main: misat11.za.Main
 version: ${project.version}
 author: Misat11
 api-version: 1.13
+softdepend: [Multiverse-Core]
 
 commands:
   za:
