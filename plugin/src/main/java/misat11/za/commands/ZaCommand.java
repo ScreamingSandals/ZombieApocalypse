@@ -123,6 +123,28 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 					} else {
 						player.sendMessage(I18n._("no_permissions"));
 					}
+				} else if (args[0].equalsIgnoreCase("skip")) {
+					if (player.hasPermission("misat11.za.admin")) {
+						if (Main.isPlayerInGame(player)) {
+							if (args.length > 1) {
+								Main.getPlayerGameProfile(player).getGame().skip(Integer.parseInt(args[1]));
+							} else {
+								Main.getPlayerGameProfile(player).getGame().skip();
+							}
+						} else {
+							player.sendMessage(I18n._("you_arent_in_game"));
+						}
+					} else {
+						player.sendMessage(I18n._("no_permissions"));
+					}
+				} else if (args[0].equalsIgnoreCase("reload")) {
+					if (player.hasPermission("misat11.za.admin")) {
+						Main.getInstance().getPluginLoader().disablePlugin(Main.getInstance());
+						Main.getInstance().getPluginLoader().enablePlugin(Main.getInstance());
+						player.sendMessage("Plugin reloaded!");
+					} else {
+						player.sendMessage(I18n._("no_permissions"));
+					}
 				} else {
 					player.sendMessage(I18n._("unknown_command"));
 				}
@@ -165,6 +187,8 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 			player.sendMessage(I18n._("help_za_admin_save", false));
 			player.sendMessage(I18n._("help_za_admin_remove", false));
 			player.sendMessage(I18n._("help_za_admin_edit", false));
+			player.sendMessage(I18n._("help_za_reload", false));
+			player.sendMessage(I18n._("help_za_skip", false));
 		}
 	}
 
@@ -176,7 +200,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 			if (args.length == 1) {
 				List<String> cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport");
 				if (player.hasPermission("misat11.za.admin")) {
-					cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport", "admin");
+					cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport", "admin", "skip", "reload");
 				}
 				StringUtil.copyPartialMatches(args[0], cmds, completionList);
 			}
@@ -263,7 +287,8 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 						}
 					} else if (args[2].equalsIgnoreCase("small")) {
 						if (args.length == 4) {
-							List<String> cmds = Arrays.asList("add", "remove", "pos1", "pos2", "monsteradd", "monsterremove");
+							List<String> cmds = Arrays.asList("add", "remove", "pos1", "pos2", "monsteradd",
+									"monsterremove");
 							StringUtil.copyPartialMatches(args[3], cmds, completionList);
 						}
 						if (args.length > 4) {

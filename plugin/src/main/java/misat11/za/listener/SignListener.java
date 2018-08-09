@@ -15,8 +15,12 @@ public class SignListener implements Listener {
 	      if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 	    	  if (event.getClickedBlock().getState() instanceof Sign) {
 	    		  Sign sign = (Sign) event.getClickedBlock().getState();
-	    		  if (sign.getLine(0).equalsIgnoreCase("[ZombieApocalypse]")) {
-	    			  if (Main.isGameExists(sign.getLine(1))) {
+	    		  if (sign.getLine(0).equalsIgnoreCase("[ZombieApocalypse]") || sign.getLine(0).equalsIgnoreCase("[ZAGame]")) {
+	    			  if (sign.getLine(1).equalsIgnoreCase("leave")) {
+	    				  if (Main.isPlayerInGame(event.getPlayer())) {
+	    					  Main.getPlayerGameProfile(event.getPlayer()).changeGame(null);
+	    				  }
+	    			  } else if (Main.isGameExists(sign.getLine(1))) {
 	    				  Main.getGame(sign.getLine(1)).joinToGame(event.getPlayer());
 	    			  }
 	    		  }

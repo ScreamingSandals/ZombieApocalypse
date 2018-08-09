@@ -20,6 +20,7 @@ import org.bukkit.scheduler.BukkitTask;
 import misat11.za.Main;
 import misat11.za.utils.GiantSpawn;
 import misat11.za.utils.I18n;
+import misat11.za.utils.SoundGen;
 
 import java.io.File;
 import java.io.IOException;
@@ -468,6 +469,7 @@ public class Game {
 				for (GamePlayer p : players) {
 					p.player.setPlayerTime(14000L, false);
 					p.player.sendTitle(title, subtitle, 0, 20, 0);
+					SoundGen.play("ENTITY_ZOMBIE_AMBIENT", p.player);
 					if (p.teleportAura != 0) {
 						p.teleportAura--;
 					} else {
@@ -480,8 +482,10 @@ public class Game {
 			} else {
 				if (countdown >= (pauseCountdown - 4)) {
 					String title = ChatColor.YELLOW.toString() + Integer.toString(pauseCountdown - countdown + 1);
-					for (GamePlayer p : players)
+					for (GamePlayer p : players) {
 						p.player.sendTitle(title, "", 0, 20, 0);
+						SoundGen.play("ENTITY_EXPERIENCE_ORB_PICKUP", p.player);
+					}
 				}
 				bossbar.setProgress((double) countdown / (double) pauseCountdown);
 			}
@@ -537,6 +541,84 @@ public class Game {
 				task.cancel();
 			}
 			task = null;
+		}
+	}
+
+	public void skip() {
+		if (status == GameStatus.RUNNING_BOSS_GAME) {
+			bossEntity.setHealth(0);
+		}
+		if (status == GameStatus.RUNNING_IN_PHASE) {
+			countdown = phases[inPhase].getCountdown();
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					if ((inPhase + 1) >= phases.length) {
+						if (boss != null) {
+							inPhase = -1;
+						} else {
+							inPhase = 0;
+						}
+					} else {
+						inPhase++;
+					}
+
+				}
+			}.runTaskLater(Main.getInstance(), 40);
+		}
+		if (status == GameStatus.RUNNING_PAUSE) {
+			if ((inPhase + 1) >= phases.length) {
+				if (boss != null) {
+					inPhase = -1;
+				} else {
+					inPhase = 0;
+				}
+			} else {
+				inPhase++;
+			}
+			countdown = 0;
+		}
+	}
+
+	public void skip(final int phase) {
+		if (status == GameStatus.RUNNING_BOSS_GAME) {
+			bossEntity.setHealth(0);
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					if (phase > phases.length) {
+						inPhase = 0;
+					} else {
+						inPhase = phase;
+					}
+
+				}
+			}.runTaskLater(Main.getInstance(), 40);
+		}
+		if (status == GameStatus.RUNNING_IN_PHASE) {
+			countdown = phases[inPhase].getCountdown() - 1;
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					if (phase > phases.length) {
+						inPhase = 0;
+					} else {
+						inPhase = phase - 1;
+					}
+
+				}
+			}.runTaskLater(Main.getInstance(), 40);
+		}
+		if (status == GameStatus.RUNNING_PAUSE) {
+			if (phase > phases.length) {
+				inPhase = 0;
+			} else {
+				inPhase = phase;
+			}
+			countdown = 0;
 		}
 	}
 

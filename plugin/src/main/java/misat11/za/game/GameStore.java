@@ -1,5 +1,8 @@
 package misat11.za.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -8,6 +11,7 @@ public class GameStore {
 
 	public final Location loc;
 	private Villager entity;
+	private List<Villager> oldVillagers = new ArrayList<Villager>();
 
 	public GameStore(Location loc) {
 		this.loc = loc;
@@ -23,6 +27,7 @@ public class GameStore {
 	public void kill() {
 		if (entity != null) {
 			entity.setAI(true);
+			oldVillagers.add(entity);
 			entity = null;
 		}
 	}
@@ -32,5 +37,9 @@ public class GameStore {
 			entity.setHealth(0);
 			entity = null;
 		}
+		for (Villager vill : oldVillagers) {
+			vill.setHealth(0);
+		}
+		oldVillagers.clear();
 	}
 }
