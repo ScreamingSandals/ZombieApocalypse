@@ -8,6 +8,7 @@ import misat11.za.game.Game;
 import misat11.za.game.GamePlayer;
 import misat11.za.game.GameStatus;
 import misat11.za.listener.PlayerListener;
+import misat11.za.listener.SignListener;
 import misat11.za.listener.VillagerListener;
 import misat11.za.listener.ZombieListener;
 import misat11.za.utils.Configurator;
@@ -17,7 +18,9 @@ import net.milkbowl.vault.economy.Economy;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -137,6 +140,14 @@ public class Main extends JavaPlugin {
 	public static void openStore(Player player) {
 		instance.menu.show(player);
 	}
+	
+	public static List<String> getGameNames() {
+		List<String> list = new ArrayList<String>();
+		for(Game game : instance.games.values()) {
+			list.add(game.getName());
+		}
+		return list;
+	}
 
 	public void onEnable() {
 		instance = this;
@@ -151,9 +162,9 @@ public class Main extends JavaPlugin {
 		}
 
 		try {
-			Package nmsPackage = Package.getPackage("org.bukkit.craftbukkit");
-			isNMS = (nmsPackage != null);
-		} catch (Exception e) {
+			Class.forName("org.bukkit.craftbukkit.Main");
+			isNMS = true;
+		} catch (ClassNotFoundException e) {
 			isNMS = false;
 		}
 
@@ -186,10 +197,13 @@ public class Main extends JavaPlugin {
 
 		I18n.load();
 
-		getCommand("za").setExecutor(new ZaCommand());
+		ZaCommand cmd = new ZaCommand();
+		getCommand("za").setExecutor(cmd);
+		getCommand("za").setTabCompleter(cmd);
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getPluginManager().registerEvents(new ZombieListener(), this);
 		getServer().getPluginManager().registerEvents(new VillagerListener(), this);
+		getServer().getPluginManager().registerEvents(new SignListener(), this);
 		menu = new Menu(this);
 
 		Bukkit.getLogger().info("********************");

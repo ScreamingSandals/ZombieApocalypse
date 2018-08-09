@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,7 +18,6 @@ import misat11.za.Main;
 public class GamePlayer {
 
 	public final Player player;
-	public int lvl = 1;
 	public int coins = 0;
 	public int teleportAura = 0;
 	private Game game = null;
@@ -120,7 +120,6 @@ public class GamePlayer {
 			e.printStackTrace();
 		}
 		pconfig.set("coins", coins);
-		pconfig.set("lvl", lvl);
 		pconfig.set("teleportAura", teleportAura);
 
 		try {
@@ -183,8 +182,6 @@ public class GamePlayer {
 		}
 		if (pconfig.isSet("coins"))
 			coins = pconfig.getInt("coins");
-		if (pconfig.isSet("lvl"))
-			lvl = pconfig.getInt("lvl");
 		if (pconfig.isSet("teleportAura"))
 			teleportAura = pconfig.getInt("teleportAura");
 
@@ -214,6 +211,8 @@ public class GamePlayer {
 		}
 		c.set("inventory.armor", player.getInventory().getArmorContents());
 		c.set("inventory.content", player.getInventory().getContents());
+		c.set("inventory.lvl", player.getLevel());
+		c.set("inventory.xp", player.getExp());
 		try {
 			c.save(file);
 		} catch (IOException e) {
@@ -242,13 +241,22 @@ public class GamePlayer {
 		} catch (InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-		if (c.get("inventory.armor") != null) {
+		if (!c.isSet("inventory")) {
+			player.getInventory().addItem(new ItemStack(Material.STONE_SWORD));
+		}
+		if (c.isSet("inventory.armor")) {
 			ItemStack[] armor = c.getList("inventory.armor").toArray(new ItemStack[0]);
 			player.getInventory().setArmorContents(armor);
 		}
-		if (c.get("inventory.content") != null) {
+		if (c.isSet("inventory.content")) {
 			ItemStack[] content = c.getList("inventory.content").toArray(new ItemStack[0]);
 			player.getInventory().setContents(content);
+		}
+		if (c.isSet("inventory.lvl")) {
+			player.setLevel(c.getInt("inventory.lvl"));
+		}
+		if (c.isSet("inventory.xp")) {
+			player.setExp((float)c.getDouble("inventory.xp"));
 		}
 	}
 

@@ -76,7 +76,6 @@ public class PlayerListener implements Listener {
 				new BukkitRunnable() {
 					public void run() {
 						victim.spigot().respawn();
-						victim.setLevel(gVictim.lvl);
 					}
 				}.runTaskLater(Main.getInstance(), 20L);
 			}
@@ -130,16 +129,6 @@ public class PlayerListener implements Listener {
 			return;
 		if (Main.isPlayerInGame(event.getPlayer()))
 			event.setCancelled(true);
-	}
-	
-	@EventHandler
-	public void onLvlChange(PlayerLevelChangeEvent event) {
-		if (Main.isPlayerInGame(event.getPlayer())) {
-			GamePlayer gPlayer = Main.getPlayerGameProfile(event.getPlayer());
-			if (event.getNewLevel() > event.getOldLevel()) {
-				gPlayer.lvl = event.getNewLevel();
-			}
-		}
 	}
 
 }

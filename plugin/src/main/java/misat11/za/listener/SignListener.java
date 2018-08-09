@@ -1,0 +1,26 @@
+package misat11.za.listener;
+
+import org.bukkit.block.Sign;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+
+import misat11.za.Main;
+
+public class SignListener implements Listener {
+	
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+	      if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+	    	  if (event.getClickedBlock().getState() instanceof Sign) {
+	    		  Sign sign = (Sign) event.getClickedBlock().getState();
+	    		  if (sign.getLine(0).equalsIgnoreCase("[ZombieApocalypse]")) {
+	    			  if (Main.isGameExists(sign.getLine(1))) {
+	    				  Main.getGame(sign.getLine(1)).joinToGame(event.getPlayer());
+	    			  }
+	    		  }
+	    	  }
+	      }
+	}
+}

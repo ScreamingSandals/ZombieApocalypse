@@ -40,6 +40,23 @@ public class GameCreator {
 		}
 	}
 
+	public List<String> getSmallArenas() {
+		List<String> list = new ArrayList<String>();
+		for (String str : smallarenas.keySet()) {
+			list.add(str);
+		}
+		return list;
+	}
+
+	public List<String> getPhaseIndexes() {
+		List<String> list = new ArrayList<String>();
+		int size = phases.size();
+		for (int i = 0; i < size; i++) {
+			list.add(Integer.toString(i));
+		}
+		return list;
+	}
+
 	public void cmd(Player player, String action, String[] args) {
 		CommandResponse response = null;
 		if (action.equalsIgnoreCase("spawn")) {
@@ -89,9 +106,20 @@ public class GameCreator {
 					response = pos1SmallArena(args[1], player.getLocation());
 				} else if (args[0].equalsIgnoreCase("pos2")) {
 					response = pos2SmallArena(args[1], player.getLocation());
+				} else if (args[0].equalsIgnoreCase("monsteradd")) {
+					if (args.length >= 5) {
+						response = addSmallMonster(args[1], Integer.parseInt(args[2]), EntityType.valueOf(args[3]),
+								Integer.parseInt(args[4]));
+					}
+				} else if (args[0].equalsIgnoreCase("monsterremove")) {
+					if (args.length >= 4) {
+						response = removeSmallMonster(args[1], Integer.parseInt(args[2]), EntityType.valueOf(args[3]));
+					}
 				}
 			}
-		} else if (action.equalsIgnoreCase("store")) {
+		} else if (action.equalsIgnoreCase("store"))
+
+		{
 			if (args.length >= 1) {
 				if (args[0].equalsIgnoreCase("add")) {
 					response = addStore(player.getLocation());
@@ -130,7 +158,7 @@ public class GameCreator {
 		}
 		player.sendMessage(response.i18n());
 	}
-	
+
 	public CommandResponse setBossGame(Location loc) {
 		if (game.getWorld() != loc.getWorld()) {
 			return CommandResponse.MUST_BE_IN_SAME_WORLD;
@@ -138,7 +166,7 @@ public class GameCreator {
 		game.setBoss(loc);
 		return CommandResponse.SUCCESS;
 	}
-	
+
 	public CommandResponse resetBossGame() {
 		game.setBoss(null);
 		return CommandResponse.SUCCESS;
@@ -332,6 +360,56 @@ public class GameCreator {
 		}
 		if (remove != null) {
 			phases.get(index).removeMonster(remove);
+		}
+		return CommandResponse.SUCCESS;
+
+	}
+
+	public CommandResponse addSmallMonster(String small, int index, EntityType monster, int spawnCountdown) {
+		if (!smallarenas.containsKey(small)) {
+			return CommandResponse.SMALL_NOT_EXISTS;
+		}
+		if (index < 0 || index >= phases.size()) {
+			return CommandResponse.PHASE_NOT_EXISTS;
+		}
+		if (phases.get(index) == null) {
+			return CommandResponse.PHASE_NOT_EXISTS;
+		}
+		PhaseInfo phase = phases.get(index);
+		SmallArena smallarena = smallarenas.get(small);
+		if (!smallarena.monsters.containsKey(phase)) {
+			smallarena.monsters.put(phase, new ArrayList<MonsterInfo>());
+		}
+		List<MonsterInfo> list = smallarena.monsters.get(phase);
+		list.add(new MonsterInfo(spawnCountdown, monster));
+		return CommandResponse.SUCCESS;
+	}
+
+	public CommandResponse removeSmallMonster(String small, int index, EntityType monster) {
+		if (!smallarenas.containsKey(small)) {
+			return CommandResponse.SMALL_NOT_EXISTS;
+		}
+		if (index < 0 || index >= phases.size()) {
+			return CommandResponse.PHASE_NOT_EXISTS;
+		}
+		if (phases.get(index) == null) {
+			return CommandResponse.PHASE_NOT_EXISTS;
+		}
+		PhaseInfo phase = phases.get(index);
+		SmallArena smallarena = smallarenas.get(small);
+		if (!smallarena.monsters.containsKey(phase)) {
+			smallarena.monsters.put(phase, new ArrayList<MonsterInfo>());
+		}
+		List<MonsterInfo> mi = smallarena.monsters.get(phase);
+		MonsterInfo remove = null;
+		for (MonsterInfo info : mi) {
+			if (info.getEntityType() == monster) {
+				remove = info;
+				break;
+			}
+		}
+		if (remove != null) {
+			mi.remove(remove);
 		}
 		return CommandResponse.SUCCESS;
 

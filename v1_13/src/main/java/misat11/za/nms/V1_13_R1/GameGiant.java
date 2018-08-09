@@ -2,6 +2,7 @@ package misat11.za.nms.V1_13_R1;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_13_R1.CraftWorld;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import net.minecraft.server.v1_13_R1.*;
 
@@ -10,7 +11,7 @@ public class GameGiant extends EntityGiantZombie
 	public GameGiant(Location loc) {
 		this(((CraftWorld)loc.getWorld()).getHandle());
         this.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-        this.world.addEntity(this);
+        this.world.addEntity(this, SpawnReason.CUSTOM);
 	}
 	
     public GameGiant(World world)
@@ -40,7 +41,7 @@ public class GameGiant extends EntityGiantZombie
 
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.3);
         this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(16.0);
-        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(10.0);
+        this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(15.0);
     }
 
     @Override

@@ -2,13 +2,18 @@ package misat11.za.commands;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
 import misat11.za.Main;
 import misat11.za.game.Game;
@@ -16,7 +21,7 @@ import misat11.za.game.GameCreator;
 import misat11.za.game.GamePlayer;
 import misat11.za.utils.I18n;
 
-public class ZaCommand implements CommandExecutor {
+public class ZaCommand implements CommandExecutor, TabCompleter {
 
 	public HashMap<String, GameCreator> gc = new HashMap<String, GameCreator>();
 
@@ -33,7 +38,8 @@ public class ZaCommand implements CommandExecutor {
 					sender.sendMessage(I18n._("have_coins").replace("%coins%", Integer.toString(gPlayer.coins)));
 				} else if (args[0].equalsIgnoreCase("antiteleport")) {
 					GamePlayer gPlayer = Main.getPlayerGameProfile(player);
-					sender.sendMessage(I18n._("have_antiteleports").replace("%antiteleport%", Integer.toString(gPlayer.teleportAura)));
+					sender.sendMessage(I18n._("have_antiteleports").replace("%antiteleport%",
+							Integer.toString(gPlayer.teleportAura)));
 				} else if (args[0].equalsIgnoreCase("join")) {
 					if (args.length > 1) {
 						String arenaN = args[1];
@@ -150,6 +156,8 @@ public class ZaCommand implements CommandExecutor {
 			player.sendMessage(I18n._("help_za_admin_small_remove", false));
 			player.sendMessage(I18n._("help_za_admin_small_pos1", false));
 			player.sendMessage(I18n._("help_za_admin_small_pos2", false));
+			player.sendMessage(I18n._("help_za_admin_small_monsteradd", false));
+			player.sendMessage(I18n._("help_za_admin_small_monsterremove", false));
 			player.sendMessage(I18n._("help_za_admin_store_add", false));
 			player.sendMessage(I18n._("help_za_admin_store_remove", false));
 			player.sendMessage(I18n._("help_za_admin_bossgame_set", false));
@@ -159,4 +167,180 @@ public class ZaCommand implements CommandExecutor {
 			player.sendMessage(I18n._("help_za_admin_edit", false));
 		}
 	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> completionList = new ArrayList<>();
+		if (sender instanceof Player) {
+			Player player = (Player) sender;
+			if (args.length == 1) {
+				List<String> cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport");
+				if (player.hasPermission("misat11.za.admin")) {
+					cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport", "admin");
+				}
+				StringUtil.copyPartialMatches(args[0], cmds, completionList);
+			}
+			if (args.length > 1) {
+				if (args[0].equalsIgnoreCase("join")) {
+					List<String> arenas = Main.getGameNames();
+					StringUtil.copyPartialMatches(args[1], arenas, completionList);
+				} else if (args[0].equalsIgnoreCase("admin") && player.hasPermission("misat11.za.admin")) {
+					if (args.length == 2) {
+						List<String> arenas = Main.getGameNames();
+						for (String arena : gc.keySet()) {
+							arenas.add(arena);
+						}
+						StringUtil.copyPartialMatches(args[1], arenas, completionList);
+					} else if (args.length == 3) {
+						List<String> cmds = Arrays.asList("add", "spawn", "pos1", "pos2", "pausecountdown", "phase",
+								"monster", "small", "store", "bossgame", "save", "remove", "edit");
+						StringUtil.copyPartialMatches(args[2], cmds, completionList);
+					} else if (args[2].equalsIgnoreCase("pausecountdown") && args.length == 4) {
+						StringUtil.copyPartialMatches(args[3], Arrays.asList("60"), completionList);
+					} else if (args[2].equalsIgnoreCase("phase")) {
+						if (args.length == 4) {
+							List<String> cmds = Arrays.asList("add", "remove", "insert", "set");
+							StringUtil.copyPartialMatches(args[3], cmds, completionList);
+						}
+						if (args.length > 4) {
+							if (args[3].equalsIgnoreCase("add") && args.length == 5) {
+								StringUtil.copyPartialMatches(args[4], Arrays.asList("60"), completionList);
+							} else if (args[3].equalsIgnoreCase("remove") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getPhaseIndexes(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("insert") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getPhaseIndexes(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("insert") && args.length == 6) {
+								StringUtil.copyPartialMatches(args[5], Arrays.asList("60"), completionList);
+							} else if (args[3].equalsIgnoreCase("set") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getPhaseIndexes(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("set") && args.length == 6) {
+								StringUtil.copyPartialMatches(args[5], Arrays.asList("60"), completionList);
+							}
+						}
+					} else if (args[2].equalsIgnoreCase("monster")) {
+						if (args.length == 4) {
+							List<String> cmds = Arrays.asList("add", "remove");
+							StringUtil.copyPartialMatches(args[3], cmds, completionList);
+						}
+						if (args.length > 4) {
+							if (args[3].equalsIgnoreCase("add") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getPhaseIndexes(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("add") && args.length == 6) {
+								List<EntityType> enumValues = Arrays.asList(EntityType.values());
+								List<String> mobs = new ArrayList<String>();
+								for (EntityType en : enumValues) {
+									mobs.add(en.toString());
+								}
+								StringUtil.copyPartialMatches(args[5], mobs, completionList);
+							} else if (args[3].equalsIgnoreCase("add") && args.length == 7) {
+								StringUtil.copyPartialMatches(args[6], Arrays.asList("5", "10", "15", "20"),
+										completionList);
+							} else if (args[3].equalsIgnoreCase("remove") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getPhaseIndexes(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("remove") && args.length == 6) {
+								List<EntityType> enumValues = Arrays.asList(EntityType.values());
+								List<String> mobs = new ArrayList<String>();
+								for (EntityType en : enumValues) {
+									mobs.add(en.toString());
+								}
+								StringUtil.copyPartialMatches(args[5], mobs, completionList);
+							}
+						}
+					} else if (args[2].equalsIgnoreCase("small")) {
+						if (args.length == 4) {
+							List<String> cmds = Arrays.asList("add", "remove", "pos1", "pos2", "monsteradd", "monsterremove");
+							StringUtil.copyPartialMatches(args[3], cmds, completionList);
+						}
+						if (args.length > 4) {
+							if (args[3].equalsIgnoreCase("add") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getSmallArenas(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("pos1") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getSmallArenas(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("pos2") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getSmallArenas(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("remove") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getSmallArenas(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("monsteradd") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getSmallArenas(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("monsterremove") && args.length == 5) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[4], creator.getSmallArenas(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("monsteradd") && args.length == 6) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[5], creator.getPhaseIndexes(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("monsteradd") && args.length == 7) {
+								List<EntityType> enumValues = Arrays.asList(EntityType.values());
+								List<String> mobs = new ArrayList<String>();
+								for (EntityType en : enumValues) {
+									mobs.add(en.toString());
+								}
+								StringUtil.copyPartialMatches(args[6], mobs, completionList);
+							} else if (args[3].equalsIgnoreCase("monsteradd") && args.length == 8) {
+								StringUtil.copyPartialMatches(args[7], Arrays.asList("5", "10", "15", "20"),
+										completionList);
+							} else if (args[3].equalsIgnoreCase("monsterremove") && args.length == 6) {
+								GameCreator creator = gc.get(args[1]);
+								if (creator != null) {
+									StringUtil.copyPartialMatches(args[5], creator.getPhaseIndexes(), completionList);
+								}
+							} else if (args[3].equalsIgnoreCase("monsterremove") && args.length == 7) {
+								List<EntityType> enumValues = Arrays.asList(EntityType.values());
+								List<String> mobs = new ArrayList<String>();
+								for (EntityType en : enumValues) {
+									mobs.add(en.toString());
+								}
+								StringUtil.copyPartialMatches(args[6], mobs, completionList);
+							}
+						}
+					} else if (args[2].equalsIgnoreCase("store")) {
+						if (args.length == 4) {
+							List<String> cmds = Arrays.asList("add", "remove");
+							StringUtil.copyPartialMatches(args[3], cmds, completionList);
+						}
+					} else if (args[2].equalsIgnoreCase("bossgame")) {
+						if (args.length == 4) {
+							List<String> cmds = Arrays.asList("set", "reset");
+							StringUtil.copyPartialMatches(args[3], cmds, completionList);
+						}
+					}
+				}
+			}
+		}
+		return completionList;
+	}
+
 }

@@ -72,7 +72,6 @@ public class Menu implements Listener {
 	public void onInventoryClick(InventoryClickEvent e) {
 		if (!e.getInventory().equals(inv))
 			return;
-		Bukkit.getLogger().info("inventory equals");
 		e.setCancelled(true);
 		if (!(e.getWhoClicked() instanceof Player)) {
 			e.getWhoClicked().closeInventory();

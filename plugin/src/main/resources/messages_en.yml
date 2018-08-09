@@ -69,6 +69,8 @@ help_za_admin_small_add: "/za admin <arena> small add <miniarena> - §eCreates a
 help_za_admin_small_remove: "/za admin <arena> small remove <miniarena> - §eRemove mini-arena"
 help_za_admin_small_pos1: "/za admin <arena> small pos1 <miniarena> - §eSets the extreme point of the mini-arena to your position"
 help_za_admin_small_pos2: "/za admin <arena> small pos2 <miniarena> - §eSets the second extreme point of the mini-arena to your position"
+help_za_admin_small_monsteradd: "/za admin <arena> small monsteradd <miniarena> <number of phase> <type of mob> <seconds> - §eAdds a new mob to the phase of miniarena and sets how often it will spawn"
+help_za_admin_small_monsterremove: "/za admin <arena> small monsterremove <miniarena> <number of phase> <type of mob> - §eRemoves from the phase of miniarena mob of the given type"
 help_za_admin_store_add: "/za admin <arena> store add - §eAdd trading villager to your position"
 help_za_admin_store_remove: "/za admin <arena> store remove - §eRemove trading villager from your position"
 help_za_admin_bossgame_set: "/za admin <arena> bossgame set - §eEnables the boss game and sets the position of the boss spawn to your position"

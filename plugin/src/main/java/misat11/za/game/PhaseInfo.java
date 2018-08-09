@@ -59,18 +59,7 @@ public class PhaseInfo {
 		}
 		if (!game.getSmallArenas().isEmpty()) {
 			for (SmallArena arena : game.getSmallArenas()) {
-				for (MonsterInfo monster : monsters) {
-					if ((currentlyPhaseTime % monster.getCountdown()) == 0) {
-						EntityType type = monster.getEntityType();
-						Entity ent = game.getWorld().spawnEntity(getRandomLocation(arena.pos1, arena.pos2), type);
-						if (!(ent instanceof LivingEntity)) {
-							ent.remove(); // Maybe in game config is not living entity but for example boat
-						}
-						LivingEntity entity = (LivingEntity) ent;
-						spawnedEntities.add(entity);
-						Main.registerGameEntity(entity, game);
-					}
-				}
+				arena.phaseRunning(game, this, currentlyPhaseTime, spawnedEntities);
 			}
 		}
 	}

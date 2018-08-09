@@ -187,6 +187,10 @@ public class Game {
 			for (GameStore store : gameStore) {
 				store.forceKill();
 			}
+			if (bossEntity != null) {
+				bossEntity.setHealth(0);
+				bossEntity = null;
+			}
 		}
 	}
 
@@ -214,16 +218,6 @@ public class Game {
 		game.spawn = readLocationFromString(game.world, configMap.getString("spawn"));
 		if (configMap.getBoolean("bossenabled"))
 			game.boss = readLocationFromString(game.world, configMap.getString("boss"));
-		List<PhaseInfo> phasel = new ArrayList<PhaseInfo>();
-		for (String phaseN : configMap.getConfigurationSection("phases").getKeys(false)) {
-			ConfigurationSection phase = configMap.getConfigurationSection("phases").getConfigurationSection(phaseN);
-			PhaseInfo pi = new PhaseInfo(phase.getInt("countdown"));
-			for (String monsterN : phase.getConfigurationSection("monsters").getKeys(false)) {
-				pi.addMonster(new MonsterInfo(phase.getInt("monsters." + monsterN), EntityType.valueOf(monsterN)));
-			}
-			phasel.add(pi);
-		}
-		game.phases = phasel.toArray(new PhaseInfo[phasel.size()]);
 		if (configMap.isSet("smallarenas")) {
 			for (String sarenaN : configMap.getConfigurationSection("smallarenas").getKeys(false)) {
 				ConfigurationSection sarena = configMap.getConfigurationSection("smallarenas")
@@ -233,6 +227,28 @@ public class Game {
 				game.smallarenas.add(sa);
 			}
 		}
+		List<PhaseInfo> phasel = new ArrayList<PhaseInfo>();
+		for (String phaseN : configMap.getConfigurationSection("phases").getKeys(false)) {
+			ConfigurationSection phase = configMap.getConfigurationSection("phases").getConfigurationSection(phaseN);
+			PhaseInfo pi = new PhaseInfo(phase.getInt("countdown"));
+			for (String monsterN : phase.getConfigurationSection("monsters").getKeys(false)) {
+				pi.addMonster(new MonsterInfo(phase.getInt("monsters." + monsterN), EntityType.valueOf(monsterN)));
+			}
+			for (SmallArena sa : game.smallarenas) {
+				if (phase.isSet("small." + sa.name)) {
+					List<MonsterInfo> mi = new ArrayList<MonsterInfo>();
+					for (String smallMonsterN : phase.getConfigurationSection("small." + sa.name).getKeys(false)) {
+						mi.add(new MonsterInfo(phase.getInt("small." + sa.name + "." + smallMonsterN),
+								EntityType.valueOf(smallMonsterN)));
+					}
+					if (!mi.isEmpty()) {
+						sa.monsters.put(pi, mi);
+					}
+				}
+			}
+			phasel.add(pi);
+		}
+		game.phases = phasel.toArray(new PhaseInfo[phasel.size()]);
 		if (configMap.isSet("stores")) {
 			List<String> stores = (List<String>) configMap.getList("stores");
 			for (String store : stores) {
@@ -316,6 +332,16 @@ public class Game {
 			configMap.set("phases." + lid + ".countdown", phase.getCountdown());
 			for (MonsterInfo minfo : phase.getMonsters()) {
 				configMap.set("phases." + lid + ".monsters." + minfo.getEntityType().name(), minfo.getCountdown());
+			}
+			if (!smallarenas.isEmpty()) {
+				for (SmallArena sa : smallarenas) {
+					if (sa.monsters.containsKey(phase)) {
+						for (MonsterInfo monster : sa.monsters.get(phase)) {
+							configMap.set("phases." + lid + ".small." + sa.name + "." + monster.getEntityType().name(),
+									monster.getCountdown());
+						}
+					}
+				}
 			}
 			lid++;
 		}
@@ -463,6 +489,7 @@ public class Game {
 			if (bossEntity == null) {
 				bossEntity = GiantSpawn.spawnGiant(boss);
 			} else if (bossEntity.isDead()) {
+				bossEntity = null;
 				String title = I18n._("zombie_pause_title", false);
 				String subtitle = I18n._("zombie_pause_subtitle", false);
 				bossbar.setTitle(subtitle);

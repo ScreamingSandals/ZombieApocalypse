@@ -69,6 +69,8 @@ help_za_admin_small_add: "/za admin <aréna> small add <miniaréna> - §eVytvoř
 help_za_admin_small_remove: "/za admin <aréna> small remove <miniaréna> - §eSmaže miniarénu"
 help_za_admin_small_pos1: "/za admin <aréna> small pos1 <miniaréna> - §eNastaví krajní bod miniarény na tvojí pozici"
 help_za_admin_small_pos2: "/za admin <aréna> small pos2 <miniaréna> - §eNastaví protilehlý krajní bod miniarény na tvojí pozici"
+help_za_admin_small_monsteradd: "/za admin <aréna> small monsteradd <miniaréna> <číslo fáze> <typ moba> <sekundy> - §ePřidá nového moba do fáze miniarény a nastaví, jak často se bude spawnovat"
+help_za_admin_small_monsterremove: "/za admin <aréna> small monsterremove <miniaréna> <číslo fáze> <typ moba> - §eOdstraní z fáze miniarény moba daného typu"
 help_za_admin_store_add: "/za admin <aréna> store add - §ePřidá obchodujícího vesničana na tvojí pozici"
 help_za_admin_store_remove: "/za admin <aréna> store remove - §eOdebere obchodujícího vesničana ze tvojí pozice"
 help_za_admin_bossgame_set: "/za admin <aréna> bossgame set - §ePovolí hru s bossem a nastaví pozici spawnu bosse na tvojí pozici"
