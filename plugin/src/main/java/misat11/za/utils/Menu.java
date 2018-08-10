@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,14 +32,13 @@ public class Menu implements Listener {
 		Set<String> s = Main.getConfigurator().shopconfig.getConfigurationSection("shop-items").getKeys(false);
 
 		for (String i : s) {
-			Material material = Material
-					.getMaterial(Main.getConfigurator().shopconfig.getString("shop-items." + i + ".item"));
+			ConfigurationSection shopItem = Main.getConfigurator().shopconfig
+					.getConfigurationSection("shop-items." + i);
+			Material material = Material.getMaterial(shopItem.getString("item"));
 			if (material != null) {
-				inv.setItem(lastpos, createItem(
-						material,
-						Main.getConfigurator().shopconfig.getInt("shop-items." + i + ".item-damage"),
-						Main.getConfigurator().shopconfig.getString("shop-items." + i + ".name"),
-						Integer.toString(Main.getConfigurator().shopconfig.getInt("shop-items." + i + ".points"))));
+				inv.setItem(lastpos, createItem(material, shopItem.getInt("item-damage"), shopItem.getString("name"),
+						Integer.toString(shopItem.getInt("points")), Integer.toString(shopItem.isSet("amount") ? shopItem.getInt("amount") : 1),
+						!shopItem.getString("type").equals("sell")));
 				addIds(Integer.toString(lastpos), i);
 				lastpos = lastpos + 1;
 			}
@@ -47,11 +47,11 @@ public class Menu implements Listener {
 		Bukkit.getServer().getPluginManager().registerEvents(this, p);
 	}
 
-	private ItemStack createItem(Material material, int damage, String name, String coins) {
+	private ItemStack createItem(Material material, int damage, String name, String coins, String amount, boolean buy) {
 		ItemStack i = new ItemStack(material, 1, (short) damage);
 		ItemMeta im = i.getItemMeta();
 		im.setDisplayName(name);
-		im.setLore(Arrays.asList("Coins:", coins));
+		im.setLore(Arrays.asList("Coins:", coins, "Amount:", amount, buy ? "BUY" : "SELL"));
 		i.setItemMeta(im);
 		return i;
 	}
@@ -87,12 +87,18 @@ public class Menu implements Listener {
 		boolean buy = Shop.buyItem(gPlayer, i);
 		if (buy == true) {
 			player.closeInventory();
-			player.sendMessage(I18n._("buy_succes")
+			player.sendMessage(I18n
+					._(Main.getConfigurator().shopconfig.getString("shop-items." + i + ".type").equals("sell")
+							? "sell_success"
+							: "buy_succes")
 					.replace("%item%", Main.getConfigurator().shopconfig.getString("shop-items." + i + ".name"))
 					.replace("%yourcoins%", Integer.toString(gPlayer.coins)));
 		} else {
 			player.closeInventory();
-			player.sendMessage(I18n._("buy_no_coins")
+			player.sendMessage(I18n
+					._(Main.getConfigurator().shopconfig.getString("shop-items." + i + ".type").equals("sell")
+							? "sell_no_items"
+							: "buy_no_coins")
 					.replace("%item%", Main.getConfigurator().shopconfig.getString("shop-items." + i + ".name"))
 					.replace("%yourcoins%", Integer.toString(gPlayer.coins)));
 

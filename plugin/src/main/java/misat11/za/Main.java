@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -139,6 +140,16 @@ public class Main extends JavaPlugin {
 
 	public static void openStore(Player player) {
 		instance.menu.show(player);
+	}
+	
+	public static boolean isFarmBlock(Material mat) {
+		if (instance.configurator.config.isSet("farmBlocks")) {
+			List<String> list = (List<String>) instance.configurator.config.getList("farmBlocks");
+			if (list.contains(mat.name())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static List<String> getGameNames() {

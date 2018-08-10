@@ -1,40 +1,62 @@
 # Zombie Apocalypse
-Simple bukkit/spigot minigame with zombies.
+Simple Spigot minigame with zombies.
 
-#####More info is on our spigotmc.org site: https://www.spigotmc.org/resources/zombieapocalypse.34779/
+#### More info is on our spigotmc.org site: https://www.spigotmc.org/resources/zombieapocalypse.34779/
 
-####Actual stable version: 1.1.0
+#### Actual stable version: 2.0.0
 
-It's for minecraft version 1.8 - 1.11.2
+#### Recommended Minecraft version: 1.13
 
-ZA is a minigame for bukkit and spigot from version 1.8. To run this minigame need separate world, where is nothing, only ZA. ZA have only 1 arena. The game is divided into the phases after 5 minutes. Between waves is always a minute of the day.
-
-
+ZA is a minigame for Spigot. This minigame can run on more worlds with more arenas and can run on normal world, where players playing for example survival.
 
 ## Tutorial
 
 For editing game you need a permission: misat11.za.admin
 ### Create game
-> 1) Create and build a world that can spawn monsters. 
+> 1) Build some arena!
 >
-> 2) Go to spawnpoint of players and run command: /za setspawnloc 
+> 2) Create new arena with /za admin <new arena name> add
 >
-> 3) Run a command /za enablegame to enable game. 
+> 3) Set first position of arena /za admin <new arena name> pos1
+>
+> 4) Set second position of arena /za admin <new arena name> pos2
+>
+> 5) Set position of player spawn /za admin <new arena name> spawn
+>
+> 6) Set pause countdown /za admin <new arena name> pausecountdown <countdown (in seconds)>
+>
+> 7) After all settings (see below) will be setted run: /za admin <new arena name> save
 
-### Zombie spawns set
-Think twice before setting where you zombies spawn. It must be square or rectangular area. These areas may overlap. Each such area must have your name or number. 
-> 1) Stand to one place where you want to spawn zombies and run this command: /za arena pos1 (number or name of your area)
+### Adding phases
+Before running you must set phases!
+> 1) Create phase with: /za admin <new arena name> phase add <phase countdown (in seconds)>
 >
-> 2) Stand to two place where you want to spawn zombies and run this command: /za arena pos2 (number or name of your area)
+> 2) Previous command will get you a phase number, for example 0 or 1 or 2
 >
-> 3) Now you need to set the time between spawnutím zombies: /za arena countdown (number or name of your area) (time in seconds)
+> 3) Now you must add monsters /za admin <new arena name> monster add <phase number> <entity type: see below> <how often will be spawn (in seconds)>
 
 ### Set giant game
-Giant game is a type of Zombie Apocalypse with giant. 5 phase lasts 30 minutes. In the last phase spawn Giant, which should be killed.
-> 1) Stand to place, where you want giant spawn and run command: /za setgiantloc
+Giant game is a type of Zombie Apocalypse with giant. Giant game will start after all phases will be done!
+> 1) Stand to place, where you want giant spawn and run command: /za admin <new arena name> bossgame set
 >
-> 2) Run a command /za enablegiantgame to enable giant.
+> 2) To disable giant game run: /za admin <new arena name> bossgame reset
 
+### Small Arenas
+Small arenas are areas with custom position and custom monsters spawning!
+> 1) Build some arena!
+>
+> 2) Create new arena with /za admin <arena name> small add <small arena>
+>
+> 3) Set first position of arena /za admin <arena name> small pos1 <small arena>
+>
+> 4) Set second position of arena /za admin <arena name> small pos2 <small arena>
+>
+> 5) Now you can customize monsters spawning with: /za admin <new arena name> small monsteradd <small arena> <phase number> <entity type: see below> <how often will be spawn (in seconds)>
+
+### Villager Stores
+> 1) To add trading villager to your position run: /za admin <arena name> store add
+>
+> 2) To remove trading villager on your position run: /za admin <arena name> store remove
 
 
 ## Features
@@ -42,21 +64,20 @@ Giant game is a type of Zombie Apocalypse with giant. 5 phase lasts 30 minutes. 
 >
 > - Teleporting players after end and start of phases
 >
-> - Set of zombie spawns
+> - Small arenas
 >
-> - Points for killing - /za points
->
-> - Daily gift - /za gift
+> - Coins /za coins
 >
 > - Shop
 >
-> - Vault hook
+> - Vault (gets you 1$ for kill)
 >
 > - Sound effects
 >
 > - Title on start
-
-### Planned features
-> - Bungeecord support
 >
-> - Scoreboard
+> - Customizing monster spawns
+>
+> - Enable farming in arena
+>
+> - Signs for join and leave

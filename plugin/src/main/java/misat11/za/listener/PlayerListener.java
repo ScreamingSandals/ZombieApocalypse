@@ -1,7 +1,5 @@
 package misat11.za.listener;
 
-import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,7 +9,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -110,6 +107,8 @@ public class PlayerListener implements Listener {
 		if (event.isCancelled())
 			return;
 		if (Main.isPlayerInGame(event.getPlayer())) {
+			if (Main.isFarmBlock(event.getBlock().getType()))
+				return;
 			event.setCancelled(true);
 		}
 	}
@@ -119,6 +118,8 @@ public class PlayerListener implements Listener {
 		if (event.isCancelled())
 			return;
 		if (Main.isPlayerInGame(event.getPlayer()))
+			if (Main.isFarmBlock(event.getBlock().getType()))
+				return;
 			event.setCancelled(true);
 	}
 

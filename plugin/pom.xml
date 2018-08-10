@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>plugin</artifactId>
-	<version>2.0.0-pre1</version>
+	<version>2.0.0</version>
 	<packaging>jar</packaging>
 	<name>ZombieApocalypse</name>
 
@@ -44,11 +44,7 @@
 				<filtering>true</filtering>
 				<directory>src/main/resources</directory>
 				<includes>
-					<include>plugin.yml</include>
-					<include>config.yml</include>
-					<include>shop.yml</include>
-					<include>messages_cs.yml</include>
-					<include>messages_en.yml</include>
+					<include>*.yml</include>
 				</includes>
 			</resource>
 		</resources>

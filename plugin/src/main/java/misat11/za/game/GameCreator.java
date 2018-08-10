@@ -216,11 +216,11 @@ public class GameCreator {
 		if (game.getWorld() != loc.getWorld()) {
 			return CommandResponse.MUST_BE_IN_SAME_WORLD;
 		}
-		if (smallarenas.get(name).pos2 != null) {
+		/*if (smallarenas.get(name).pos2 != null) {
 			if (Math.abs(smallarenas.get(name).pos2.getBlockY() - loc.getBlockY()) <= 5) {
 				return CommandResponse.POS1_POS2_DIFFERENCE_MUST_BE_HIGHER;
 			}
-		}
+		}*/
 		smallarenas.get(name).pos1 = loc;
 		return CommandResponse.SUCCESS;
 	}
@@ -232,11 +232,11 @@ public class GameCreator {
 		if (game.getWorld() != loc.getWorld()) {
 			return CommandResponse.MUST_BE_IN_SAME_WORLD;
 		}
-		if (smallarenas.get(name).pos1 != null) {
+		/*if (smallarenas.get(name).pos1 != null) {
 			if (Math.abs(smallarenas.get(name).pos1.getBlockY() - loc.getBlockY()) <= 5) {
 				return CommandResponse.POS1_POS2_DIFFERENCE_MUST_BE_HIGHER;
 			}
-		}
+		}*/
 		smallarenas.get(name).pos2 = loc;
 		return CommandResponse.SUCCESS;
 	}

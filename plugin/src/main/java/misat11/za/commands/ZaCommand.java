@@ -139,8 +139,8 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 					}
 				} else if (args[0].equalsIgnoreCase("reload")) {
 					if (player.hasPermission("misat11.za.admin")) {
-						Main.getInstance().getPluginLoader().disablePlugin(Main.getInstance());
-						Main.getInstance().getPluginLoader().enablePlugin(Main.getInstance());
+						Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
+						Bukkit.getServer().getPluginManager().enablePlugin(Main.getInstance());
 						player.sendMessage("Plugin reloaded!");
 					} else {
 						player.sendMessage(I18n._("no_permissions"));
@@ -156,7 +156,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 	}
 
 	public void sendHelp(Player player) {
-		player.sendMessage(I18n._("help_title", false));
+		player.sendMessage(I18n._("help_title", false).replace("%version%", Main.getVersion()));
 		player.sendMessage(I18n._("help_za_join", false));
 		player.sendMessage(I18n._("help_za_leave", false));
 		player.sendMessage(I18n._("help_za_list", false));

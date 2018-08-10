@@ -146,7 +146,7 @@ public class GamePlayer {
 		this.player.setExhaustion(0);
 		this.player.setHealth(20.0D);
 		this.player.setFireTicks(0);
-		this.player.setGameMode(GameMode.ADVENTURE);
+		this.player.setGameMode(GameMode.SURVIVAL);
 
 		if (this.player.isInsideVehicle()) {
 			this.player.leaveVehicle();

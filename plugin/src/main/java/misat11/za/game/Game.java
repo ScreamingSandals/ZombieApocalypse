@@ -1,5 +1,6 @@
 package misat11.za.game;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,6 +22,9 @@ import misat11.za.Main;
 import misat11.za.utils.GiantSpawn;
 import misat11.za.utils.I18n;
 import misat11.za.utils.SoundGen;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.io.File;
 import java.io.IOException;
@@ -466,6 +470,42 @@ public class Game {
 				countdown = 0;
 				bossbar.setTitle(subtitle);
 				bossbar.setProgress(0);
+				if (Main.isSpigot()) {
+					if (status == GameStatus.RUNNING_IN_PHASE) {
+						final List<MonsterInfo> monstersInPhase = new ArrayList<MonsterInfo>();
+						for (MonsterInfo info : phases[inPhase].getMonsters()) {
+							monstersInPhase.add(info);
+						}
+						if (!smallarenas.isEmpty()) {
+							for (SmallArena sarena : smallarenas) {
+								if (sarena.monsters.containsKey(phases[inPhase])) {
+									for (MonsterInfo minfo : sarena.monsters.get(phases[inPhase])) {
+										monstersInPhase.add(minfo);
+									}
+								}
+							}
+						}
+						new BukkitRunnable() {
+
+							public int index = 0;
+
+							@Override
+							public void run() {
+								if (monstersInPhase.size() > 0 && index < monstersInPhase.size()) {
+									for (GamePlayer p : players) {
+										p.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+												TextComponent.fromLegacyText(WordUtils.capitalize(monstersInPhase
+														.get(index).getEntityType().name().replaceAll("_", " ").toLowerCase())));
+									}
+									index++;
+								} else {
+									this.cancel();
+								}
+
+							}
+						}.runTaskTimer(Main.getInstance(), 20, 40);
+					}
+				}
 				for (GamePlayer p : players) {
 					p.player.setPlayerTime(14000L, false);
 					p.player.sendTitle(title, subtitle, 0, 20, 0);
