@@ -107,8 +107,9 @@ public class PlayerListener implements Listener {
 		if (event.isCancelled())
 			return;
 		if (Main.isPlayerInGame(event.getPlayer())) {
-			if (Main.isFarmBlock(event.getBlock().getType()))
+			if (Main.isFarmBlock(event.getBlock().getType())) {
 				return;
+			}
 			event.setCancelled(true);
 		}
 	}
@@ -117,10 +118,12 @@ public class PlayerListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.isCancelled())
 			return;
-		if (Main.isPlayerInGame(event.getPlayer()))
-			if (Main.isFarmBlock(event.getBlock().getType()))
+		if (Main.isPlayerInGame(event.getPlayer())) {
+			if (Main.isFarmBlock(event.getBlock().getType())) {
 				return;
+			}
 			event.setCancelled(true);
+		}
 	}
 
 }
