@@ -1,6 +1,7 @@
 package misat11.za.listener;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -83,17 +83,6 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
-		if (event.isCancelled())
-			return;
-		if (Main.isPlayerInGame(event.getPlayer())) {
-			if (event.getNewGameMode() != GameMode.ADVENTURE) {
-				event.getPlayer().setGameMode(GameMode.ADVENTURE);
-			}
-		}
-	}
-
-	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (Main.isPlayerGameProfileRegistered(event.getPlayer())) {
 			GamePlayer gPlayer = Main.getPlayerGameProfile(event.getPlayer());
@@ -112,15 +101,17 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
 		if (Main.isPlayerInGame(event.getPlayer()))
-			Main.getPlayerGameProfile(event.getPlayer()).changeGame(null);
+			if (Main.getPlayerGameProfile(event.getPlayer()).getGame().getWorld() != event.getPlayer().getWorld())
+				Main.getPlayerGameProfile(event.getPlayer()).changeGame(null);
 	}
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.isCancelled())
 			return;
-		if (Main.isPlayerInGame(event.getPlayer()))
+		if (Main.isPlayerInGame(event.getPlayer())) {
 			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler
