@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import misat11.za.Main;
+import misat11.za.utils.SpawnUtils;
 
 public class SmallArena {
 
@@ -29,7 +30,7 @@ public class SmallArena {
 			for (MonsterInfo monster : monsters.get(info)) {
 				if ((currentlyPhaseTime % monster.getCountdown()) == 0) {
 					EntityType type = monster.getEntityType();
-					Entity ent = game.getWorld().spawnEntity(getRandomLocation(pos1, pos2), type);
+					Entity ent = SpawnUtils.spawnAggressive(getRandomLocation(pos1, pos2), type);
 					if (!(ent instanceof LivingEntity)) {
 						ent.remove(); // Maybe in game config is not living entity but for example boat
 					}
@@ -42,7 +43,7 @@ public class SmallArena {
 			for (MonsterInfo monster : info.getMonsters()) {
 				if ((currentlyPhaseTime % monster.getCountdown()) == 0) {
 					EntityType type = monster.getEntityType();
-					Entity ent = game.getWorld().spawnEntity(getRandomLocation(pos1, pos2), type);
+					Entity ent = SpawnUtils.spawnAggressive(getRandomLocation(pos1, pos2), type);
 					if (!(ent instanceof LivingEntity)) {
 						ent.remove(); // Maybe in game config is not living entity but for example boat
 					}

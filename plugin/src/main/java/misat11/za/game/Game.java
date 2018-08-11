@@ -19,11 +19,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import misat11.za.Main;
-import misat11.za.utils.GiantSpawn;
+import misat11.za.utils.SpawnUtils;
 import misat11.za.utils.I18n;
 import misat11.za.utils.SoundGen;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.io.File;
@@ -531,7 +530,7 @@ public class Game {
 			}
 		} else if (status == GameStatus.RUNNING_BOSS_GAME) {
 			if (bossEntity == null) {
-				bossEntity = GiantSpawn.spawnGiant(boss);
+				bossEntity = SpawnUtils.spawnGiant(boss);
 			} else if (bossEntity.isDead()) {
 				bossEntity = null;
 				String title = I18n._("zombie_pause_title", false);

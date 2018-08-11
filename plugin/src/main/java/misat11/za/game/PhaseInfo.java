@@ -11,6 +11,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
+import misat11.za.utils.SpawnUtils;
 
 public class PhaseInfo {
 
@@ -48,7 +49,7 @@ public class PhaseInfo {
 		for (MonsterInfo monster : monsters) {
 			if ((currentlyPhaseTime % monster.getCountdown()) == 0) {
 				EntityType type = monster.getEntityType();
-				Entity ent = game.getWorld().spawnEntity(getRandomLocation(game.getPos1(), game.getPos2()), type);
+				Entity ent = SpawnUtils.spawnAggressive(getRandomLocation(game.getPos1(), game.getPos2()), type);
 				if (!(ent instanceof LivingEntity)) {
 					ent.remove(); // Maybe in game config is not living entity but for example boat
 				}

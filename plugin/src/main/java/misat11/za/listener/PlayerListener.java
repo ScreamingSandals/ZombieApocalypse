@@ -9,6 +9,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -123,6 +124,17 @@ public class PlayerListener implements Listener {
 				return;
 			}
 			event.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onCommandExecuted(PlayerCommandPreprocessEvent event) {
+		if (event.isCancelled())
+			return;
+		if (Main.isPlayerInGame(event.getPlayer())) {
+			if (!event.getMessage().split(" ")[0].equals("/za")) {
+				event.setCancelled(true);
+			}
 		}
 	}
 

@@ -21,7 +21,7 @@ public class GameGiant extends EntityGiantZombie
         width = 1;
 
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(2, new PathfinderGoalStomp(this, 1.0D, false));
+        this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this, 1.0D, false));
         this.goalSelector.a(5, new PathfinderGoalMoveTowardsRestriction(this, 1.0D));
         this.goalSelector.a(7, new PathfinderGoalRandomStroll(this, 1.0D));
         this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 0.5F));
