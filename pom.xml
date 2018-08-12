@@ -12,6 +12,10 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
+        <repository>
+            <id>nms-repo</id>
+            <url>https://repo.codemc.org/repository/nms/</url>
+        </repository>
 		<repository>
 			<id>vault-repo</id>
 			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
@@ -26,6 +30,11 @@
 	<modules>
 		<module>plugin</module>
 		<module>v1_13</module>
+		<module>v1_12</module>
+		<module>v1_11</module>
+		<module>v1_10</module>
+		<module>v1_9_4</module>
+		<module>v1_9</module>
 	</modules>
 
 </project>

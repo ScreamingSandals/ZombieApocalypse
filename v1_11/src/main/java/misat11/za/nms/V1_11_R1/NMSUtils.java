@@ -1,19 +1,19 @@
-package misat11.za.nms.V1_13_R1;
+package misat11.za.nms.V1_11_R1;
 
-import org.bukkit.craftbukkit.v1_13_R1.entity.CraftLivingEntity;
-import net.minecraft.server.v1_13_R1.EntityCreature;
-import net.minecraft.server.v1_13_R1.EntityHuman;
-import net.minecraft.server.v1_13_R1.EntityLiving;
-import net.minecraft.server.v1_13_R1.EntityVillager;
-import net.minecraft.server.v1_13_R1.GenericAttributes;
-import net.minecraft.server.v1_13_R1.PathfinderGoalFloat;
-import net.minecraft.server.v1_13_R1.PathfinderGoalHurtByTarget;
-import net.minecraft.server.v1_13_R1.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_13_R1.PathfinderGoalMeleeAttack;
-import net.minecraft.server.v1_13_R1.PathfinderGoalMoveTowardsRestriction;
-import net.minecraft.server.v1_13_R1.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.server.v1_13_R1.PathfinderGoalRandomLookaround;
-import net.minecraft.server.v1_13_R1.PathfinderGoalRandomStroll;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftLivingEntity;
+import net.minecraft.server.v1_11_R1.EntityCreature;
+import net.minecraft.server.v1_11_R1.EntityHuman;
+import net.minecraft.server.v1_11_R1.EntityLiving;
+import net.minecraft.server.v1_11_R1.EntityVillager;
+import net.minecraft.server.v1_11_R1.GenericAttributes;
+import net.minecraft.server.v1_11_R1.PathfinderGoalFloat;
+import net.minecraft.server.v1_11_R1.PathfinderGoalHurtByTarget;
+import net.minecraft.server.v1_11_R1.PathfinderGoalLookAtPlayer;
+import net.minecraft.server.v1_11_R1.PathfinderGoalMeleeAttack;
+import net.minecraft.server.v1_11_R1.PathfinderGoalMoveTowardsRestriction;
+import net.minecraft.server.v1_11_R1.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.server.v1_11_R1.PathfinderGoalRandomLookaround;
+import net.minecraft.server.v1_11_R1.PathfinderGoalRandomStroll;
 
 public class NMSUtils {
 	public static void load() {
@@ -24,7 +24,6 @@ public class NMSUtils {
 		if (((CraftLivingEntity) entity).getHandle() instanceof EntityCreature) {
 			EntityCreature creature = (EntityCreature) ((CraftLivingEntity) entity).getHandle();
 			switch (entity.getType()) {
-			case DOLPHIN:
 			case OCELOT:
 			case WOLF:
 			case SNOWMAN:
@@ -36,20 +35,15 @@ public class NMSUtils {
 				creature.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(creature, EntityHuman.class, true));
 				creature.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(creature, EntityVillager.class, true));
 				break;
-			case COD:
 			case COW:
 			case DONKEY:
 			case HORSE:
 			case CHICKEN:
 			case MUSHROOM_COW:
 			case MULE:
-			case PARROT:
 			case PIG:
-			case SALMON:
 			case SHEEP:
 			case SQUID:
-			case TROPICAL_FISH:
-			case TURTLE:
 				creature.getAttributeMap().b(GenericAttributes.ATTACK_DAMAGE).setValue(5.0);
 				creature.goalSelector.a(1, new PathfinderGoalMeleeAttack(creature, 1.0D, false));
 				creature.targetSelector.a(1, new PathfinderGoalHurtByTarget(creature, true, new Class[0]));

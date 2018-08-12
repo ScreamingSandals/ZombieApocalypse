@@ -76,7 +76,7 @@ public class PhaseInfo {
 					entity.setHealth(0);
 					
 				}
-			}.runTaskLater(Main.getInstance(), 60);
+			}.runTaskLater(Main.getInstance(), 10);
 		}
 		spawnedEntities.clear();
 	}

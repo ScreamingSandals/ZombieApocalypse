@@ -20,6 +20,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import misat11.za.Main;
 import misat11.za.utils.SpawnUtils;
+import misat11.za.utils.Title;
 import misat11.za.utils.I18n;
 import misat11.za.utils.SoundGen;
 import net.md_5.bungee.api.ChatMessageType;
@@ -444,7 +445,7 @@ public class Game {
 					inPhase++;
 				}
 				for (GamePlayer p : players) {
-					p.player.sendTitle(title, subtitle, 0, 20, 0);
+					Title.send(p.player, title, subtitle);
 					p.player.setPlayerTime(6000L, false);
 				}
 				for (GameStore store : gameStore) {
@@ -502,12 +503,12 @@ public class Game {
 								}
 
 							}
-						}.runTaskTimer(Main.getInstance(), 20, 40);
+						}.runTaskTimerAsynchronously(Main.getInstance(), 20, 40);
 					}
 				}
 				for (GamePlayer p : players) {
 					p.player.setPlayerTime(14000L, false);
-					p.player.sendTitle(title, subtitle, 0, 20, 0);
+					Title.send(p.player, title, subtitle);
 					SoundGen.play("ENTITY_ZOMBIE_AMBIENT", p.player);
 					if (p.teleportAura != 0) {
 						p.teleportAura--;
@@ -522,7 +523,7 @@ public class Game {
 				if (countdown >= (pauseCountdown - 4)) {
 					String title = ChatColor.YELLOW.toString() + Integer.toString(pauseCountdown - countdown + 1);
 					for (GamePlayer p : players) {
-						p.player.sendTitle(title, "", 0, 20, 0);
+						Title.send(p.player, title, "");
 						SoundGen.play("ENTITY_EXPERIENCE_ORB_PICKUP", p.player);
 					}
 				}
@@ -542,7 +543,7 @@ public class Game {
 				countdown = 0;
 				inPhase = 0;
 				for (GamePlayer p : players) {
-					p.player.sendTitle(title, subtitle, 0, 20, 0);
+					Title.send(p.player, title, subtitle);
 					p.player.setPlayerTime(6000L, false);
 				}
 				for (GameStore store : gameStore) {
@@ -560,7 +561,7 @@ public class Game {
 
 	private void runTask() {
 		if (task != null) {
-			if (!task.isCancelled()) {
+			if (Bukkit.getScheduler().isQueued(task.getTaskId())) {
 				task.cancel();
 			}
 			task = null;
@@ -576,7 +577,7 @@ public class Game {
 
 	private void cancelTask() {
 		if (task != null) {
-			if (!task.isCancelled()) {
+			if (Bukkit.getScheduler().isQueued(task.getTaskId())) {
 				task.cancel();
 			}
 			task = null;
