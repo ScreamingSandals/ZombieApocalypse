@@ -16,7 +16,7 @@ public class I18n {
 
 	public static final String base_lang_code = "en";
 
-	public static final List<String> supported_lang_codes = Arrays.asList("en", "cs");
+	public static final List<String> supported_lang_codes = Arrays.asList("en", "cs", "zh");
 
 	private static String locale = "en";
 	private static FileConfiguration config_baseLanguage;
