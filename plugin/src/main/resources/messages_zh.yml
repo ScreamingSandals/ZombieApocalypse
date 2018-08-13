@@ -10,9 +10,9 @@ giant_start_subtitle: "§5Boss已经生成!挤到她赢得游戏的结束"
 
 join: "%name% §a加入战场"
 leave: "%name% §c离开了我们.."
-player_miss_points: "§c你被§7%killer%§c杀死了并且被抢走了§7%coins%§c个金币 ! 你的钱包还有§7%yourcoins%§c个金币"
+player_miss_points: "§c你被§7%killer%§c杀死了并且被抢走了§7%coins%§c个金币 ! 你的钱包还有§7%newcoins%§c个金币"
 player_miss_points_without_entity: "§c你死了，有§7%coins%§c个金币被他们抢走了! 你的钱包还有: §7%newcoins%§c个金币"
-player_get_points: "§a你暴力的把§7%entity%§a打了并且得到§7%coins%§a个金币! 你的钱包有: §7%newcoins%§c个金币"
+player_get_points: "§a你暴力的把§7%entity%§a打了并且得到§7%coins%§a个金币! 你的钱包有: §7%newcoins%§a个金币"
 have_coins: "§a钱包:§7%coins%"
 have_antiteleports: "§a你有§7%antiteleport%§a个反tp光环..."
 
