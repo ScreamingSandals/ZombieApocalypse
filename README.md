@@ -3,7 +3,7 @@ Simple Spigot minigame with zombies.
 
 #### More info is on our spigotmc.org site: https://www.spigotmc.org/resources/zombieapocalypse.34779/
 
-#### Actual stable version: 2.0.0
+#### Actual stable version: 2.0.1
 
 #### Recommended Minecraft version: 1.13
 
@@ -31,3 +31,5 @@ ZA is a minigame for Spigot. This minigame can run on more worlds with more aren
 > - Enable farming in arena
 >
 > - Signs for join and leave
+>
+> - Making passive mobs aggressive
