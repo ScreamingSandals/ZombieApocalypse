@@ -1,1 +1,15 @@
 locale: en
+farmBlocks:
+- WHEAT
+- CARROTS
+- POTATOES
+- BEETROOTS
+reward:
+  default: 5
+  GIANT: 50
+vault:
+  enable: true
+  reward:
+    default: 1
+    GIANT: 10
+    PLAYER: 5

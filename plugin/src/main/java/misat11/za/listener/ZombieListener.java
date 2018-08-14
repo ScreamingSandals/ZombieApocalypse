@@ -49,9 +49,8 @@ public class ZombieListener implements Listener {
 			Player killer = (Player) event.getEntity().getKiller();
 			if (Main.isPlayerInGame(killer)) {
 				GamePlayer gKiller = Main.getPlayerGameProfile(killer);
-				int add = 5;
+				int add = Main.getReward(event.getEntityType());
 				if (event.getEntity() instanceof Giant) {
-					add = 50;
 					event.setDroppedExp(100);
 					event.getDrops().add(new ItemStack(Material.IRON_INGOT, 5));
 					event.getDrops().add(new ItemStack(Material.GOLD_INGOT, 5));
@@ -65,7 +64,7 @@ public class ZombieListener implements Listener {
 						.replace("%coins%", Integer.toString(add))
 						.replace("%newcoins%", Integer.toString(gKiller.coins));
 				killer.sendMessage(kMessage);
-				Main.depositPlayer(killer, 1);
+				Main.depositPlayer(killer, Main.getVaultReward(event.getEntityType()));
 			}
 		}
 	}

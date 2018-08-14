@@ -15,6 +15,7 @@ player_miss_points_without_entity: "§cZemřel jsi a ztratil jsi §7%coins%§c m
 player_get_points: "§aZabil jsi §7%entity%§a a získal jsi §7%coins%§a mincí! Tvůj aktuální stav: §7%newcoins%"
 have_coins: "§aMáš §7%coins%§a mincí!"
 have_antiteleports: "§aMáš §7%antiteleport%§a kusů Anti Teleport Aury."
+vault_deposite: "§aZískal jsi §7%coins% %currency%§a do svého účtu Vault!"
 
 unknown_command: "§cPříkaz neznámý! Zadej §4/za help §cpro nápovědu!"
 no_arena_found: "§cAréna nenalezena!"

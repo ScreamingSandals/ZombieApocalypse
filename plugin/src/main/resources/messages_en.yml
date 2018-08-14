@@ -15,6 +15,7 @@ player_miss_points_without_entity: "§cYou died and lost §7%coins%§c coins! Yo
 player_get_points: "§aYou killed §7%entity%§a and got §7%coins%§a coins! Your currently statu: §7%newcoins%"
 have_coins: "§aYou have §7%coins%§a coins!"
 have_antiteleports: "§aYou have §7%antiteleport%§a pieces of Anti Teleport Aura."
+vault_deposite: "§aYou got §7%coins% %currency%§a to your Vault account!"
 
 unknown_command: "§cCommand unknown! Tyoe §4/za help §cfor help!"
 no_arena_found: "§cArena not found!"

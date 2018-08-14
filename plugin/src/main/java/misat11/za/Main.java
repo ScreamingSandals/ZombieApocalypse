@@ -15,6 +15,7 @@ import misat11.za.utils.Configurator;
 import misat11.za.utils.I18n;
 import misat11.za.utils.Menu;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -25,6 +26,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class Main extends JavaPlugin {
@@ -71,8 +73,11 @@ public class Main extends JavaPlugin {
 	}
 
 	public static void depositPlayer(Player player, double coins) {
-		if (isVault()) {
-			Main.instance.econ.depositPlayer(player, coins);
+		if (isVault() && instance.configurator.config.getBoolean("vault.enable")) {
+			EconomyResponse response = instance.econ.depositPlayer(player, coins);
+			if (response.transactionSuccess()) {
+				player.sendMessage(I18n._("vault_deposite").replace("%coins%", Double.toString(coins)).replace("%currency%", (coins == 1 ? instance.econ.currencyNameSingular() : instance.econ.currencyNamePlural())));
+			}
 		}
 	}
 
@@ -141,7 +146,7 @@ public class Main extends JavaPlugin {
 	public static void openStore(Player player) {
 		instance.menu.show(player);
 	}
-	
+
 	public static boolean isFarmBlock(Material mat) {
 		if (instance.configurator.config.isSet("farmBlocks")) {
 			List<String> list = (List<String>) instance.configurator.config.getList("farmBlocks");
@@ -151,13 +156,35 @@ public class Main extends JavaPlugin {
 		}
 		return false;
 	}
-	
+
 	public static List<String> getGameNames() {
 		List<String> list = new ArrayList<String>();
-		for(Game game : instance.games.values()) {
+		for (Game game : instance.games.values()) {
 			list.add(game.getName());
 		}
 		return list;
+	}
+
+	public static int getReward(EntityType type) {
+		int reward = 0;
+		if (instance.configurator.config.isSet("reward." + type.name())) {
+			reward = instance.configurator.config.getInt("reward." + type.name());
+		}
+		if (reward <= 0 && instance.configurator.config.isSet("reward.default")) {
+			reward = instance.configurator.config.getInt("reward.default");
+		}
+		return reward > 0 ? reward : 5;
+	}
+
+	public static int getVaultReward(EntityType type) {
+		int reward = 0;
+		if (instance.configurator.config.isSet("vault.reward." + type.name())) {
+			reward = instance.configurator.config.getInt("vault.reward." + type.name());
+		}
+		if (reward <= 0 && instance.configurator.config.isSet("vault.reward.default")) {
+			reward = instance.configurator.config.getInt("vault.reward.default");
+		}
+		return reward > 0 ? reward : 1;
 	}
 
 	public void onEnable() {

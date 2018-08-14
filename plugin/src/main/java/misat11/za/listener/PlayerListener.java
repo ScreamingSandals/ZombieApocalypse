@@ -1,6 +1,7 @@
 package misat11.za.listener;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,7 +47,7 @@ public class PlayerListener implements Listener {
 						.replace("%coins%", Integer.toString(subtract))
 						.replace("%newcoins%", Integer.toString(gKiller.coins));
 				killer.sendMessage(kMessage);
-				Main.depositPlayer(killer, 1);
+				Main.depositPlayer(killer, Main.getVaultReward(EntityType.PLAYER));
 			} else {
 				int nc = gVictim.coins - 5;
 				int subtract = 5;
