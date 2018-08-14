@@ -316,13 +316,6 @@ public class Game {
 			}
 		}
 		FileConfiguration configMap = new YamlConfiguration();
-		try {
-			configMap.load(file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidConfigurationException e) {
-			e.printStackTrace();
-		}
 		configMap.set("name", name);
 		configMap.set("pauseCountdown", pauseCountdown);
 		configMap.set("world", world.getName());
@@ -472,15 +465,17 @@ public class Game {
 				bossbar.setProgress(0);
 				if (Main.isSpigot()) {
 					if (status == GameStatus.RUNNING_IN_PHASE) {
-						final List<MonsterInfo> monstersInPhase = new ArrayList<MonsterInfo>();
+						final List<EntityType> monstersInPhase = new ArrayList<EntityType>();
 						for (MonsterInfo info : phases[inPhase].getMonsters()) {
-							monstersInPhase.add(info);
+							monstersInPhase.add(info.getEntityType());
 						}
 						if (!smallarenas.isEmpty()) {
 							for (SmallArena sarena : smallarenas) {
 								if (sarena.monsters.containsKey(phases[inPhase])) {
 									for (MonsterInfo minfo : sarena.monsters.get(phases[inPhase])) {
-										monstersInPhase.add(minfo);
+										if (!monstersInPhase.contains(minfo.getEntityType())) {
+											monstersInPhase.add(minfo.getEntityType());
+										}
 									}
 								}
 							}
@@ -495,7 +490,7 @@ public class Game {
 									for (GamePlayer p : players) {
 										p.player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 												TextComponent.fromLegacyText(WordUtils.capitalize(monstersInPhase
-														.get(index).getEntityType().name().replaceAll("_", " ").toLowerCase())));
+														.get(index).name().replaceAll("_", " ").toLowerCase())));
 									}
 									index++;
 								} else {

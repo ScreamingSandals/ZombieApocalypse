@@ -216,11 +216,6 @@ public class GameCreator {
 		if (game.getWorld() != loc.getWorld()) {
 			return CommandResponse.MUST_BE_IN_SAME_WORLD;
 		}
-		/*if (smallarenas.get(name).pos2 != null) {
-			if (Math.abs(smallarenas.get(name).pos2.getBlockY() - loc.getBlockY()) <= 5) {
-				return CommandResponse.POS1_POS2_DIFFERENCE_MUST_BE_HIGHER;
-			}
-		}*/
 		smallarenas.get(name).pos1 = loc;
 		return CommandResponse.SUCCESS;
 	}
@@ -232,11 +227,6 @@ public class GameCreator {
 		if (game.getWorld() != loc.getWorld()) {
 			return CommandResponse.MUST_BE_IN_SAME_WORLD;
 		}
-		/*if (smallarenas.get(name).pos1 != null) {
-			if (Math.abs(smallarenas.get(name).pos1.getBlockY() - loc.getBlockY()) <= 5) {
-				return CommandResponse.POS1_POS2_DIFFERENCE_MUST_BE_HIGHER;
-			}
-		}*/
 		smallarenas.get(name).pos2 = loc;
 		return CommandResponse.SUCCESS;
 	}
@@ -350,16 +340,12 @@ public class GameCreator {
 		if (phases.get(index) == null) {
 			return CommandResponse.PHASE_NOT_EXISTS;
 		}
-		MonsterInfo remove = null;
-		List<MonsterInfo> mi = phases.get(index).getMonsters();
+		List<MonsterInfo> mi = new ArrayList<MonsterInfo>((phases.get(index).getMonsters()));
 		for (MonsterInfo info : mi) {
 			if (info.getEntityType() == monster) {
-				remove = info;
+				phases.get(index).removeMonster(info);
 				break;
 			}
-		}
-		if (remove != null) {
-			phases.get(index).removeMonster(remove);
 		}
 		return CommandResponse.SUCCESS;
 
@@ -401,15 +387,11 @@ public class GameCreator {
 			smallarena.monsters.put(phase, new ArrayList<MonsterInfo>());
 		}
 		List<MonsterInfo> mi = smallarena.monsters.get(phase);
-		MonsterInfo remove = null;
-		for (MonsterInfo info : mi) {
+		for (MonsterInfo info : new ArrayList<MonsterInfo>(mi)) {
 			if (info.getEntityType() == monster) {
-				remove = info;
+				mi.remove(info);
 				break;
 			}
-		}
-		if (remove != null) {
-			mi.remove(remove);
 		}
 		return CommandResponse.SUCCESS;
 
