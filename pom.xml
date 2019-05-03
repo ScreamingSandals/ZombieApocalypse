@@ -17,8 +17,8 @@
 			<url>https://repo.codemc.org/repository/nms/</url>
 		</repository>
 		<repository>
-			<id>vault-repo</id>
-			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+			<id>mtorus-repo</id>
+			<url>https://jenkins.mtorus.cz/plugin/repository/everything/</url>
 		</repository>
 	</repositories>
 
@@ -29,6 +29,7 @@
 
 	<modules>
 		<module>plugin</module>
+		<module>v1_14</module>
 		<module>v1_13_1</module>
 		<module>v1_13</module>
 		<module>v1_12</module>

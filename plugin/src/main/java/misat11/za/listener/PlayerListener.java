@@ -17,7 +17,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 import misat11.za.game.GamePlayer;
-import misat11.za.utils.I18n;
+
+import static misat11.lib.lang.I18n.*;
 
 public class PlayerListener implements Listener {
 
@@ -39,11 +40,11 @@ public class PlayerListener implements Listener {
 				}
 				gVictim.coins -= subtract;
 				gKiller.coins += subtract;
-				String vMessage = I18n._("player_miss_points").replace("%killer%", killer.getDisplayName())
+				String vMessage = i18n("player_miss_points").replace("%killer%", killer.getDisplayName())
 						.replace("%coins%", Integer.toString(subtract))
 						.replace("%newcoins%", Integer.toString(gVictim.coins));
 				victim.sendMessage(vMessage);
-				String kMessage = I18n._("player_get_points").replace("%entity%", victim.getDisplayName())
+				String kMessage = i18n("player_get_points").replace("%entity%", victim.getDisplayName())
 						.replace("%coins%", Integer.toString(subtract))
 						.replace("%newcoins%", Integer.toString(gKiller.coins));
 				killer.sendMessage(kMessage);
@@ -58,13 +59,13 @@ public class PlayerListener implements Listener {
 				String vMessage;
 				if (victim.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 					Entity dKiller = ((EntityDamageByEntityEvent) victim.getLastDamageCause()).getDamager();
-					vMessage = I18n._("player_miss_points")
+					vMessage = i18n("player_miss_points")
 							.replace("%killer%",
 									dKiller.getCustomName() != null ? dKiller.getCustomName() : dKiller.getName())
 							.replace("%coins%", Integer.toString(subtract))
 							.replace("%newcoins%", Integer.toString(gVictim.coins));
 				} else {
-					vMessage = I18n._("player_miss_points_without_entity")
+					vMessage = i18n("player_miss_points_without_entity")
 							.replace("%coins%", Integer.toString(subtract))
 							.replace("%newcoins%", Integer.toString(gVictim.coins));
 				}

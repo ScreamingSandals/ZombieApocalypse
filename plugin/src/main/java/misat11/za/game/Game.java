@@ -21,7 +21,6 @@ import org.bukkit.scheduler.BukkitTask;
 import misat11.za.Main;
 import misat11.za.utils.SpawnUtils;
 import misat11.za.utils.Title;
-import misat11.za.utils.I18n;
 import misat11.za.utils.SoundGen;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static misat11.lib.lang.I18n.*;
 
 public class Game {
 
@@ -158,7 +159,7 @@ public class Game {
 				status == GameStatus.RUNNING_IN_PHASE || status == GameStatus.RUNNING_BOSS_GAME ? 14000L : 6000L,
 				false);
 
-		String message = I18n._("join").replace("%name%", player.player.getDisplayName());
+		String message = i18n("join").replace("%name%", player.player.getDisplayName());
 		for (GamePlayer p : players)
 			p.player.sendMessage(message);
 
@@ -177,7 +178,7 @@ public class Game {
 			players.remove(player);
 		}
 
-		String message = I18n._("leave").replace("%name%", player.player.getDisplayName());
+		String message = i18n("leave").replace("%name%", player.player.getDisplayName());
 		bossbar.removePlayer(player.player);
 		for (GamePlayer p : players)
 			p.player.sendMessage(message);
@@ -409,7 +410,7 @@ public class Game {
 	public void run() {
 		if (status == GameStatus.WAITING) {
 			status = GameStatus.RUNNING_PAUSE;
-			String title = I18n._("zombie_pause_subtitle", false);
+			String title = i18n("zombie_pause_subtitle", false);
 			bossbar = Bukkit.createBossBar(title, BarColor.RED, BarStyle.SEGMENTED_20);
 			for (GamePlayer p : players)
 				bossbar.addPlayer(p.player);
@@ -421,8 +422,8 @@ public class Game {
 		if (status == GameStatus.RUNNING_IN_PHASE) {
 			if (countdown > phases[inPhase].getCountdown()) {
 				phases[inPhase].phaseEnd();
-				String title = I18n._("zombie_pause_title", false);
-				String subtitle = I18n._("zombie_pause_subtitle", false);
+				String title = i18n("zombie_pause_title", false);
+				String subtitle = i18n("zombie_pause_subtitle", false);
 				bossbar.setTitle(subtitle);
 				bossbar.setProgress(0);
 				bossbar.setColor(BarColor.RED);
@@ -450,12 +451,12 @@ public class Game {
 			}
 		} else if (status == GameStatus.RUNNING_PAUSE) {
 			if (countdown > pauseCountdown) {
-				String title = I18n._("zombie_start_title", false);
-				String subtitle = I18n._("zombie_start_subtitle", false);
+				String title = i18n("zombie_start_title", false);
+				String subtitle = i18n("zombie_start_subtitle", false);
 				if (inPhase == -1) {
 					status = GameStatus.RUNNING_BOSS_GAME;
 					bossbar.setColor(BarColor.PURPLE);
-					subtitle = I18n._("giant_start_subtitle", false);
+					subtitle = i18n("giant_start_subtitle", false);
 				} else {
 					status = GameStatus.RUNNING_IN_PHASE;
 					bossbar.setColor(BarColor.GREEN);
@@ -529,8 +530,8 @@ public class Game {
 				bossEntity = SpawnUtils.spawnGiant(boss);
 			} else if (bossEntity.isDead()) {
 				bossEntity = null;
-				String title = I18n._("zombie_pause_title", false);
-				String subtitle = I18n._("zombie_pause_subtitle", false);
+				String title = i18n("zombie_pause_title", false);
+				String subtitle = i18n("zombie_pause_subtitle", false);
 				bossbar.setTitle(subtitle);
 				bossbar.setProgress(0);
 				bossbar.setColor(BarColor.RED);

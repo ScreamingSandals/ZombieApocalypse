@@ -37,6 +37,12 @@ buy_no_coins: "§cNedostatek financí pro koupi §7%item%§c, tvůj aktuální s
 sell_success: "§aÚspěšně prodáno §7%item%§a, tvůj aktuální stav: §7%yourcoins%§a mincí"
 sell_no_items: "§cNedostatek kusů pro prodání §7%item%§c!"
 
+coins: "Mincí"
+amount: "Množství"
+buy: "Koupit"
+sell: "Prodat"
+teleport_aura: "Teleport Aura"
+
 admin_command_success: "§aPříkaz proveden! Změna zapsána!"
 admin_command_must_be_in_same_world: "§cVšechny příkazy musí být provedeny z jednoho světa!"
 admin_command_invalid_countdown: "§cOdpočet musí být v rozmezí 10 < x < 600 sekund!"

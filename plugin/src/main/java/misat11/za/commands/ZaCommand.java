@@ -19,7 +19,8 @@ import misat11.za.Main;
 import misat11.za.game.Game;
 import misat11.za.game.GameCreator;
 import misat11.za.game.GamePlayer;
-import misat11.za.utils.I18n;
+
+import static misat11.lib.lang.I18n.*;
 
 public class ZaCommand implements CommandExecutor, TabCompleter {
 
@@ -35,10 +36,10 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 					sendHelp(player);
 				} else if (args[0].equalsIgnoreCase("coins")) {
 					GamePlayer gPlayer = Main.getPlayerGameProfile(player);
-					sender.sendMessage(I18n._("have_coins").replace("%coins%", Integer.toString(gPlayer.coins)));
+					sender.sendMessage(i18n("have_coins").replace("%coins%", Integer.toString(gPlayer.coins)));
 				} else if (args[0].equalsIgnoreCase("antiteleport")) {
 					GamePlayer gPlayer = Main.getPlayerGameProfile(player);
-					sender.sendMessage(I18n._("have_antiteleports").replace("%antiteleport%",
+					sender.sendMessage(i18n("have_antiteleports").replace("%antiteleport%",
 							Integer.toString(gPlayer.teleportAura)));
 				} else if (args[0].equalsIgnoreCase("join")) {
 					if (args.length > 1) {
@@ -46,19 +47,19 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 						if (Main.isGameExists(arenaN)) {
 							Main.getGame(arenaN).joinToGame(player);
 						} else {
-							player.sendMessage(I18n._("no_arena_found"));
+							player.sendMessage(i18n("no_arena_found"));
 						}
 					} else {
-						player.sendMessage(I18n._("usage_za_join"));
+						player.sendMessage(i18n("usage_za_join"));
 					}
 				} else if (args[0].equalsIgnoreCase("leave")) {
 					if (Main.isPlayerInGame(player)) {
 						Main.getPlayerGameProfile(player).changeGame(null);
 					} else {
-						player.sendMessage(I18n._("you_arent_in_game"));
+						player.sendMessage(i18n("you_arent_in_game"));
 					}
 				} else if (args[0].equalsIgnoreCase("list")) {
-					player.sendMessage(I18n._("list_header"));
+					player.sendMessage(i18n("list_header"));
 					Main.sendGameListInfo(player);
 				} else if (args[0].equalsIgnoreCase("admin")) {
 					if (player.hasPermission("misat11.za.admin")) {
@@ -66,38 +67,38 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 							String arN = args[1];
 							if (args[2].equalsIgnoreCase("add")) {
 								if (Main.isGameExists(arN)) {
-									player.sendMessage(I18n._("allready_exists"));
+									player.sendMessage(i18n("allready_exists"));
 								} else if (gc.containsKey(arN)) {
-									player.sendMessage(I18n._("allready_working_on_it"));
+									player.sendMessage(i18n("allready_working_on_it"));
 								} else {
 									GameCreator creator = new GameCreator(Game.createGame(arN));
 									gc.put(arN, creator);
-									player.sendMessage(I18n._("arena_added"));
+									player.sendMessage(i18n("arena_added"));
 								}
 							} else if (args[2].equalsIgnoreCase("remove")) {
 								if (Main.isGameExists(arN)) {
 									if (!gc.containsKey(arN)) {
-										player.sendMessage(I18n._("arena_must_be_in_edit_mode"));
+										player.sendMessage(i18n("arena_must_be_in_edit_mode"));
 									} else {
 										gc.remove(arN);
 										new File(Main.getInstance().getDataFolder(), "arenas/" + arN + ".yml").delete();
 										Main.removeGame(Main.getGame(arN));
-										player.sendMessage(I18n._("arena_removed"));
+										player.sendMessage(i18n("arena_removed"));
 									}
 								} else if (gc.containsKey(arN)) {
 									gc.remove(arN);
-									player.sendMessage(I18n._("arena_removed"));
+									player.sendMessage(i18n("arena_removed"));
 								} else {
-									player.sendMessage(I18n._("no_arena_found"));
+									player.sendMessage(i18n("no_arena_found"));
 								}
 							} else if (args[2].equalsIgnoreCase("edit")) {
 								if (Main.isGameExists(arN)) {
 									Game game = Main.getGame(arN);
 									game.stop();
 									gc.put(arN, new GameCreator(game));
-									player.sendMessage(I18n._("arena_switched_to_edit"));
+									player.sendMessage(i18n("arena_switched_to_edit"));
 								} else {
-									player.sendMessage(I18n._("no_arena_found"));
+									player.sendMessage(i18n("no_arena_found"));
 								}
 							} else {
 								if (gc.containsKey(arN)) {
@@ -114,14 +115,14 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 										gc.remove(arN);
 									}
 								} else {
-									player.sendMessage(I18n._("arena_not_in_edit"));
+									player.sendMessage(i18n("arena_not_in_edit"));
 								}
 							}
 						} else {
-							player.sendMessage(I18n._("usage_za_admin"));
+							player.sendMessage(i18n("usage_za_admin"));
 						}
 					} else {
-						player.sendMessage(I18n._("no_permissions"));
+						player.sendMessage(i18n("no_permissions"));
 					}
 				} else if (args[0].equalsIgnoreCase("skip")) {
 					if (player.hasPermission("misat11.za.admin")) {
@@ -132,10 +133,10 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 								Main.getPlayerGameProfile(player).getGame().skip();
 							}
 						} else {
-							player.sendMessage(I18n._("you_arent_in_game"));
+							player.sendMessage(i18n("you_arent_in_game"));
 						}
 					} else {
-						player.sendMessage(I18n._("no_permissions"));
+						player.sendMessage(i18n("no_permissions"));
 					}
 				} else if (args[0].equalsIgnoreCase("reload")) {
 					if (player.hasPermission("misat11.za.admin")) {
@@ -143,10 +144,10 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 						Bukkit.getServer().getPluginManager().enablePlugin(Main.getInstance());
 						player.sendMessage("Plugin reloaded!");
 					} else {
-						player.sendMessage(I18n._("no_permissions"));
+						player.sendMessage(i18n("no_permissions"));
 					}
 				} else {
-					player.sendMessage(I18n._("unknown_command"));
+					player.sendMessage(i18n("unknown_command"));
 				}
 			}
 		} else {
@@ -156,39 +157,39 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 	}
 
 	public void sendHelp(Player player) {
-		player.sendMessage(I18n._("help_title", false).replace("%version%", Main.getVersion()));
-		player.sendMessage(I18n._("help_za_join", false));
-		player.sendMessage(I18n._("help_za_leave", false));
-		player.sendMessage(I18n._("help_za_list", false));
-		player.sendMessage(I18n._("help_za_coins", false));
-		player.sendMessage(I18n._("help_za_antiteleport", false));
+		player.sendMessage(i18n("help_title", false).replace("%version%", Main.getVersion()));
+		player.sendMessage(i18n("help_za_join", false));
+		player.sendMessage(i18n("help_za_leave", false));
+		player.sendMessage(i18n("help_za_list", false));
+		player.sendMessage(i18n("help_za_coins", false));
+		player.sendMessage(i18n("help_za_antiteleport", false));
 		if (player.hasPermission("misat11.za.admin")) {
-			player.sendMessage(I18n._("help_za_admin_add", false));
-			player.sendMessage(I18n._("help_za_admin_spawn", false));
-			player.sendMessage(I18n._("help_za_admin_pos1", false));
-			player.sendMessage(I18n._("help_za_admin_pos2", false));
-			player.sendMessage(I18n._("help_za_admin_pausecountdown", false));
-			player.sendMessage(I18n._("help_za_admin_phase_add", false));
-			player.sendMessage(I18n._("help_za_admin_phase_remove", false));
-			player.sendMessage(I18n._("help_za_admin_phase_insert", false));
-			player.sendMessage(I18n._("help_za_admin_phase_set", false));
-			player.sendMessage(I18n._("help_za_admin_monster_add", false));
-			player.sendMessage(I18n._("help_za_admin_monster_remove", false));
-			player.sendMessage(I18n._("help_za_admin_small_add", false));
-			player.sendMessage(I18n._("help_za_admin_small_remove", false));
-			player.sendMessage(I18n._("help_za_admin_small_pos1", false));
-			player.sendMessage(I18n._("help_za_admin_small_pos2", false));
-			player.sendMessage(I18n._("help_za_admin_small_monsteradd", false));
-			player.sendMessage(I18n._("help_za_admin_small_monsterremove", false));
-			player.sendMessage(I18n._("help_za_admin_store_add", false));
-			player.sendMessage(I18n._("help_za_admin_store_remove", false));
-			player.sendMessage(I18n._("help_za_admin_bossgame_set", false));
-			player.sendMessage(I18n._("help_za_admin_bossgame_reset", false));
-			player.sendMessage(I18n._("help_za_admin_save", false));
-			player.sendMessage(I18n._("help_za_admin_remove", false));
-			player.sendMessage(I18n._("help_za_admin_edit", false));
-			player.sendMessage(I18n._("help_za_reload", false));
-			player.sendMessage(I18n._("help_za_skip", false));
+			player.sendMessage(i18n("help_za_admin_add", false));
+			player.sendMessage(i18n("help_za_admin_spawn", false));
+			player.sendMessage(i18n("help_za_admin_pos1", false));
+			player.sendMessage(i18n("help_za_admin_pos2", false));
+			player.sendMessage(i18n("help_za_admin_pausecountdown", false));
+			player.sendMessage(i18n("help_za_admin_phase_add", false));
+			player.sendMessage(i18n("help_za_admin_phase_remove", false));
+			player.sendMessage(i18n("help_za_admin_phase_insert", false));
+			player.sendMessage(i18n("help_za_admin_phase_set", false));
+			player.sendMessage(i18n("help_za_admin_monster_add", false));
+			player.sendMessage(i18n("help_za_admin_monster_remove", false));
+			player.sendMessage(i18n("help_za_admin_small_add", false));
+			player.sendMessage(i18n("help_za_admin_small_remove", false));
+			player.sendMessage(i18n("help_za_admin_small_pos1", false));
+			player.sendMessage(i18n("help_za_admin_small_pos2", false));
+			player.sendMessage(i18n("help_za_admin_small_monsteradd", false));
+			player.sendMessage(i18n("help_za_admin_small_monsterremove", false));
+			player.sendMessage(i18n("help_za_admin_store_add", false));
+			player.sendMessage(i18n("help_za_admin_store_remove", false));
+			player.sendMessage(i18n("help_za_admin_bossgame_set", false));
+			player.sendMessage(i18n("help_za_admin_bossgame_reset", false));
+			player.sendMessage(i18n("help_za_admin_save", false));
+			player.sendMessage(i18n("help_za_admin_remove", false));
+			player.sendMessage(i18n("help_za_admin_edit", false));
+			player.sendMessage(i18n("help_za_reload", false));
+			player.sendMessage(i18n("help_za_skip", false));
 		}
 	}
 

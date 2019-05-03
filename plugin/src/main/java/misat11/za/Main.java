@@ -12,8 +12,7 @@ import misat11.za.listener.SignListener;
 import misat11.za.listener.VillagerListener;
 import misat11.za.listener.ZombieListener;
 import misat11.za.utils.Configurator;
-import misat11.za.utils.I18n;
-import misat11.za.utils.Menu;
+import misat11.za.utils.ShopMenu;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -29,6 +28,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import static misat11.lib.lang.I18n.*;
+
 public class Main extends JavaPlugin {
 	private static Main instance;
 	private String version, nmsVersion;
@@ -38,7 +39,7 @@ public class Main extends JavaPlugin {
 	private HashMap<Player, GamePlayer> playersInGame = new HashMap<Player, GamePlayer>();
 	private HashMap<Entity, Game> entitiesInGame = new HashMap<Entity, Game>();
 	private Configurator configurator;
-	private Menu menu;
+	private ShopMenu menu;
 
 	public static Main getInstance() {
 		return instance;
@@ -76,7 +77,7 @@ public class Main extends JavaPlugin {
 		if (isVault() && instance.configurator.config.getBoolean("vault.enable")) {
 			EconomyResponse response = instance.econ.depositPlayer(player, coins);
 			if (response.transactionSuccess()) {
-				player.sendMessage(I18n._("vault_deposite").replace("%coins%", Double.toString(coins)).replace("%currency%", (coins == 1 ? instance.econ.currencyNameSingular() : instance.econ.currencyNamePlural())));
+				player.sendMessage(i18n("vault_deposite").replace("%coins%", Double.toString(coins)).replace("%currency%", (coins == 1 ? instance.econ.currencyNameSingular() : instance.econ.currencyNamePlural())));
 			}
 		}
 	}
@@ -233,7 +234,7 @@ public class Main extends JavaPlugin {
 
 		configurator.createFiles();
 
-		I18n.load();
+		load(this, configurator.config.getString("locale"));
 
 		ZaCommand cmd = new ZaCommand();
 		getCommand("za").setExecutor(cmd);
@@ -242,7 +243,7 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ZombieListener(), this);
 		getServer().getPluginManager().registerEvents(new VillagerListener(), this);
 		getServer().getPluginManager().registerEvents(new SignListener(), this);
-		menu = new Menu(this);
+		menu = new ShopMenu();
 
 		Bukkit.getLogger().info("********************");
 		Bukkit.getLogger().info("* ZombieApocalypse *");

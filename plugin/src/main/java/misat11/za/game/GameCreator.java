@@ -9,7 +9,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import misat11.za.Main;
-import misat11.za.utils.I18n;
+
+import static misat11.lib.lang.I18n.*;
 
 public class GameCreator {
 
@@ -288,7 +289,7 @@ public class GameCreator {
 	public CommandResponse addPhase(Player player, int index, int countdown) {
 		PhaseInfo info = new PhaseInfo(countdown);
 		phases.add(index, info);
-		player.sendMessage(I18n._("admin_phase_added_number", false).replace("%number%", Integer.toString(index)));
+		player.sendMessage(i18n("admin_phase_added_number", false).replace("%number%", Integer.toString(index)));
 		return CommandResponse.SUCCESS;
 	}
 
@@ -296,7 +297,7 @@ public class GameCreator {
 		PhaseInfo info = new PhaseInfo(countdown);
 		phases.add(info);
 		player.sendMessage(
-				I18n._("admin_phase_added_number", false).replace("%number%", Integer.toString(phases.size() - 1)));
+				i18n("admin_phase_added_number", false).replace("%number%", Integer.toString(phases.size() - 1)));
 		return CommandResponse.SUCCESS;
 	}
 
@@ -428,7 +429,7 @@ public class GameCreator {
 		}
 
 		public String i18n() {
-			return I18n._(msg, false);
+			return i18nonly(msg);
 		}
 	}
 }

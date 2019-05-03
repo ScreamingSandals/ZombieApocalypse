@@ -18,7 +18,8 @@ import misat11.za.Main;
 import misat11.za.game.Game;
 import misat11.za.game.GamePlayer;
 import misat11.za.game.GameStatus;
-import misat11.za.utils.I18n;
+
+import static misat11.lib.lang.I18n.*;
 
 public class ZombieListener implements Listener {
 	@EventHandler
@@ -57,7 +58,7 @@ public class ZombieListener implements Listener {
 					event.getDrops().add(new ItemStack(Material.DIAMOND, 1));
 				}
 				gKiller.coins += add;
-				String kMessage = I18n._("player_get_points")
+				String kMessage = i18n("player_get_points")
 						.replace("%entity%",
 								event.getEntity().getCustomName() != null ? event.getEntity().getCustomName()
 										: event.getEntity().getName())

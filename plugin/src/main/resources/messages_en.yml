@@ -37,6 +37,12 @@ buy_no_coins: "§cLack of finance to buy §7%item%§c, your current status: §7%
 sell_success: "§aSuccessfully sold §7%item%§a, your current status: §7%yourcoins%§a coins"
 sell_no_items: "§cLack of pieces to sell §7%item%§c!"
 
+coins: "Coins"
+amount: "Amount"
+buy: "Buy"
+sell: "Sell"
+teleport_aura: "Teleport Aura"
+
 admin_command_success: "§aCommand executed successfully!"
 admin_command_must_be_in_same_world: "§cAll commands must be called from one world!"
 admin_command_invalid_countdown: "§cDeduction must be within 10 < x < 600 seconds!"

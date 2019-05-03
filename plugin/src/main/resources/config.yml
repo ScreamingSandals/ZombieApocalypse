@@ -13,3 +13,8 @@ vault:
     default: 1
     GIANT: 10
     PLAYER: 5
+items:
+  shopback: BARRIER
+  pageback: BARRIER
+  pageforward: ARROW
+  shopcosmetic: AIR
