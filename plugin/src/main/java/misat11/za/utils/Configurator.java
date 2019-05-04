@@ -89,11 +89,7 @@ public class Configurator {
 					int price = shopItem.getInt("points");
 					String shopItemType = shopItem.getString("type", "give");
 					int damage = shopItem.getInt("item-damage");
-					String name = shopItem.getString("name");
 					ItemStack stack = new ItemStack(material, amount, (short) damage);
-					ItemMeta meta = stack.getItemMeta();
-					meta.setDisplayName(name);
-					stack.setItemMeta(meta);
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("stack", stack);
 					map.put("price", price);

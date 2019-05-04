@@ -26,7 +26,6 @@ public class NMSUtils {
 			switch (entity.getType()) {
 			case DOLPHIN:
 			case OCELOT:
-			case CAT:
 			case WOLF:
 			case SNOWMAN:
 			case IRON_GOLEM:
@@ -55,6 +54,7 @@ public class NMSUtils {
 			case TROPICAL_FISH:
 			case TURTLE:
 			case WANDERING_TRADER:
+			case CAT:
 				creature.getAttributeMap().b(GenericAttributes.ATTACK_DAMAGE).setValue(5.0);
 				creature.goalSelector.a(1, new PathfinderGoalMeleeAttack(creature, 1.0D, false));
 				creature.targetSelector.a(1, new PathfinderGoalHurtByTarget(creature, new Class[0]));

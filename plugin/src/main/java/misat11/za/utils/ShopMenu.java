@@ -130,7 +130,7 @@ public class ShopMenu implements Listener {
 				if (gPlayer.coins >= price) {
 					gPlayer.teleportAura += newItem.getAmount();
 					gPlayer.coins -= price;
-					player.sendMessage(i18n("buy_success").replace("%item%", i18n("teleport_aura", false))
+					player.sendMessage(i18n("buy_succes").replace("%item%", i18n("teleport_aura", false))
 							.replace("%yourcoins%", Integer.toString(gPlayer.coins)));
 				} else {
 					player.sendMessage(i18n("buy_no_coins").replace("%item%", i18n("teleport_aura", false))
@@ -151,7 +151,7 @@ public class ShopMenu implements Listener {
 				if (gPlayer.coins >= price) {
 					gPlayer.player.getInventory().addItem(newItem);
 					gPlayer.coins -= price;
-					player.sendMessage(i18n("buy_success").replace("%item%", getNameOrCustomNameOfItem(newItem))
+					player.sendMessage(i18n("buy_succes").replace("%item%", getNameOrCustomNameOfItem(newItem))
 							.replace("%yourcoins%", Integer.toString(gPlayer.coins)));
 				} else {
 					player.sendMessage(i18n("buy_no_coins").replace("%item%", getNameOrCustomNameOfItem(newItem))
