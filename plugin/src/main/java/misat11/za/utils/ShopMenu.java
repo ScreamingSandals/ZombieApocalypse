@@ -13,11 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import misat11.lib.sgui.ItemData;
-import misat11.lib.sgui.ItemInfo;
+import misat11.lib.sgui.PlayerItemInfo;
 import misat11.lib.sgui.SimpleGuiFormat;
-import misat11.lib.sgui.StaticGuiCreator;
-import misat11.lib.sgui.StaticInventoryListener;
 import misat11.lib.sgui.events.GenerateItemEvent;
 import misat11.lib.sgui.events.PostActionEvent;
 import misat11.lib.sgui.events.PreActionEvent;
@@ -27,8 +24,6 @@ import misat11.za.game.GamePlayer;
 public class ShopMenu implements Listener {
 	private ItemStack backItem, pageBackItem, pageForwardItem, cosmeticItem;
 	private SimpleGuiFormat format;
-	private StaticGuiCreator creator;
-	private StaticInventoryListener listener;
 
 	public ShopMenu() {
 		List<Map<String, Object>> data = (List<Map<String, Object>>) Main.getConfigurator().shopconfig.getList("data");
@@ -50,16 +45,14 @@ public class ShopMenu implements Listener {
 
 		cosmeticItem = Main.getConfigurator().readDefinedItem("shopcosmetic", "AIR");
 
-		format = new SimpleGuiFormat(data);
-		format.generateData();
-
-		creator = new StaticGuiCreator("[ZA] Shop", format, backItem, pageBackItem, pageForwardItem, cosmeticItem);
-
-		listener = new StaticInventoryListener(creator);
-		Bukkit.getServer().getPluginManager().registerEvents(listener, Main.getInstance());
+		format = new SimpleGuiFormat("[ZA] Shop", backItem, pageBackItem, pageForwardItem, cosmeticItem);
+		format.enableAnimations(Main.getInstance());
+		format.disableGenericShop(); // TODO change it to using Generic Shop
+		format.load(data);
+		
 		Bukkit.getServer().getPluginManager().registerEvents(this, Main.getInstance());
-
-		creator.generate();
+		
+		format.generateData();
 	}
 
 	@EventHandler
@@ -68,9 +61,8 @@ public class ShopMenu implements Listener {
 			return;
 		}
 
-		ItemInfo item = event.getInfo();
-		ItemData data = item.getData();
-		Map<String, Object> originalItemData = data.getData();
+		PlayerItemInfo item = event.getInfo();
+		Map<String, Object> originalItemData = item.getData();
 		if (originalItemData.containsKey("price")) {
 			ItemStack stack = event.getStack();
 			ItemMeta stackMeta = stack.getItemMeta();
@@ -119,9 +111,8 @@ public class ShopMenu implements Listener {
 		Player player = event.getPlayer();
 		GamePlayer gPlayer = Main.getPlayerGameProfile(event.getPlayer());
 
-		ItemInfo item = event.getItem();
-		ItemData data = item.getData();
-		Map<String, Object> originalItemData = data.getData();
+		PlayerItemInfo item = event.getItem();
+		Map<String, Object> originalItemData = item.getData();
 		if (originalItemData.containsKey("price") && originalItemData.containsKey("price-type")) {
 			int price = (int) originalItemData.get("price");
 			String priceType = ((String) originalItemData.get("price-type")).toLowerCase();
@@ -177,6 +168,6 @@ public class ShopMenu implements Listener {
 	}
 
 	public void show(Player p) {
-		p.openInventory(creator.getInventories(null).get(0));
+		format.openForPlayer(p);
 	}
 }

@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.14-R0.1-SNAPSHOT</version>
+			<version>1.14.3-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>misat11.lib.sgui</groupId>
 			<artifactId>SimpleGuiFormat</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.7</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

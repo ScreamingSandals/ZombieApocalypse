@@ -1,4 +1,6 @@
 locale: en
+allow-crafting: false
+allow-workbench-crafting: true
 farmBlocks:
 - WHEAT
 - CARROTS

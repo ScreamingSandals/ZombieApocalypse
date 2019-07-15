@@ -10,6 +10,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -18,6 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 import misat11.za.game.GamePlayer;
+import misat11.za.game.GameStatus;
 
 import static misat11.lib.lang.I18n.*;
 
@@ -137,6 +140,28 @@ public class PlayerListener implements Listener {
 		if (Main.isPlayerInGame(event.getPlayer())) {
 			if (!event.getMessage().split(" ")[0].equals("/za")) {
 				event.setCancelled(true);
+			}
+		}
+	}
+
+
+	@EventHandler
+	public void onCraft(CraftItemEvent event) {
+		if (event.isCancelled() || !(event.getWhoClicked() instanceof Player)) {
+			return;
+		}
+		Player player = (Player) event.getWhoClicked();
+		if (Main.isPlayerInGame(player)) {
+			if (event.getInventory().getType() == InventoryType.WORKBENCH) {
+				if (!Main.getConfigurator().config.getBoolean("allow-workbench-crafting", true)) {
+					event.setCancelled(true);
+					return;
+				}
+			} else {
+				if (!Main.getConfigurator().config.getBoolean("allow-crafting", true)) {
+					event.setCancelled(true);
+					return;
+				}
 			}
 		}
 	}

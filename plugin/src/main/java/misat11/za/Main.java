@@ -3,6 +3,7 @@ package misat11.za;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import misat11.lib.sgui.InventoryListener;
 import misat11.za.commands.ZaCommand;
 import misat11.za.game.Game;
 import misat11.za.game.GamePlayer;
@@ -243,6 +244,7 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ZombieListener(), this);
 		getServer().getPluginManager().registerEvents(new VillagerListener(), this);
 		getServer().getPluginManager().registerEvents(new SignListener(), this);
+		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		menu = new ShopMenu();
 
 		Bukkit.getLogger().info("********************");
