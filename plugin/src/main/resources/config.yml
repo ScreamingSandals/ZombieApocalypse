@@ -17,6 +17,6 @@ vault:
     PLAYER: 5
 items:
   shopback: BARRIER
-  pageback: BARRIER
+  pageback: ARROW
   pageforward: ARROW
   shopcosmetic: AIR

@@ -247,42 +247,15 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		menu = new ShopMenu();
 
-		Bukkit.getLogger().info("********************");
-		Bukkit.getLogger().info("* ZombieApocalypse *");
-		Bukkit.getLogger().info("*    by Misat11    *");
-		Bukkit.getLogger().info("*                  *");
-		if (version.length() == 10) {
-			Bukkit.getLogger().info("*                  *");
-			Bukkit.getLogger().info("*    V" + version + "   *");
-		} else {
-			Bukkit.getLogger().info("*      V" + version + "      *");
+		Bukkit.getConsoleSender().sendMessage("§a====================  §fby Misat11");
+		Bukkit.getConsoleSender().sendMessage("§a+ ZombieApocalypse +  §6Version: " + version);
+		Bukkit.getConsoleSender().sendMessage("§a====================  " + (snapshot ? "§cSNAPSHOT VERSION" : "§aSTABLE VERSION"));
+		if (isVault) {
+			Bukkit.getConsoleSender().sendMessage("§a[ZA] §6Found Vault");
 		}
-		Bukkit.getLogger().info("*                  *");
-		if (snapshot == true) {
-			Bukkit.getLogger().info("* SNAPSHOT VERSION *");
-		} else {
-			Bukkit.getLogger().info("*  STABLE VERSION  *");
+		if (!isSpigot) {
+			Bukkit.getConsoleSender().sendMessage("§a[ZA] §cWARNING: You are not using Spigot. Some features may not work properly.");
 		}
-		Bukkit.getLogger().info("*                  *");
-
-		if (isVault == true) {
-			Bukkit.getLogger().info("*                  *");
-			Bukkit.getLogger().info("*   Vault hooked   *");
-			Bukkit.getLogger().info("*                  *");
-		}
-
-		if (isSpigot == false) {
-			Bukkit.getLogger().info("*                  *");
-			Bukkit.getLogger().info("*     WARNING:     *");
-			Bukkit.getLogger().info("* You aren't using *");
-			Bukkit.getLogger().info("*      Spigot      *");
-			Bukkit.getLogger().info("*                  *");
-			Bukkit.getLogger().info("* Please download! *");
-			Bukkit.getLogger().info("*   spigotmc.org   *");
-		}
-
-		Bukkit.getLogger().info("*                  *");
-		Bukkit.getLogger().info("********************");
 
 		File folder = new File(getDataFolder().toString(), "arenas");
 		if (folder.exists()) {

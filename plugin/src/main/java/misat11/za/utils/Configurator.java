@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -55,24 +56,6 @@ public class Configurator {
 		} catch (InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-
-		if (config.isSet("locale") == false) {
-			config.set("locale", "en");
-			try {
-				config.save(configf);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (shopconfig.isSet("enable") == false) {
-			shopconfig.set("enable", true);
-			try {
-				shopconfig.save(shopconfigf);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 		
 		if (shopconfig.contains("shop-items")) {
 			Set<String> s = shopconfig.getConfigurationSection("shop-items").getKeys(false);
@@ -109,6 +92,30 @@ public class Configurator {
 				e.printStackTrace();
 			}
 		}
+
+		AtomicBoolean modify = new AtomicBoolean(false);
+		checkOrSetConfig(modify, "locale", "en");
+		checkOrSetConfig(modify, "allow-crafting", false);
+		checkOrSetConfig(modify, "allow-workbench-crafting", true);
+		checkOrSetConfig(modify, "farmBlocks", new ArrayList<>());
+		checkOrSetConfig(modify, "reward.default", 5);
+		checkOrSetConfig(modify, "reward.GIANT", 50);
+		checkOrSetConfig(modify, "vault.enable", true);
+		checkOrSetConfig(modify, "vault.reward.default", 1);
+		checkOrSetConfig(modify, "vault.reward.GIANT", 10);
+		checkOrSetConfig(modify, "vault.reward.PLAYER", 5);
+		checkOrSetConfig(modify, "items.shopback", "BARRIER");
+		checkOrSetConfig(modify, "items.pageback", "ARROW");
+		checkOrSetConfig(modify, "items.pageforward", "ARROW");
+		checkOrSetConfig(modify, "items.shopcosmetic", "AIR");
+		if (modify.get()) {
+			try {
+				config.save(configf);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	public ItemStack readDefinedItem(String item, String def) {
@@ -124,5 +131,16 @@ public class Configurator {
 		}
 		
 		return material;
+	}
+
+	private void checkOrSetConfig(AtomicBoolean modify, String path, Object value) {
+		checkOrSet(modify, this.config, path, value);
+	}
+
+	private static void checkOrSet(AtomicBoolean modify, FileConfiguration config, String path, Object value) {
+		if (!config.isSet(path)) {
+			config.set(path, value);
+			modify.set(true);
+		}
 	}
 }

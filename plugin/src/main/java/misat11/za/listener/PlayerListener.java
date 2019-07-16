@@ -20,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 import misat11.za.game.GamePlayer;
-import misat11.za.game.GameStatus;
 
 import static misat11.lib.lang.I18n.*;
 
