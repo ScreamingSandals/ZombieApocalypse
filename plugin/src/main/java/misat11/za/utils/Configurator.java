@@ -16,7 +16,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import misat11.za.Main;
 
@@ -113,6 +112,10 @@ public class Configurator {
 		checkOrSetConfig(modify, "giant-drops", Arrays.asList(new ItemStack(Material.IRON_INGOT, 5),
 				new ItemStack(Material.GOLD_INGOT, 5), new ItemStack(Material.DIAMOND, 1)));
 		checkOrSetConfig(modify, "giant-xp", 100);
+		checkOrSetConfig(modify, "scoreboard.enabled", true);
+		checkOrSetConfig(modify, "scoreboard.title", "§aZombieApocalypse§f - %elapsedTime%");
+		checkOrSetConfig(modify, "scoreboard.content", Arrays.asList("§fMap: §2%arena%", "§fPlayers: §2%players%",
+				"§fPhase: §l%phase%", "§4Leave: /za leave"));
 		if (modify.get()) {
 			try {
 				config.save(configf);

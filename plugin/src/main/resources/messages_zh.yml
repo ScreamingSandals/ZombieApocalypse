@@ -7,6 +7,7 @@ zombie_start_subtitle: "§a坚持活下去!"
 zombie_pause_title: "§c暂停..了?"
 zombie_pause_subtitle: "§c这是一次休息时间! 为了下一个关卡而准备吧!"
 giant_start_subtitle: "§5Boss已经生成!挤到她赢得游戏的结束"
+scoreboard_boss: "§5§lBoss"
 
 join: "%name% §a加入战场"
 leave: "%name% §c离开了我们.."

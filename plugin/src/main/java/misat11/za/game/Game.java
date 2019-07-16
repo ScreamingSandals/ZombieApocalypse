@@ -17,6 +17,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import misat11.za.Main;
 import misat11.za.utils.SpawnUtils;
@@ -53,6 +57,7 @@ public class Game {
 	private BukkitTask task;
 	private BossBar bossbar;
 	private LivingEntity bossEntity = null;
+	private Scoreboard gameScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
 	private Game() {
 
@@ -180,6 +185,7 @@ public class Game {
 
 		String message = i18n("leave").replace("%name%", player.player.getDisplayName());
 		bossbar.removePlayer(player.player);
+		player.player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 		for (GamePlayer p : players)
 			p.player.sendMessage(message);
 		if (players.isEmpty()) {
@@ -419,6 +425,7 @@ public class Game {
 			}
 		}
 		countdown++;
+		updateScoreboard();
 		if (status == GameStatus.RUNNING_IN_PHASE) {
 			if (countdown > phases[inPhase].getCountdown()) {
 				phases[inPhase].phaseEnd();
@@ -656,6 +663,81 @@ public class Game {
 			}
 			countdown = 0;
 		}
+	}
+	
+	private void updateScoreboard() {
+		if (!Main.getConfigurator().config.getBoolean("scoreboard.enabled")) {
+			return;
+		}
+		
+		gameScoreboard.clearSlot(DisplaySlot.SIDEBAR);
+
+		Objective obj = gameScoreboard.getObjective("display");
+		if (obj != null) {
+			obj.unregister();
+		}
+
+		obj = gameScoreboard.registerNewObjective("display", "dummy");
+		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		obj.setDisplayName(this.formatScoreboardString(
+				Main.getConfigurator().config.getString("scoreboard.title", "§aZombieApocalypse")));
+
+		List<String> rows = Main.getConfigurator().config.getStringList("scoreboard.content");
+		int rowMax = rows.size();
+		if (rows == null || rows.isEmpty()) {
+			return;
+		}
+
+		for (String row : rows) {
+			if (row.trim().equals("")) {
+				for (int i = 0; i <= rowMax; i++) {
+					row = row + " ";
+				}
+			}
+
+			Score score = obj.getScore(this.formatScoreboardString(row));
+			score.setScore(rowMax);
+			rowMax--;
+		}
+
+		for (GamePlayer player : players) {
+			player.player.setScoreboard(gameScoreboard);
+		}
+	}
+	
+	private String formatScoreboardString(String row) {
+		row = row.replaceAll("%players%", Integer.toString(players.size()));
+		row = row.replaceAll("%arena%", name);
+		String phaseStr = inPhase >= 0 ? Integer.toString(inPhase) : i18nonly("scoreboard_boss");
+		row = row.replaceAll("%phase%", phaseStr);
+		row = row.replaceAll("%elapsedTime%", getFormattedTime(countdown));
+		row = row.replaceAll("%countdown%", Integer.toString(countdown));
+		return row;
+	}
+
+	public String getFormattedTime(int countdown) {
+		String colorCodes = "";
+		
+		if (status == GameStatus.RUNNING_PAUSE) {
+			colorCodes += ChatColor.RED;
+		} else if (status == GameStatus.RUNNING_IN_PHASE) {
+			colorCodes += ChatColor.GREEN;
+		} else if (status == GameStatus.RUNNING_BOSS_GAME) {
+			colorCodes += ChatColor.DARK_PURPLE;
+		}
+		
+		int min;
+		int sec;
+		String minStr;
+		String secStr;
+
+		min = (int) Math.floor(countdown / 60);
+		sec = countdown % 60;
+
+		minStr = (min < 10) ? "0" + min : String.valueOf(min);
+		secStr = (sec < 10) ? "0" + sec : String.valueOf(sec);
+
+		return colorCodes + minStr + ":" + secStr;
 	}
 
 }

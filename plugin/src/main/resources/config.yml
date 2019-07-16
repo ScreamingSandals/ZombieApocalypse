@@ -33,3 +33,14 @@ giant-drops:
   type: DIAMOND
   amount: 1
 giant-xp: 100
+scoreboard:
+  enabled: true
+  title: "§aZombieApocalypse§f - %elapsedTime%"
+  content:
+    - " "
+    - "§fMap: §2%arena%"
+    - "§fPlayers: §2%players%"
+    - " "
+    - "§fPhase: §l%phase%"
+    - " "
+    - "§4Leave: /za leave"

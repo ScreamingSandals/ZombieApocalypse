@@ -7,6 +7,7 @@ zombie_start_subtitle: "§aPhase started! Good luck"
 zombie_pause_title: "§cPause"
 zombie_pause_subtitle: "§cIt's a pause! Now prepare for the next phase!"
 giant_start_subtitle: "§5A giant was called into the game! Kill him for the end of the game!"
+scoreboard_boss: "§5§lBoss"
 
 join: "%name% §ajoined to arena!"
 leave: "%name% §cleft the arena!"

@@ -7,6 +7,7 @@ zombie_start_subtitle: "§aVlna začala! Hodně štěstí"
 zombie_pause_title: "§cPauza"
 zombie_pause_subtitle: "§cPrávě je pauza! Nyní se připrav na další vlnu!"
 giant_start_subtitle: "§5Do hry byl přivolán obr! Zabij ho pro konec hry!"
+scoreboard_boss: "§5§lBoss"
 
 join: "%name% §ase připojil do arény!"
 leave: "%name% §copustil arénu!"
