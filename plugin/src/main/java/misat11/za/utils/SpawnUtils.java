@@ -17,6 +17,12 @@ public class SpawnUtils {
 	
 	public static Entity spawnAggressive(Location loc, EntityType type) {
 		Entity entity = loc.getWorld().spawnEntity(loc, type);
+		makeAggressive(entity);
+		return entity;
+		
+	}
+	
+	public static void makeAggressive(Entity entity) {
 		if (Main.isNMS() && entity instanceof LivingEntity) {
 			try {
 				Class<?> clazz = Class.forName("misat11.za.nms." + Main.getNMSVersion().toUpperCase() + ".NMSUtils");
@@ -27,6 +33,5 @@ public class SpawnUtils {
 				ex.printStackTrace();
 			}
 		}
-		return entity;
 	}
 }

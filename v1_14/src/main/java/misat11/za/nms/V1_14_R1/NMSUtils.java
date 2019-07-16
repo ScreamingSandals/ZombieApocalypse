@@ -55,6 +55,7 @@ public class NMSUtils {
 			case TURTLE:
 			case WANDERING_TRADER:
 			case CAT:
+			case VILLAGER:
 				creature.getAttributeMap().b(GenericAttributes.ATTACK_DAMAGE).setValue(5.0);
 				creature.goalSelector.a(1, new PathfinderGoalMeleeAttack(creature, 1.0D, false));
 				creature.targetSelector.a(1, new PathfinderGoalHurtByTarget(creature, new Class[0]));

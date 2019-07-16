@@ -1,6 +1,7 @@
 locale: en
 allow-crafting: false
 allow-workbench-crafting: true
+make-villagers-aggressive-when-phase-started: false
 farmBlocks:
 - WHEAT
 - CARROTS
@@ -20,3 +21,15 @@ items:
   pageback: ARROW
   pageforward: ARROW
   shopcosmetic: AIR
+disable-drops: []
+giant-drops:
+- ==: org.bukkit.inventory.ItemStack
+  type: IRON_INGOT
+  amount: 5
+- ==: org.bukkit.inventory.ItemStack
+  type: GOLD_INGOT
+  amount: 5
+- ==: org.bukkit.inventory.ItemStack
+  type: DIAMOND
+  amount: 1
+giant-xp: 100

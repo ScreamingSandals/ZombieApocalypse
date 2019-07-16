@@ -57,6 +57,7 @@ public class NMSUtils {
 			case PIG:
 			case SHEEP:
 			case SQUID:
+			case VILLAGER:
 				creature.getAttributeMap().b(GenericAttributes.ATTACK_DAMAGE).setValue(5.0);
 				creature.goalSelector.a(1, new PathfinderGoalMeleeAttack(creature, 1.0D, false) {
 					protected void a(EntityLiving entityliving, double d0) {

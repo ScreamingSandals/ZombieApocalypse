@@ -7,6 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 
+import misat11.za.Main;
+import misat11.za.utils.SpawnUtils;
+
 public class GameStore {
 
 	public final Location loc;
@@ -28,6 +31,9 @@ public class GameStore {
 		if (entity != null) {
 			entity.setAI(true);
 			oldVillagers.add(entity);
+			if (Main.getConfigurator().config.getBoolean("make-villagers-aggressive-when-phase-started", false)) {
+				SpawnUtils.makeAggressive(entity);
+			}
 			entity = null;
 		}
 	}

@@ -3,6 +3,7 @@ package misat11.za.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +24,14 @@ public class Configurator {
 
 	public File configf, shopconfigf;
 	public FileConfiguration config, shopconfig;
-	
+
 	public final File datafolder;
 	public final Main main;
-	
+
 	public Configurator(Main main) {
 		this.datafolder = main.getDataFolder();
 		this.main = main;
 	}
-
 
 	public void createFiles() {
 
@@ -56,16 +56,16 @@ public class Configurator {
 		} catch (InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (shopconfig.contains("shop-items")) {
 			Set<String> s = shopconfig.getConfigurationSection("shop-items").getKeys(false);
-			
+
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-			
+
 			for (String i : s) {
 				ConfigurationSection shopItem = Main.getConfigurator().shopconfig
 						.getConfigurationSection("shop-items." + i);
-				
+
 				try {
 					Material material = Material.valueOf(shopItem.getString("item"));
 					int amount = shopItem.getInt("amount", 5);
@@ -79,13 +79,13 @@ public class Configurator {
 					map.put("price-type", shopItemType);
 					list.add(map);
 				} catch (Throwable t) {
-					
+
 				}
 			}
-			
+
 			shopconfig.set("data", list);
 			shopconfig.set("shop-items", null);
-			
+
 			try {
 				shopconfig.save(shopconfigf);
 			} catch (IOException e) {
@@ -97,6 +97,7 @@ public class Configurator {
 		checkOrSetConfig(modify, "locale", "en");
 		checkOrSetConfig(modify, "allow-crafting", false);
 		checkOrSetConfig(modify, "allow-workbench-crafting", true);
+		checkOrSetConfig(modify, "make-villagers-aggressive-when-phase-started", false);
 		checkOrSetConfig(modify, "farmBlocks", new ArrayList<>());
 		checkOrSetConfig(modify, "reward.default", 5);
 		checkOrSetConfig(modify, "reward.GIANT", 50);
@@ -108,6 +109,10 @@ public class Configurator {
 		checkOrSetConfig(modify, "items.pageback", "ARROW");
 		checkOrSetConfig(modify, "items.pageforward", "ARROW");
 		checkOrSetConfig(modify, "items.shopcosmetic", "AIR");
+		checkOrSetConfig(modify, "disable-drops", new ArrayList<>());
+		checkOrSetConfig(modify, "giant-drops", Arrays.asList(new ItemStack(Material.IRON_INGOT, 5),
+				new ItemStack(Material.GOLD_INGOT, 5), new ItemStack(Material.DIAMOND, 1)));
+		checkOrSetConfig(modify, "giant-xp", 100);
 		if (modify.get()) {
 			try {
 				config.save(configf);
@@ -115,12 +120,12 @@ public class Configurator {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	public ItemStack readDefinedItem(String item, String def) {
 		ItemStack material = new ItemStack(Material.valueOf(def));
-		
+
 		if (config.isSet("items." + item)) {
 			Object obj = config.get("items." + item);
 			if (obj instanceof ItemStack) {
@@ -129,7 +134,7 @@ public class Configurator {
 				material.setType(Material.valueOf((String) obj));
 			}
 		}
-		
+
 		return material;
 	}
 

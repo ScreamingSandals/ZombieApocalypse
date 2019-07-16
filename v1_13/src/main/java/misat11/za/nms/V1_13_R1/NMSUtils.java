@@ -50,6 +50,7 @@ public class NMSUtils {
 			case SQUID:
 			case TROPICAL_FISH:
 			case TURTLE:
+			case VILLAGER:
 				creature.getAttributeMap().b(GenericAttributes.ATTACK_DAMAGE).setValue(5.0);
 				creature.goalSelector.a(1, new PathfinderGoalMeleeAttack(creature, 1.0D, false));
 				creature.targetSelector.a(1, new PathfinderGoalHurtByTarget(creature, true, new Class[0]));

@@ -21,6 +21,9 @@ import misat11.za.game.GameStatus;
 
 import static misat11.lib.lang.I18n.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ZombieListener implements Listener {
 	@EventHandler
 	public void onCombust(final EntityCombustEvent event) {
@@ -52,10 +55,13 @@ public class ZombieListener implements Listener {
 				GamePlayer gKiller = Main.getPlayerGameProfile(killer);
 				int add = Main.getReward(event.getEntityType());
 				if (event.getEntity() instanceof Giant) {
-					event.setDroppedExp(100);
-					event.getDrops().add(new ItemStack(Material.IRON_INGOT, 5));
-					event.getDrops().add(new ItemStack(Material.GOLD_INGOT, 5));
-					event.getDrops().add(new ItemStack(Material.DIAMOND, 1));
+					event.setDroppedExp(Main.getConfigurator().config.getInt("giant-xp", 100));
+					for (ItemStack stack : (List<ItemStack>) Main.getConfigurator().config.getList("giant-drops", new ArrayList<>())) {
+						event.getDrops().add(stack);
+					}
+				}
+				if (Main.getConfigurator().config.getStringList("disable-drops").contains(event.getEntityType().name())) {
+					event.getDrops().clear();
 				}
 				gKiller.coins += add;
 				String kMessage = i18n("player_get_points")
