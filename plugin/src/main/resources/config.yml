@@ -44,3 +44,8 @@ scoreboard:
     - "§fPhase: §l%phase%"
     - " "
     - "§4Leave: /za leave"
+sign:
+   - "§a§l[ZombieApocalypse]"
+   - "%arena%"
+   - "%status%"
+   - "%players%"

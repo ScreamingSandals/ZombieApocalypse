@@ -150,6 +150,7 @@ public class GameCreator {
 			game.setGameStores(gamestores);
 			game.saveToConfig();
 			game.start();
+			game.updateSigns();
 			Main.addGame(game);
 			response = i18n("admin_command_game_saved_and_started");
 		}

@@ -44,6 +44,20 @@ buy: "Buy"
 sell: "Sell"
 teleport_aura: "Teleport Aura"
 
+sign_successfully_created: "§aSign was successfully created!"
+sign_can_not_been_created: "§cSign couldn't be created! Please check the name of the arena!"
+sign_can_not_been_destroyed: "§cYou don't have permissions to destroy this sign!"
+sign_game_not_exists: "§cThe game that is written on the sign doesnt exist! Please contact an admin!"
+
+sign_status_disabled: "§cGame"
+sign_status_disabled_players: "§cdisabled"
+
+sign_status_running: "§aRunning"
+sign_status_running_players: "§a%players% Players"
+
+sign_status_waiting: "§6Waiting"
+sign_status_waiting_players: "§6for players"
+
 admin_command_success: "§aCommand executed successfully!"
 admin_command_must_be_in_same_world: "§cAll commands must be called from one world!"
 admin_command_invalid_countdown: "§cDeduction must be within 10 < x < 600 seconds!"

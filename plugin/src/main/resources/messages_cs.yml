@@ -44,6 +44,20 @@ buy: "Koupit"
 sell: "Prodat"
 teleport_aura: "Teleport Aura"
 
+sign_successfully_created: "§aCedule byla úspěšně vytvořena!"
+sign_can_not_been_created: "§cCeduli se nepodařilo vytvorit! Zkontrolujte si prosím název arény!"
+sign_can_not_been_destroyed: "§cNemáš patřičná oprávnění pro zničení této cedule!"
+sign_game_not_exists: "§cHra, do které se pokoušíte připojit touto cedulí, neexistuje! Prosím kontaktujte administrátora!"
+
+sign_status_disabled: "§cHra"
+sign_status_disabled_players: "§cvypnuta"
+
+sign_status_running: "§aHra běží"
+sign_status_running_players: "§a%players% Hráčů"
+
+sign_status_waiting: "§6Čekání"
+sign_status_waiting_players: "§6na hráče"
+
 admin_command_success: "§aPříkaz proveden! Změna zapsána!"
 admin_command_must_be_in_same_world: "§cVšechny příkazy musí být provedeny z jednoho světa!"
 admin_command_invalid_countdown: "§cOdpočet musí být v rozmezí 10 < x < 600 sekund!"

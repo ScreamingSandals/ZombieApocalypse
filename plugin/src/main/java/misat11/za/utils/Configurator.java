@@ -21,8 +21,8 @@ import misat11.za.Main;
 
 public class Configurator {
 
-	public File configf, shopconfigf;
-	public FileConfiguration config, shopconfig;
+	public File configf, shopconfigf, signconfigf;
+	public FileConfiguration config, shopconfig, signconfig;
 
 	public final File datafolder;
 	public final Main main;
@@ -36,6 +36,7 @@ public class Configurator {
 
 		configf = new File(datafolder, "config.yml");
 		shopconfigf = new File(datafolder, "shop.yml");
+		signconfigf = new File(datafolder, "sign.yml");
 
 		if (!configf.exists()) {
 			configf.getParentFile().mkdirs();
@@ -45,11 +46,17 @@ public class Configurator {
 			shopconfigf.getParentFile().mkdirs();
 			main.saveResource("shop.yml", false);
 		}
+		if (!signconfigf.exists()) {
+			signconfigf.getParentFile().mkdirs();
+			main.saveResource("sign.yml", false);
+		}
 		config = new YamlConfiguration();
 		shopconfig = new YamlConfiguration();
+		signconfig = new YamlConfiguration();
 		try {
 			config.load(configf);
 			shopconfig.load(shopconfigf);
+			signconfig.load(signconfigf);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InvalidConfigurationException e) {
@@ -116,6 +123,7 @@ public class Configurator {
 		checkOrSetConfig(modify, "scoreboard.title", "§aZombieApocalypse§f - %elapsedTime%");
 		checkOrSetConfig(modify, "scoreboard.content", Arrays.asList("§fMap: §2%arena%", "§fPlayers: §2%players%",
 				"§fPhase: §l%phase%", "§4Leave: /za leave"));
+		checkOrSetConfig(modify, "sign", Arrays.asList("§a§l[ZombieApocalypse]", "%arena%", "%status%", "%players%"));
 		if (modify.get()) {
 			try {
 				config.save(configf);

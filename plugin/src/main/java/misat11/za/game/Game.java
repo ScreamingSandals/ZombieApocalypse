@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -25,6 +27,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import misat11.za.Main;
 import misat11.za.utils.SpawnUtils;
 import misat11.za.utils.Title;
+import misat11.za.utils.GameSign;
 import misat11.za.utils.SoundGen;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -172,6 +175,7 @@ public class Game {
 			runTask();
 		} else {
 			bossbar.addPlayer(player.player);
+			updateSigns();
 		}
 	}
 
@@ -204,6 +208,7 @@ public class Game {
 				bossEntity = null;
 			}
 		}
+		updateSigns();
 	}
 
 	public static Game loadGame(File file) {
@@ -270,6 +275,7 @@ public class Game {
 		game.start();
 		Main.getInstance().getLogger().info("Arena " + game.name + " loaded!");
 		Main.addGame(game);
+		game.updateSigns();
 		return game;
 	}
 
@@ -423,6 +429,7 @@ public class Game {
 			for (GameStore store : gameStore) {
 				store.spawn();
 			}
+			updateSigns();
 		}
 		countdown++;
 		updateScoreboard();
@@ -664,12 +671,12 @@ public class Game {
 			countdown = 0;
 		}
 	}
-	
+
 	private void updateScoreboard() {
 		if (!Main.getConfigurator().config.getBoolean("scoreboard.enabled")) {
 			return;
 		}
-		
+
 		gameScoreboard.clearSlot(DisplaySlot.SIDEBAR);
 
 		Objective obj = gameScoreboard.getObjective("display");
@@ -704,7 +711,7 @@ public class Game {
 			player.player.setScoreboard(gameScoreboard);
 		}
 	}
-	
+
 	private String formatScoreboardString(String row) {
 		row = row.replaceAll("%players%", Integer.toString(players.size()));
 		row = row.replaceAll("%arena%", name);
@@ -717,7 +724,7 @@ public class Game {
 
 	public String getFormattedTime(int countdown) {
 		String colorCodes = "";
-		
+
 		if (status == GameStatus.RUNNING_PAUSE) {
 			colorCodes += ChatColor.RED;
 		} else if (status == GameStatus.RUNNING_IN_PHASE) {
@@ -725,7 +732,7 @@ public class Game {
 		} else if (status == GameStatus.RUNNING_BOSS_GAME) {
 			colorCodes += ChatColor.DARK_PURPLE;
 		}
-		
+
 		int min;
 		int sec;
 		String minStr;
@@ -738,6 +745,52 @@ public class Game {
 		secStr = (sec < 10) ? "0" + sec : String.valueOf(sec);
 
 		return colorCodes + minStr + ":" + secStr;
+	}
+
+	public void updateSigns() {
+		List<GameSign> gameSigns = Main.getSignsForGame(this);
+
+		if (gameSigns.isEmpty()) {
+			return;
+		}
+
+		String statusLine = "";
+		String playersLine = "";
+		switch (status) {
+		case DISABLED:
+			statusLine = i18nonly("sign_status_disabled");
+			playersLine = i18nonly("sign_status_disabled_players");
+			break;
+		case WAITING:
+			statusLine = i18nonly("sign_status_waiting");
+			playersLine = i18nonly("sign_status_waiting_players");
+			break;
+		default:
+			statusLine = i18nonly("sign_status_running");
+			playersLine = i18nonly("sign_status_running_players");
+		}
+		playersLine = playersLine.replace("%players%", Integer.toString(players.size()));
+
+		List<String> texts = new ArrayList<>(Main.getConfigurator().config.getStringList("sign"));
+
+		for (int i = 0; i < texts.size(); i++) {
+			String text = texts.get(i);
+			texts.set(i, text.replaceAll("%arena%", this.getName()).replaceAll("%status%", statusLine)
+					.replaceAll("%players%", playersLine));
+		}
+
+		for (GameSign sign : gameSigns) {
+			if (sign.getLocation().getChunk().isLoaded()) {
+				Block block = sign.getLocation().getBlock();
+				if (block.getState() instanceof Sign) {
+					Sign state = (Sign) block.getState();
+					for (int i = 0; i < texts.size() && i < 4; i++) {
+						state.setLine(i, texts.get(i));
+					}
+					state.update();
+				}
+			}
+		}
 	}
 
 }

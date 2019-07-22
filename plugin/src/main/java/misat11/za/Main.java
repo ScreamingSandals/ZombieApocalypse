@@ -13,7 +13,9 @@ import misat11.za.listener.SignListener;
 import misat11.za.listener.VillagerListener;
 import misat11.za.listener.ZombieListener;
 import misat11.za.utils.Configurator;
+import misat11.za.utils.GameSign;
 import misat11.za.utils.ShopMenu;
+import misat11.za.utils.SignManager;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -41,6 +44,7 @@ public class Main extends JavaPlugin {
 	private HashMap<Entity, Game> entitiesInGame = new HashMap<Entity, Game>();
 	private Configurator configurator;
 	private ShopMenu menu;
+	private SignManager signManager;
 
 	public static Main getInstance() {
 		return instance;
@@ -105,6 +109,26 @@ public class Main extends JavaPlugin {
 
 	public static void registerGameEntity(Entity entity, Game game) {
 		instance.entitiesInGame.put(entity, game);
+	}
+
+	public static boolean isSignRegistered(Location location) {
+		return instance.signManager.isSignRegistered(location);
+	}
+
+	public static void unregisterSign(Location location) {
+		instance.signManager.unregisterSign(location);
+	}
+
+	public static boolean registerSign(Location location, String game) {
+		return instance.signManager.registerSign(location, game);
+	}
+
+	public static GameSign getSign(Location location) {
+		return instance.signManager.getSign(location);
+	}
+
+	public static List<GameSign> getSignsForGame(Game game) {
+		return instance.signManager.getSignsForGame(game);
 	}
 
 	public static void unregisterGameEntity(Entity entity) {
@@ -192,7 +216,7 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		version = this.getDescription().getVersion();
-		snapshot = version.toLowerCase().contains("pre");
+		snapshot = version.toLowerCase().contains("pre") || version.toLowerCase().contains("snapshot");
 
 		try {
 			Package spigotPackage = Package.getPackage("org.spigotmc");
@@ -235,6 +259,8 @@ public class Main extends JavaPlugin {
 
 		configurator.createFiles();
 
+		signManager = new SignManager(configurator.signconfig, configurator.signconfigf);
+
 		load(this, configurator.config.getString("locale"));
 
 		ZaCommand cmd = new ZaCommand();
@@ -272,6 +298,9 @@ public class Main extends JavaPlugin {
 	}
 
 	public void onDisable() {
+		if (signManager != null) {
+			signManager.save();
+		}
 		for (Game game : games.values()) {
 			game.stop();
 		}
