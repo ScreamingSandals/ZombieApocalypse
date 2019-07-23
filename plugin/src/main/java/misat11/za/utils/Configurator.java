@@ -104,6 +104,7 @@ public class Configurator {
 		checkOrSetConfig(modify, "allow-crafting", false);
 		checkOrSetConfig(modify, "allow-workbench-crafting", true);
 		checkOrSetConfig(modify, "make-villagers-aggressive-when-phase-started", false);
+		checkOrSetConfig(modify, "prevent-spawning-villager-if-previous-is-living", false);
 		checkOrSetConfig(modify, "farmBlocks", new ArrayList<>());
 		checkOrSetConfig(modify, "reward.default", 5);
 		checkOrSetConfig(modify, "reward.GIANT", 50);

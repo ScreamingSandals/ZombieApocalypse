@@ -21,6 +21,14 @@ public class GameStore {
 	}
 
 	public void spawn() {
+		if (Main.getConfigurator().config.getBoolean("prevent-spawning-villager-if-previous-is-living")) {
+			for (Villager vill : oldVillagers) {
+				if (!vill.isDead()) {
+					entity = vill;
+					break;
+				}
+			}
+		}
 		if (entity == null) {
 			entity = (Villager) loc.getWorld().spawnEntity(loc, EntityType.VILLAGER);
 			entity.setAI(false);
