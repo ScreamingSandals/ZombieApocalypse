@@ -17,7 +17,7 @@ public class GameCreator {
 	private Game game;
 	private List<PhaseInfo> phases = new ArrayList<PhaseInfo>();
 	private HashMap<String, SmallArena> smallarenas = new HashMap<String, SmallArena>();
-	private List<String> villagerstores = new ArrayList<String>();
+	private HashMap<String, GameStore> villagerstores = new HashMap<>();
 
 	public GameCreator(Game game) {
 		this.game = game;
@@ -36,7 +36,8 @@ public class GameCreator {
 		List<GameStore> gs = game.getGameStores();
 		if (!gs.isEmpty()) {
 			for (GameStore store : gs) {
-				villagerstores.add(store.loc.getBlockX() + ";" + store.loc.getBlockY() + ";" + store.loc.getBlockZ());
+				villagerstores.put(store.loc.getBlockX() + ";" + store.loc.getBlockY() + ";" + store.loc.getBlockZ(),
+						store);
 			}
 		}
 	}
@@ -144,8 +145,8 @@ public class GameCreator {
 			}
 			game.setSmallArenas(arenalist);
 			List<GameStore> gamestores = new ArrayList<GameStore>();
-			for (String vloc : villagerstores) {
-				gamestores.add(new GameStore(Game.readLocationFromString(game.getWorld(), vloc)));
+			for (GameStore vloc : villagerstores.values()) {
+				gamestores.add(vloc);
 			}
 			game.setGameStores(gamestores);
 			game.saveToConfig();
@@ -166,12 +167,13 @@ public class GameCreator {
 			return i18n("admin_command_must_be_in_same_world");
 		}
 		game.setBoss(loc);
-		return i18n("admin_command_success");
+		return i18n("admin_command_set_boss").replace("%x%", Double.toString(loc.getX()))
+				.replace("%y%", Double.toString(loc.getY())).replace("%z%", Double.toString(loc.getZ()));
 	}
 
 	public String resetBossGame() {
 		game.setBoss(null);
-		return i18n("admin_command_success");
+		return i18n("admin_command_reset_boss");
 	}
 
 	public String addStore(Location loc) {
@@ -179,20 +181,22 @@ public class GameCreator {
 			return i18n("admin_command_must_be_in_same_world");
 		}
 		String location = loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ();
-		if (villagerstores.contains(location)) {
+		if (villagerstores.containsKey(location)) {
 			return i18n("admin_command_store_already_exists");
 		}
-		villagerstores.add(location);
-		return i18n("admin_command_success");
+		villagerstores.put(location, new GameStore(loc));
+		return i18n("admin_command_store_added").replace("%x%", Integer.toString(loc.getBlockX()))
+				.replace("%y%", Integer.toString(loc.getBlockY())).replace("%z%", Integer.toString(loc.getBlockZ()));
 	}
 
 	public String removeStore(Location loc) {
 		String location = loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ();
-		if (!villagerstores.contains(location)) {
+		if (!villagerstores.containsKey(location)) {
 			return i18n("admin_command_store_not_exists");
 		}
 		villagerstores.remove(location);
-		return i18n("admin_command_success");
+		return i18n("admin_command_store_removed").replace("%x%", Integer.toString(loc.getBlockX()))
+				.replace("%y%", Integer.toString(loc.getBlockY())).replace("%z%", Integer.toString(loc.getBlockZ()));
 	}
 
 	public String addSmallArena(String name) {
@@ -200,7 +204,7 @@ public class GameCreator {
 			return i18n("admin_command_small_already_exists");
 		}
 		smallarenas.put(name, new SmallArena(name, null, null));
-		return i18n("admin_command_success");
+		return i18n("admin_command_small_created").replace("%small%", name);
 	}
 
 	public String removeSmallArena(String name) {
@@ -208,7 +212,7 @@ public class GameCreator {
 			return i18n("admin_command_small_not_exists");
 		}
 		smallarenas.remove(name);
-		return i18n("admin_command_success");
+		return i18n("admin_command_small_removed").replace("%small%", name);
 	}
 
 	public String pos1SmallArena(String name, Location loc) {
@@ -219,7 +223,8 @@ public class GameCreator {
 			return i18n("admin_command_must_be_in_same_world");
 		}
 		smallarenas.get(name).pos1 = loc;
-		return i18n("admin_command_success");
+		return i18n("admin_command_set_small_pos1").replace("%small%", name).replace("%x%", Double.toString(loc.getX()))
+				.replace("%y%", Double.toString(loc.getY())).replace("%z%", Double.toString(loc.getZ()));
 	}
 
 	public String pos2SmallArena(String name, Location loc) {
@@ -230,7 +235,8 @@ public class GameCreator {
 			return i18n("admin_command_must_be_in_same_world");
 		}
 		smallarenas.get(name).pos2 = loc;
-		return i18n("admin_command_success");
+		return i18n("admin_command_set_small_pos2").replace("%small%", name).replace("%x%", Double.toString(loc.getX()))
+				.replace("%y%", Double.toString(loc.getY())).replace("%z%", Double.toString(loc.getZ()));
 	}
 
 	public String setSpawn(Location loc) {
@@ -244,7 +250,8 @@ public class GameCreator {
 			return i18n("admin_command_spawn_must_be_in_area");
 		}
 		game.setSpawn(loc);
-		return i18n("admin_command_success");
+		return i18n("admin_command_set_spawn").replace("%x%", Double.toString(loc.getX()))
+				.replace("%y%", Double.toString(loc.getY())).replace("%z%", Double.toString(loc.getZ()));
 	}
 
 	public String setPos1(Location loc) {
@@ -260,7 +267,9 @@ public class GameCreator {
 			}
 		}
 		game.setPos1(loc);
-		return i18n("admin_command_success");
+		return i18n("admin_command_set_pos1").replace("%name%", game.getName())
+				.replace("%x%", Double.toString(loc.getX())).replace("%y%", Double.toString(loc.getY()))
+				.replace("%z%", Double.toString(loc.getZ()));
 	}
 
 	public String setPos2(Location loc) {
@@ -276,13 +285,15 @@ public class GameCreator {
 			}
 		}
 		game.setPos2(loc);
-		return i18n("admin_command_success");
+		return i18n("admin_command_set_pos2").replace("%name%", game.getName())
+				.replace("%x%", Double.toString(loc.getX())).replace("%y%", Double.toString(loc.getY()))
+				.replace("%z%", Double.toString(loc.getZ()));
 	}
 
 	public String setPauseCountdown(int countdown) {
 		if (countdown >= 10 && countdown <= 600) {
 			game.setPauseCountdown(countdown);
-			return i18n("admin_command_success");
+			return i18n("admin_command_set_pausecountdown").replace("%seconds%", Integer.toString(countdown));
 		}
 		return i18n("admin_command_invalid_countdown");
 	}
@@ -290,16 +301,13 @@ public class GameCreator {
 	public String addPhase(Player player, int index, int countdown) {
 		PhaseInfo info = new PhaseInfo(countdown);
 		phases.add(index, info);
-		player.sendMessage(i18n("admin_phase_added_number", false).replace("%number%", Integer.toString(index)));
-		return i18n("admin_command_success");
+		return i18n("admin_phase_added_number", false).replace("%number%", Integer.toString(index));
 	}
 
 	public String addPhase(Player player, int countdown) {
 		PhaseInfo info = new PhaseInfo(countdown);
 		phases.add(info);
-		player.sendMessage(
-				i18n("admin_phase_added_number", false).replace("%number%", Integer.toString(phases.size() - 1)));
-		return i18n("admin_command_success");
+		return i18n("admin_phase_added_number", false).replace("%number%", Integer.toString(phases.size() - 1));
 	}
 
 	public String removePhase(int index) {
@@ -310,7 +318,7 @@ public class GameCreator {
 			return i18n("admin_command_phase_not_exists");
 		}
 		phases.remove(index);
-		return i18n("admin_command_success");
+		return i18n("admin_command_phase_removed").replace("%number%", Integer.toString(index));
 	}
 
 	public String editPhaseCountdown(int index, int countdown) {
@@ -321,7 +329,8 @@ public class GameCreator {
 			return i18n("admin_command_phase_not_exists");
 		}
 		phases.get(index).setCountdown(countdown);
-		return i18n("admin_command_success");
+		return i18n("admin_command_set_phase_countdown").replace("%number%", Integer.toString(index))
+				.replace("%seconds%", Integer.toString(countdown));
 	}
 
 	public String addMonster(int index, EntityType monster, int spawnCountdown) {
@@ -332,7 +341,8 @@ public class GameCreator {
 			return i18n("admin_command_phase_not_exists");
 		}
 		phases.get(index).addMonster(new MonsterInfo(spawnCountdown, monster));
-		return i18n("admin_command_success");
+		return i18n("admin_command_monster_added").replace("%number%", Integer.toString(index))
+				.replace("%type%", monster.name()).replace("%interval%", Integer.toString(spawnCountdown));
 	}
 
 	public String removeMonster(int index, EntityType monster) {
@@ -349,7 +359,8 @@ public class GameCreator {
 				break;
 			}
 		}
-		return i18n("admin_command_success");
+		return i18n("admin_command_monster_removed").replace("%number%", Integer.toString(index)).replace("%type%",
+				monster.name());
 
 	}
 
@@ -370,7 +381,9 @@ public class GameCreator {
 		}
 		List<MonsterInfo> list = smallarena.monsters.get(phase);
 		list.add(new MonsterInfo(spawnCountdown, monster));
-		return i18n("admin_command_success");
+		return i18n("admin_command_small_monster_added").replace("%small%", small)
+				.replace("%number%", Integer.toString(index)).replace("%type%", monster.name())
+				.replace("%interval%", Integer.toString(spawnCountdown));
 	}
 
 	public String removeSmallMonster(String small, int index, EntityType monster) {
@@ -395,7 +408,8 @@ public class GameCreator {
 				break;
 			}
 		}
-		return i18n("admin_command_success");
+		return i18n("admin_command_small_monster_removed").replace("%small%", small)
+				.replace("%number%", Integer.toString(index)).replace("%type%", monster.name());
 
 	}
 
