@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,10 +21,16 @@ import misat11.za.Main;
 import misat11.za.game.Game;
 import misat11.za.game.GameCreator;
 import misat11.za.game.GamePlayer;
+import misat11.za.game.GameStore;
+import misat11.za.game.MonsterInfo;
+import misat11.za.game.PhaseInfo;
+import misat11.za.game.SmallArena;
 
 import static misat11.lib.lang.I18n.*;
 
 public class ZaCommand implements CommandExecutor, TabCompleter {
+
+	public static final String ADMIN_PERMISSION = "misat11.za.admin";
 
 	public HashMap<String, GameCreator> gc = new HashMap<String, GameCreator>();
 
@@ -62,7 +70,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 					player.sendMessage(i18n("list_header"));
 					Main.sendGameListInfo(player);
 				} else if (args[0].equalsIgnoreCase("admin")) {
-					if (player.hasPermission("misat11.za.admin")) {
+					if (player.hasPermission(ADMIN_PERMISSION)) {
 						if (args.length >= 3) {
 							String arN = args[1];
 							if (args[2].equalsIgnoreCase("add")) {
@@ -100,6 +108,156 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 								} else {
 									player.sendMessage(i18n("no_arena_found"));
 								}
+							} else if (args[2].equalsIgnoreCase("info")) {
+								if (Main.isGameExists(arN)) {
+									Game game = Main.getGame(arN);
+									player.sendMessage(i18n("arena_info_header"));
+									player.sendMessage(
+											i18n("arena_info_name", false).replace("%name%", game.getName()));
+									String status = i18n("arena_info_status", false);
+									switch (game.getStatus()) {
+									case DISABLED:
+										if (gc.containsKey(arN)) {
+											player.sendMessage(i18nonly("arena_info_in_edit"));
+											status = status.replace("%status%",
+													i18n("arena_info_status_disabled_in_edit", false));
+										} else {
+											status = status.replace("%status%",
+													i18n("arena_info_status_disabled", false));
+										}
+										break;
+									case WAITING:
+										status = status.replace("%status%", i18n("arena_info_status_waiting", false));
+										break;
+									default:
+										status = status.replace("%status%", i18n("arena_info_status_running", false));
+									}
+									player.sendMessage(status);
+
+									player.sendMessage(i18n("arena_info_world", false).replace("%world%",
+											game.getWorld().getName()));
+
+									Location loc_pos1 = game.getPos1();
+									String pos1 = i18n("arena_info_pos1", false)
+											.replace("%x%", Double.toString(loc_pos1.getX()))
+											.replace("%y%", Double.toString(loc_pos1.getY()))
+											.replace("%z%", Double.toString(loc_pos1.getZ()))
+											.replace("%yaw%", Float.toString(loc_pos1.getYaw()))
+											.replace("%pitch%", Float.toString(loc_pos1.getPitch()))
+											.replace("%world%", loc_pos1.getWorld().getName());
+
+									player.sendMessage(pos1);
+
+									Location loc_pos2 = game.getPos2();
+									String pos2 = i18n("arena_info_pos2", false)
+											.replace("%x%", Double.toString(loc_pos2.getX()))
+											.replace("%y%", Double.toString(loc_pos2.getY()))
+											.replace("%z%", Double.toString(loc_pos2.getZ()))
+											.replace("%yaw%", Float.toString(loc_pos2.getYaw()))
+											.replace("%pitch%", Float.toString(loc_pos2.getPitch()))
+											.replace("%world%", loc_pos2.getWorld().getName());
+
+									player.sendMessage(pos2);
+
+									if (game.getBoss() == null) {
+										player.sendMessage(i18nonly("arena_info_boss_disabled"));
+									} else {
+										Location loc_boss = game.getBoss();
+										String boss = i18n("arena_info_boss_enabled", false)
+												.replace("%x%", Double.toString(loc_boss.getX()))
+												.replace("%y%", Double.toString(loc_boss.getY()))
+												.replace("%z%", Double.toString(loc_boss.getZ()))
+												.replace("%yaw%", Float.toString(loc_boss.getYaw()))
+												.replace("%pitch%", Float.toString(loc_boss.getPitch()))
+												.replace("%world%", loc_boss.getWorld().getName());
+										player.sendMessage(boss);
+									}
+
+									Location loc_spawn = game.getSpawn();
+									String spawn = i18n("arena_info_spawn", false)
+											.replace("%x%", Double.toString(loc_spawn.getX()))
+											.replace("%y%", Double.toString(loc_spawn.getY()))
+											.replace("%z%", Double.toString(loc_spawn.getZ()))
+											.replace("%yaw%", Float.toString(loc_spawn.getYaw()))
+											.replace("%pitch%", Float.toString(loc_spawn.getPitch()))
+											.replace("%world%", loc_spawn.getWorld().getName());
+									player.sendMessage(spawn);
+									player.sendMessage(i18n("arena_info_pause_countdown", false).replace("%time%",
+											Integer.toString(game.getPauseCountdown())));
+
+									player.sendMessage(i18n("arena_info_villagers", false));
+									for (GameStore store : game.getGameStores()) {
+
+										Location loc_store = store.loc;
+										String storeM = i18n("arena_info_villager_pos", false)
+												.replace("%x%", Double.toString(loc_store.getX()))
+												.replace("%y%", Double.toString(loc_store.getY()))
+												.replace("%z%", Double.toString(loc_store.getZ()))
+												.replace("%yaw%", Float.toString(loc_store.getYaw()))
+												.replace("%pitch%", Float.toString(loc_store.getPitch()))
+												.replace("%world%", loc_store.getWorld().getName());
+
+										player.sendMessage(storeM);
+									}
+
+									player.sendMessage(i18n("arena_info_phases", false));
+
+									PhaseInfo[] phases = game.getPhases();
+									for (int i = 0; i < phases.length; i++) {
+										PhaseInfo phase = phases[i];
+										player.sendMessage(
+												i18nonly("arena_info_phase").replace("%number%", Integer.toString(i))
+														.replace("%seconds%", Integer.toString(phase.getCountdown())));
+										for (MonsterInfo info : phase.getMonsters()) {
+											player.sendMessage(i18nonly("arena_info_phase_monsters")
+													.replace("%type%", info.getEntityType().name())
+													.replace("%seconds%", Integer.toString(info.getCountdown())));
+										}
+									}
+
+									player.sendMessage(i18n("arena_info_smalls", false));
+
+									for (SmallArena arena : game.getSmallArenas()) {
+										player.sendMessage(
+												i18n("arena_info_small_name", false).replace("%name%", arena.name));
+										Location small_pos1 = arena.pos1;
+										player.sendMessage(i18n("arena_info_small_pos1", false)
+												.replace("%x%", Double.toString(small_pos1.getX()))
+												.replace("%y%", Double.toString(small_pos1.getY()))
+												.replace("%z%", Double.toString(small_pos1.getZ()))
+												.replace("%yaw%", Float.toString(small_pos1.getYaw()))
+												.replace("%pitch%", Float.toString(small_pos1.getPitch()))
+												.replace("%world%", small_pos1.getWorld().getName()));
+										Location small_pos2 = arena.pos1;
+										player.sendMessage(i18n("arena_info_small_pos2", false)
+												.replace("%x%", Double.toString(small_pos2.getX()))
+												.replace("%y%", Double.toString(small_pos2.getY()))
+												.replace("%z%", Double.toString(small_pos2.getZ()))
+												.replace("%yaw%", Float.toString(small_pos2.getYaw()))
+												.replace("%pitch%", Float.toString(small_pos2.getPitch()))
+												.replace("%world%", small_pos2.getWorld().getName()));
+										for (Map.Entry<PhaseInfo, List<MonsterInfo>> monster : arena.monsters
+												.entrySet()) {
+											int index = 0;
+											for (int i = 0; i < phases.length; i++) {
+												if (phases[i] == monster.getKey()) {
+													index = i;
+													break;
+												}
+											}
+											for (MonsterInfo info : monster.getValue()) {
+												player.sendMessage(i18nonly("arena_info_small_monsters")
+														.replace("%number%", Integer.toString(index))
+														.replace("%type%", info.getEntityType().name())
+														.replace("%seconds%", Integer.toString(info.getCountdown())));
+											}
+										}
+
+									}
+
+								} else {
+									player.sendMessage(i18n("no_arena_found"));
+								}
 							} else {
 								if (gc.containsKey(arN)) {
 									List<String> nargs = new ArrayList<String>();
@@ -110,7 +268,8 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 										}
 										lid++;
 									}
-									boolean isArenaSaved = gc.get(arN).cmd(player, args[2], nargs.toArray(new String[nargs.size()]));
+									boolean isArenaSaved = gc.get(arN).cmd(player, args[2],
+											nargs.toArray(new String[nargs.size()]));
 									if (args[2].equalsIgnoreCase("save") && isArenaSaved) {
 										gc.remove(arN);
 									}
@@ -125,7 +284,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 						player.sendMessage(i18n("no_permissions"));
 					}
 				} else if (args[0].equalsIgnoreCase("skip")) {
-					if (player.hasPermission("misat11.za.admin")) {
+					if (player.hasPermission(ADMIN_PERMISSION)) {
 						if (Main.isPlayerInGame(player)) {
 							if (args.length > 1) {
 								Main.getPlayerGameProfile(player).getGame().skip(Integer.parseInt(args[1]));
@@ -139,7 +298,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 						player.sendMessage(i18n("no_permissions"));
 					}
 				} else if (args[0].equalsIgnoreCase("reload")) {
-					if (player.hasPermission("misat11.za.admin")) {
+					if (player.hasPermission(ADMIN_PERMISSION)) {
 						Bukkit.getServer().getPluginManager().disablePlugin(Main.getInstance());
 						Bukkit.getServer().getPluginManager().enablePlugin(Main.getInstance());
 						player.sendMessage("Plugin reloaded!");
@@ -163,7 +322,8 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 		player.sendMessage(i18n("help_za_list", false));
 		player.sendMessage(i18n("help_za_coins", false));
 		player.sendMessage(i18n("help_za_antiteleport", false));
-		if (player.hasPermission("misat11.za.admin")) {
+		if (player.hasPermission(ADMIN_PERMISSION)) {
+			player.sendMessage(i18n("help_za_admin_info", false));
 			player.sendMessage(i18n("help_za_admin_add", false));
 			player.sendMessage(i18n("help_za_admin_spawn", false));
 			player.sendMessage(i18n("help_za_admin_pos1", false));
@@ -200,7 +360,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 			Player player = (Player) sender;
 			if (args.length == 1) {
 				List<String> cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport");
-				if (player.hasPermission("misat11.za.admin")) {
+				if (player.hasPermission(ADMIN_PERMISSION)) {
 					cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport", "admin", "skip", "reload");
 				}
 				StringUtil.copyPartialMatches(args[0], cmds, completionList);
@@ -209,7 +369,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 				if (args[0].equalsIgnoreCase("join")) {
 					List<String> arenas = Main.getGameNames();
 					StringUtil.copyPartialMatches(args[1], arenas, completionList);
-				} else if (args[0].equalsIgnoreCase("admin") && player.hasPermission("misat11.za.admin")) {
+				} else if (args[0].equalsIgnoreCase("admin") && player.hasPermission(ADMIN_PERMISSION)) {
 					if (args.length == 2) {
 						List<String> arenas = Main.getGameNames();
 						for (String arena : gc.keySet()) {
@@ -218,7 +378,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 						StringUtil.copyPartialMatches(args[1], arenas, completionList);
 					} else if (args.length == 3) {
 						List<String> cmds = Arrays.asList("add", "spawn", "pos1", "pos2", "pausecountdown", "phase",
-								"monster", "small", "store", "bossgame", "save", "remove", "edit");
+								"monster", "small", "store", "bossgame", "save", "remove", "edit", "info");
 						StringUtil.copyPartialMatches(args[2], cmds, completionList);
 					} else if (args[2].equalsIgnoreCase("pausecountdown") && args.length == 4) {
 						StringUtil.copyPartialMatches(args[3], Arrays.asList("60"), completionList);

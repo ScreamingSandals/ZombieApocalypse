@@ -15,6 +15,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import misat11.za.Main;
+import misat11.za.commands.ZaCommand;
 import misat11.za.game.Game;
 import misat11.za.utils.GameSign;
 
@@ -54,7 +55,7 @@ public class SignListener implements Listener {
 		if (event.getBlock().getState() instanceof Sign) {
 			Location loc = event.getBlock().getLocation();
 			if (Main.isSignRegistered(loc)) {
-				if (event.getPlayer().hasPermission("misat11.za.admin")) {
+				if (event.getPlayer().hasPermission(ZaCommand.ADMIN_PERMISSION)) {
 					Main.unregisterSign(loc);
 				} else {
 					event.getPlayer().sendMessage(i18n("sign_can_not_been_destroyed"));
@@ -73,7 +74,7 @@ public class SignListener implements Listener {
 		if (event.getBlock().getState() instanceof Sign) {
 			Location loc = event.getBlock().getLocation();
 			if (ZOMBIE_APOCALYPSE_SIGN_PREFIX.contains(event.getLine(0).toLowerCase())) {
-				if (event.getPlayer().hasPermission("misat11.za.admin")) {
+				if (event.getPlayer().hasPermission(ZaCommand.ADMIN_PERMISSION)) {
 					if (Main.registerSign(loc, event.getLine(1))) {
 						event.getPlayer().sendMessage(i18n("sign_successfully_created"));
 					} else {
