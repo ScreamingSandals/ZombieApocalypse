@@ -91,6 +91,14 @@ admin_command_monster_removed: "§aMonstrum §7%type%§a bylo z fáze §7%number
 admin_command_small_monster_added: "§aMonstrum §7%type%§a bylo přidáno do fáze §7%number%§a a miniarény §7%small%§a a bude se spawnovat v intervalu §7%interval%§a sekund!"
 admin_command_small_monster_removed: "§aMonstrum §7%type%§a z miniarény §7%small%§a bylo z fáze §7%number%§a odebráno!"
 
+admin_command_save_phases_missing: "§cProsím přidejte nějaká fáze dříve, než budete moct uložit!"
+admin_command_save_stores_missing: "§cProsím přidejte nějaká fáze dříve, než budete moct uložit!"
+admin_command_save_pos1_or_pos2: "§cPozice 1 nebo pozice 2 není nastavena!"
+admin_command_save_spawn_missing: "§cPozice spawnu není nastavena!"
+admin_command_save_phase_countdown: "§cDélka fáze §7%number%§c není nastavena!"
+admin_command_save_phase_monsters: "§cVe fázi §7%number%§c nejsou žádná monstra!"
+admin_command_save_small_pos1_or_pos2: "§cPozice 1 nebo pozice 2 není nastavena pro miniarénu §7%name%§c!"
+
 help_title: "ZombieApocalypse %version% - Nápověda"
 help_za_join: "/za join <aréna> - §aPřipojí tě k aréně"
 help_za_leave: "/za leave - §aOdpojí tě z arény"

@@ -59,7 +59,8 @@ public class GameCreator {
 		return list;
 	}
 
-	public void cmd(Player player, String action, String[] args) {
+	public boolean cmd(Player player, String action, String[] args) {
+		boolean isArenaSaved = false;
 		String response = null;
 		if (action.equalsIgnoreCase("spawn")) {
 			response = setSpawn(player.getLocation());
@@ -119,9 +120,7 @@ public class GameCreator {
 					}
 				}
 			}
-		} else if (action.equalsIgnoreCase("store"))
-
-		{
+		} else if (action.equalsIgnoreCase("store")) {
 			if (args.length >= 1) {
 				if (args[0].equalsIgnoreCase("add")) {
 					response = addStore(player.getLocation());
@@ -138,28 +137,74 @@ public class GameCreator {
 				}
 			}
 		} else if (action.equalsIgnoreCase("save")) {
-			game.setPhases(phases.toArray(new PhaseInfo[phases.size()]));
-			List<SmallArena> arenalist = new ArrayList<SmallArena>();
-			for (SmallArena arr : smallarenas.values()) {
-				arenalist.add(arr);
+			if (game.getPos1() == null || game.getPos2() == null) {
+				response = i18n("admin_command_save_pos1_or_pos2");
+			} else if (game.getSpawn() == null) {
+				response = i18n("admin_command_save_spawn_missing");
+			} else if (phases.isEmpty()) {
+				response = i18n("admin_command_save_phases_missing");
+			} else if (villagerstores.isEmpty()) {
+				response = i18n("admin_command_save_stores_missing");
+			} else {
+				boolean isPhasesCorrect = true;
+				for (int i = 0; i < phases.size(); i++) {
+					PhaseInfo phase = phases.get(i);
+					if (phase.getCountdown() <= 0) {
+						isPhasesCorrect = false;
+						response = i18n("admin_command_save_phase_countdown").replace("%number%", Integer.toString(i));
+						break;
+					} else if (phase.getMonsters().isEmpty()) {
+						boolean monstersInMiniarena = false;
+						for (SmallArena arr : smallarenas.values()) {
+							 List<MonsterInfo> info = arr.monsters.get(phase);
+							 if (info != null && !info.isEmpty()) {
+								 monstersInMiniarena = true;
+								 break;
+							 }
+						}
+						if (!monstersInMiniarena) {
+							isPhasesCorrect = false;
+							response = i18n("admin_command_save_phase_monsters").replace("%number%",
+									Integer.toString(i));
+							break;
+						}
+					}
+				}
+				if (isPhasesCorrect) {
+					game.setPhases(phases.toArray(new PhaseInfo[phases.size()]));
+					boolean isSmallCorrect = true;
+					List<SmallArena> arenalist = new ArrayList<SmallArena>();
+					for (SmallArena arr : smallarenas.values()) {
+						if (arr.pos1 == null || arr.pos2 == null) {
+							isSmallCorrect = false;
+							response = i18n("admin_command_save_small_pos1_or_pos2").replace("%name%", arr.name);
+							break;
+						}
+						arenalist.add(arr);
+					}
+					if (isSmallCorrect) {
+						game.setSmallArenas(arenalist);
+						List<GameStore> gamestores = new ArrayList<GameStore>();
+						for (GameStore vloc : villagerstores.values()) {
+							gamestores.add(vloc);
+						}
+						game.setGameStores(gamestores);
+						game.saveToConfig();
+						game.start();
+						game.updateSigns();
+						Main.addGame(game);
+						response = i18n("admin_command_game_saved_and_started");
+						isArenaSaved = true;
+					}
+				}
 			}
-			game.setSmallArenas(arenalist);
-			List<GameStore> gamestores = new ArrayList<GameStore>();
-			for (GameStore vloc : villagerstores.values()) {
-				gamestores.add(vloc);
-			}
-			game.setGameStores(gamestores);
-			game.saveToConfig();
-			game.start();
-			game.updateSigns();
-			Main.addGame(game);
-			response = i18n("admin_command_game_saved_and_started");
 		}
 
 		if (response == null) {
 			response = i18n("unknown_command");
 		}
 		player.sendMessage(response);
+		return isArenaSaved;
 	}
 
 	public String setBossGame(Location loc) {

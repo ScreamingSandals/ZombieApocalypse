@@ -46,7 +46,7 @@ public class Game {
 	private Location pos2;
 	private Location spawn;
 	private PhaseInfo[] phases;
-	private int pauseCountdown;
+	private int pauseCountdown = 60;
 	private List<GamePlayer> players = new ArrayList<GamePlayer>();
 	private List<SmallArena> smallarenas = new ArrayList<SmallArena>();
 	private World world;

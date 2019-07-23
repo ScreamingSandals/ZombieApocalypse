@@ -91,6 +91,14 @@ admin_command_monster_removed: "§aMonster §7%type%§a was removed from §7%num
 admin_command_small_monster_added: "§aMonster §7%type%§a was added to §7%number%§a and miniarena §7%small%§a and will be spawned in interval §7%interval%§a seconds!"
 admin_command_small_monster_removed: "§aMonster §7%type%§a from miniarena §7%small%§a was removed from §7%number%§a!"
 
+admin_command_save_phases_missing: "§cPlease add some phases before save!"
+admin_command_save_stores_missing: "§cPlease add some stores before save!"
+admin_command_save_pos1_or_pos2: "§cPosition 1 or position 2 is not set!"
+admin_command_save_spawn_missing: "§cSpawn position is not set!"
+admin_command_save_phase_countdown: "§cCountdown for phase §7%number%§c is not set!"
+admin_command_save_phase_monsters: "§cPhase §7%number%§c doesn't have any monster!"
+admin_command_save_small_pos1_or_pos2: "§cPosition 1 or position 2 is not set for miniarena §7%name%§c!"
+
 help_title: "ZombieApocalypse %version% - Help"
 help_za_join: "/za join <arena> - §aJoin to arena"
 help_za_leave: "/za leave - §aLeave from arena"
