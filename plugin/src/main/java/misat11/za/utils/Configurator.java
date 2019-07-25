@@ -126,6 +126,12 @@ public class Configurator {
 		checkOrSetConfig(modify, "scoreboard.content", Arrays.asList("§fMap: §2%arena%", "§fPlayers: §2%players%",
 				"§fPhase: §l%phase%", "§4Leave: /za leave"));
 		checkOrSetConfig(modify, "sign", Arrays.asList("§a§l[ZombieApocalypse]", "%arena%", "%status%", "%players%"));
+		checkOrSetConfig(modify, "start_kits", Arrays.asList(new HashMap<String, Object>(){
+			{
+				put("stack", new ItemStack(Material.STONE_SWORD));
+				put("items", Arrays.asList(new ItemStack(Material.STONE_SWORD)));
+			}
+		}));
 		if (modify.get()) {
 			try {
 				config.save(configf);

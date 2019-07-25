@@ -125,6 +125,8 @@ arena_info_small_monsters: "  - §7%type% §f(fáze: §7%number%§f, interval: �
 arena_info_boss_disabled: "§7Boss je vypnutý"
 arena_info_boss_enabled: "§7Boss spawn: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
 
+kit_selection_inventory: "Výběr prvního vybavení"
+
 help_title: "ZombieApocalypse %version% - Nápověda"
 help_za_join: "/za join <aréna> - §aPřipojí tě k aréně"
 help_za_leave: "/za leave - §aOdpojí tě z arény"

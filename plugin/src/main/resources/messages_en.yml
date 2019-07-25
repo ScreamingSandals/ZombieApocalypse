@@ -125,6 +125,8 @@ arena_info_small_monsters: "  - §7%type% §f(phase: §7%number%§f, interval: �
 arena_info_boss_disabled: "§7Boss is disabled"
 arena_info_boss_enabled: "§7Boss spawn: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
 
+kit_selection_inventory: "Start kit selection"
+
 help_title: "ZombieApocalypse %version% - Help"
 help_za_join: "/za join <arena> - §aJoin to arena"
 help_za_leave: "/za leave - §aLeave from arena"

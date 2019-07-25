@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import misat11.za.Main;
 
@@ -242,7 +243,14 @@ public class GamePlayer {
 			e.printStackTrace();
 		}
 		if (!c.isSet("inventory")) {
-			player.getInventory().addItem(new ItemStack(Material.STONE_SWORD));
+			new BukkitRunnable() {
+				
+				@Override
+				public void run() {
+					Main.getKits().openForPlayer(player);
+				}
+				
+			}.runTask(Main.getInstance());
 		}
 		if (c.isSet("inventory.armor")) {
 			ItemStack[] armor = c.getList("inventory.armor").toArray(new ItemStack[0]);

@@ -51,3 +51,22 @@ sign:
    - "%arena%"
    - "%status%"
    - "%players%"
+start_kits:
+   - stack:
+       ==: org.bukkit.inventory.ItemStack
+       type: STONE_SWORD
+       meta:
+         ==: ItemMeta
+         meta-type: UNSPECIFIC
+         display-name: "§aStone sword"
+     items:
+     - stack:
+         ==: org.bukkit.inventory.ItemStack
+         type: STONE_SWORD
+   - stack:
+       ==: org.bukkit.inventory.ItemStack
+       type: BARRIER
+       meta:
+         ==: ItemMeta
+         meta-type: UNSPECIFIC
+         display-name: "§cJust my hands"

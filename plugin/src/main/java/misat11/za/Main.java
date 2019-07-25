@@ -14,6 +14,7 @@ import misat11.za.listener.VillagerListener;
 import misat11.za.listener.ZombieListener;
 import misat11.za.utils.Configurator;
 import misat11.za.utils.GameSign;
+import misat11.za.utils.KitSelectorInventory;
 import misat11.za.utils.ShopMenu;
 import misat11.za.utils.SignManager;
 import net.milkbowl.vault.economy.Economy;
@@ -45,6 +46,7 @@ public class Main extends JavaPlugin {
 	private Configurator configurator;
 	private ShopMenu menu;
 	private SignManager signManager;
+	private KitSelectorInventory kit;
 
 	public static Main getInstance() {
 		return instance;
@@ -212,6 +214,10 @@ public class Main extends JavaPlugin {
 		}
 		return reward > 0 ? reward : 1;
 	}
+	
+	public static KitSelectorInventory getKits() {
+		return instance.kit;
+	}
 
 	public void onEnable() {
 		instance = this;
@@ -272,6 +278,7 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new SignListener(), this);
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		menu = new ShopMenu();
+		kit = new KitSelectorInventory();
 
 		Bukkit.getConsoleSender().sendMessage("§a====================  §fby Misat11");
 		Bukkit.getConsoleSender().sendMessage("§a+ ZombieApocalypse +  §6Version: " + version);
