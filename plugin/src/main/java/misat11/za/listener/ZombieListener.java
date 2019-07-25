@@ -64,6 +64,7 @@ public class ZombieListener implements Listener {
 					event.getDrops().clear();
 				}
 				gKiller.coins += add;
+				gKiller.mobkills.put(gKiller.getGame().getName(), gKiller.mobkills.getOrDefault(gKiller.getGame().getName(), 0) + 1);
 				String kMessage = i18n("player_get_points")
 						.replace("%entity%",
 								event.getEntity().getCustomName() != null ? event.getEntity().getCustomName()

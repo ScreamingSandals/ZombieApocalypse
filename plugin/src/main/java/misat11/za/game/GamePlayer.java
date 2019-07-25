@@ -2,9 +2,11 @@ package misat11.za.game;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +23,10 @@ public class GamePlayer {
 	public final Player player;
 	public int coins = 0;
 	public int teleportAura = 0;
+	public Map<String, Integer> mobkills = new HashMap<>();
+	public Map<String, Integer> pvpkills = new HashMap<>();
+	public Map<String, Integer> mobdeaths = new HashMap<>();
+	public Map<String, Integer> pvpdeaths = new HashMap<>();
 	private Game game = null;
 
 	private StoredInventory oldinventory = new StoredInventory();
@@ -122,7 +128,18 @@ public class GamePlayer {
 		}
 		pconfig.set("coins", coins);
 		pconfig.set("teleportAura", teleportAura);
-
+		for (Map.Entry<String, Integer> entry : mobkills.entrySet()) {
+			pconfig.set("kills." + entry.getKey() + ".mobs", entry.getValue());
+		}
+		for (Map.Entry<String, Integer> entry : pvpkills.entrySet()) {
+			pconfig.set("kills." + entry.getKey() + ".players", entry.getValue());
+		}
+		for (Map.Entry<String, Integer> entry : mobdeaths.entrySet()) {
+			pconfig.set("deaths." + entry.getKey() + ".mobs", entry.getValue());
+		}
+		for (Map.Entry<String, Integer> entry : pvpdeaths.entrySet()) {
+			pconfig.set("deaths." + entry.getKey() + ".players", entry.getValue());
+		}
 		try {
 			pconfig.save(file);
 		} catch (IOException e) {
@@ -185,6 +202,26 @@ public class GamePlayer {
 			coins = pconfig.getInt("coins");
 		if (pconfig.isSet("teleportAura"))
 			teleportAura = pconfig.getInt("teleportAura");
+		if (pconfig.isSet("kills")) {
+			ConfigurationSection kills = pconfig.getConfigurationSection("kills");
+			for (String killN : kills.getKeys(false)) {
+				ConfigurationSection kill = kills.getConfigurationSection(killN);
+				int mobs = kill.getInt("mobs", 0);
+				int players = kill.getInt("players", 0);
+				mobkills.put(killN, mobs);
+				pvpkills.put(killN, players);
+			}
+		}
+		if (pconfig.isSet("deaths")) {
+			ConfigurationSection deaths = pconfig.getConfigurationSection("deaths");
+			for (String deathN : deaths.getKeys(false)) {
+				ConfigurationSection death = deaths.getConfigurationSection(deathN);
+				int mobs = death.getInt("mobs", 0);
+				int players = death.getInt("players", 0);
+				mobdeaths.put(deathN, mobs);
+				pvpdeaths.put(deathN, players);
+			}
+		}
 
 		saveGamePlayerData();
 	}
@@ -244,12 +281,12 @@ public class GamePlayer {
 		}
 		if (!c.isSet("inventory")) {
 			new BukkitRunnable() {
-				
+
 				@Override
 				public void run() {
 					Main.getKits().openForPlayer(player);
 				}
-				
+
 			}.runTask(Main.getInstance());
 		}
 		if (c.isSet("inventory.armor")) {
@@ -264,7 +301,7 @@ public class GamePlayer {
 			player.setLevel(c.getInt("inventory.lvl"));
 		}
 		if (c.isSet("inventory.xp")) {
-			player.setExp((float)c.getDouble("inventory.xp"));
+			player.setExp((float) c.getDouble("inventory.xp"));
 		}
 	}
 

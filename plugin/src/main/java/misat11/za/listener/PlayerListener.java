@@ -44,6 +44,8 @@ public class PlayerListener implements Listener {
 				}
 				gVictim.coins -= subtract;
 				gKiller.coins += subtract;
+				gKiller.pvpkills.put(gKiller.getGame().getName(), gKiller.pvpkills.getOrDefault(gKiller.getGame().getName(), 0) + 1);
+				gVictim.pvpdeaths.put(gVictim.getGame().getName(), gVictim.pvpdeaths.getOrDefault(gVictim.getGame().getName(), 0) + 1);
 				String vMessage = i18n("player_miss_points").replace("%killer%", killer.getDisplayName())
 						.replace("%coins%", Integer.toString(subtract))
 						.replace("%newcoins%", Integer.toString(gVictim.coins));
@@ -60,6 +62,7 @@ public class PlayerListener implements Listener {
 					subtract = 5 - Math.abs(nc);
 				}
 				gVictim.coins -= subtract;
+				gVictim.mobdeaths.put(gVictim.getGame().getName(), gVictim.mobdeaths.getOrDefault(gVictim.getGame().getName(), 0) + 1);
 				String vMessage;
 				if (victim.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 					Entity dKiller = ((EntityDamageByEntityEvent) victim.getLastDamageCause()).getDamager();
