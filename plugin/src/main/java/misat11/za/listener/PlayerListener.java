@@ -3,6 +3,7 @@ package misat11.za.listener;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -160,6 +161,27 @@ public class PlayerListener implements Listener {
 				if (!Main.getConfigurator().config.getBoolean("allow-crafting", true)) {
 					event.setCancelled(true);
 					return;
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPVP(EntityDamageByEntityEvent event) {
+		if (event.isCancelled() || Main.getConfigurator().config.getBoolean("allow-pvp", true)) {
+			return;
+		}
+		
+		if (event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			if (Main.isPlayerInGame(player)) {
+				if (event.getDamager() instanceof Player) {
+					event.setCancelled(true);
+				} else if (event.getDamager() instanceof Projectile) {
+					Projectile projectile = (Projectile) event.getDamager();
+					if (projectile.getShooter() instanceof Player) {
+						event.setCancelled(true);
+					}
 				}
 			}
 		}

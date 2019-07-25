@@ -3,6 +3,7 @@ allow-crafting: false
 allow-workbench-crafting: true
 make-villagers-aggressive-when-phase-started: false
 prevent-spawning-villager-if-previous-is-living: false
+allow-pvp: true
 farmBlocks:
 - WHEAT
 - CARROTS
