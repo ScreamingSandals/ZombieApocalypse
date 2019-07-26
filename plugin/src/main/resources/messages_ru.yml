@@ -19,18 +19,18 @@ have_antiteleports: "§aУ вас есть §7%antiteleport%§a частиц А�
 vault_deposite: "§aВы получили §7%coins% %currency%§a на ваш аккаунт в Vault!"
 
 unknown_command: "§cНеизвестная команда! Напишите §4/za help §cдля помощи!"
-no_арена_found: "§cАрена не найдена!"
+no_arena_found: "§cАрена не найдена!"
 usage_za_join: "§cИспользование: /za join <арена>"
 usage_za_admin: "§cИспользование: /za admin <арена> <add|edit|remove|save|...> ..."
 you_arent_in_game: "§cВы не находитесь в игре!"
 allready_exists: "§cАрена уже существует!"
 allready_working_on_it: "§cАрена уже существует или ещё не завершена!"
-арена_not_in_edit: "§cАрена не существует или запущена! Отключите её, используя §7/za admin <арена> edit§c и сохраните её: §7/za admin <арена> save"
+arena_not_in_edit: "§cАрена не существует или запущена! Отключите её, используя §7/za admin <арена> edit§c и сохраните её: §7/za admin <арена> save"
 no_permissions: "§cНедостаточно прав!"
-арена_must_be_in_edit_mode: "§cАрена должна быть в режиме редактирования!"
-арена_removed: "§c§lАрена удалена!"
-арена_added: "§aАрена добавлена!"
-арена_switched_to_edit: "§aАрена переключена в режим редактирования!"
+arena_must_be_in_edit_mode: "§cАрена должна быть в режиме редактирования!"
+arena_removed: "§c§lАрена удалена!"
+arena_added: "§aАрена добавлена!"
+arena_switched_to_edit: "§aАрена переключена в режим редактирования!"
 
 list_header: "§aДоступные арены:"
 buy_succes: "§aПредмет §7%item%§a был куплен, осталось монет: §7%yourcoins%"
@@ -53,7 +53,7 @@ admin_command_pos1_pos2_difference_must_be_higher: "§cРазница высот
 admin_command_phase_not_exists: "§cВыбранная фаза не существует!"
 admin_command_game_saved_and_started: "§aАрена была успешно сохранена и запущена! Теперь вы можете зайти и играть!"
 admin_phase_added_number: "§bФаза %number% добавлена! Фазы на следующих позициях автоматически перемещены!"
-admin_command_small_already_exists: "§cМиниарена с этим названием уже существует!"
+admin_command_small_already_exists: "§cМини-арена с этим названием уже существует!"
 admin_command_small_not_exists: "§cМиниарена с этим названием не существует!"
 admin_command_store_already_exists: "§cМагазин уже существует!"
 admin_command_store_not_exists: "§cМагазин не существует!"
@@ -90,3 +90,53 @@ help_za_admin_bossgame_reset: "/za admin <арена> bossgame reset - §eОтк
 help_za_admin_remove: "/za admin <арена> remove - §cУбрать арену"
 help_za_admin_edit: "/za admin <арена> edit - §eПереключить арену в режим редактирования"
 help_za_admin_save: "/za admin <арена> save - §aСохранить арену!"
+
+sign_successfully_created: "§aТабличка была успешно создана!"
+sign_can_not_been_created: "§cТабличка не может быть создана! Проверьте название арены!"
+sign_can_not_been_destroyed: "§cУ вас нет прав на ломание таблички!"
+sign_game_not_exists: "§cАрена не существует! Свяжитесь с администратором!"
+
+sign_status_disabled: "§cАрена"
+sign_status_disabled_players: "§cвыключена"
+
+sign_status_running: "§aЗапущена"
+sign_status_running_players: "§a%players% игроков"
+
+sign_status_waiting: "§6Ожидание"
+sign_status_waiting_players: "§6игроков"
+
+admin_command_save_phases_missing: "§cДобавьте больше фаз перед сохранением!"
+admin_command_save_stores_missing: "§cДобавьте больше торговцев перед сохранением!"
+admin_command_save_pos1_or_pos2: "§cПервая или вторая позиции не заданы!"
+admin_command_save_spawn_missing: "§cТочки появления не заданы!"
+admin_command_save_phase_countdown: "§cОтчёт для фазы §7%number%§c не задан!"
+admin_command_save_phase_monsters: "§cФаза §7%number%§c не имеет никаких мобов!"
+admin_command_save_small_pos1_or_pos2: "§cПервая или вторая позиции не заданы для мини-арены §7%name%§c!"
+
+arena_info_header: "§aИнформация о арене:"
+arena_info_in_edit: "§cThis details shows just saved entries! Things that you are editting you can't see here!"
+arena_info_name: "§7Название: §r%name%"
+arena_info_status: "§7Статус: §r%status%"
+arena_info_status_disabled: "§cВЫКЛЮЧЕНА"
+arena_info_status_waiting: "§eОЖИДАНИЕ ИГРОКОВ"
+arena_info_status_running: "§aАРЕНА ЗАПУЩЕНА"
+arena_info_status_disabled_in_edit: "§cВЫКЛЮЧЕНА§r (§eРЕДАКТОР§r)"
+arena_info_world: "§7Мир: §r%world%"
+arena_info_pos1: "§7Позиция 1: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
+arena_info_pos2: "§7Позиция 2: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
+arena_info_spawn: "§7Точки появления: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
+arena_info_villagers: "§7Торговцы:"
+arena_info_villager_pos: "- XYZ: §7%x%§r/§7%y%§r/§7%z%"
+arena_info_pause_countdown: "§7Отчёт до следующей фазы: §f%time% с"
+arena_info_phases: "§fФазы:"
+arena_info_phase: "- §7Фаза %number% - %seconds% секунд"
+arena_info_phase_monsters: "  - §7%type% §f(промежуток: §7%seconds%§f seconds)"
+arena_info_smalls: "§fМини-арены:"
+arena_info_small_name: "- §7Имя: §r%name%"
+arena_info_small_pos1: "  §7Позиция 1: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
+arena_info_small_pos2: "  §7Позиция 2: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
+arena_info_small_monsters: "  - §7%type% §f(фаза: §7%number%§f, промежуток: §7%seconds%§f секунд)"
+arena_info_boss_disabled: "§7Босс выключен"
+arena_info_boss_enabled: "§7Точка появления босса: §fXYZ: §7%x%§r/§7%y%§r/§7%z%"
+
+kit_selection_inventory: "Выбор начального набора"
