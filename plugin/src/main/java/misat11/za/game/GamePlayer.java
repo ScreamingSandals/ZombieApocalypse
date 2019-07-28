@@ -56,6 +56,50 @@ public class GamePlayer {
 		}
 		saveGamePlayerData();
 	}
+	
+	public int countKills() {
+		return countMobKills() + countPvPKills();
+	}
+	
+	public int countDeaths() {
+		return countMobDeaths() + countPvPDeaths();
+	}
+	
+	public double getKD() {
+		return (double) countKills() / (double) (countDeaths() == 0 ? 1 : countDeaths());
+	}
+	
+	public int countMobKills() {
+		int total = 0;
+		for (int i : mobkills.values()) {
+			total += i;
+		}
+		return total;
+	}
+	
+	public int countMobDeaths() {
+		int total = 0;
+		for (int i : mobdeaths.values()) {
+			total += i;
+		}
+		return total;
+	}
+	
+	public int countPvPKills() {
+		int total = 0;
+		for (int i : pvpkills.values()) {
+			total += i;
+		}
+		return total;
+	}
+	
+	public int countPvPDeaths() {
+		int total = 0;
+		for (int i : pvpdeaths.values()) {
+			total += i;
+		}
+		return total;
+	}
 
 	public Game getGame() {
 		return game;

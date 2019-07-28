@@ -49,6 +49,16 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 					GamePlayer gPlayer = Main.getPlayerGameProfile(player);
 					sender.sendMessage(i18n("have_antiteleports").replace("%antiteleport%",
 							Integer.toString(gPlayer.teleportAura)));
+				} else if (args[0].equalsIgnoreCase("stats")) {
+					GamePlayer gPlayer = Main.getPlayerGameProfile(player);
+					sender.sendMessage(i18n("have_kills").replace("%total%", Integer.toString(gPlayer.countKills()))
+							.replace("%pvp%", Integer.toString(gPlayer.countPvPKills()))
+							.replace("%mob%", Integer.toString(gPlayer.countMobKills())));
+					sender.sendMessage(i18n("have_deaths").replace("%total%", Integer.toString(gPlayer.countDeaths()))
+							.replace("%pvp%", Integer.toString(gPlayer.countPvPDeaths()))
+							.replace("%mob%", Integer.toString(gPlayer.countMobDeaths())));
+					sender.sendMessage(i18n("have_kd").replace("%kd%",
+							Double.toString((double) Math.round(gPlayer.getKD() * 100) / 100)));
 				} else if (args[0].equalsIgnoreCase("join")) {
 					if (args.length > 1) {
 						String arenaN = args[1];
@@ -322,6 +332,7 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 		player.sendMessage(i18n("help_za_list", false));
 		player.sendMessage(i18n("help_za_coins", false));
 		player.sendMessage(i18n("help_za_antiteleport", false));
+		player.sendMessage(i18n("help_za_stats", false));
 		if (player.hasPermission(ADMIN_PERMISSION)) {
 			player.sendMessage(i18n("help_za_admin_info", false));
 			player.sendMessage(i18n("help_za_admin_add", false));
@@ -359,9 +370,9 @@ public class ZaCommand implements CommandExecutor, TabCompleter {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (args.length == 1) {
-				List<String> cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport");
+				List<String> cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport", "stats");
 				if (player.hasPermission(ADMIN_PERMISSION)) {
-					cmds = Arrays.asList("join", "leave", "list", "coins", "antiteleport", "admin", "skip", "reload");
+					cmds = Arrays.asList("join", "leave", "list", "coins", "stats", "antiteleport", "admin", "skip", "reload");
 				}
 				StringUtil.copyPartialMatches(args[0], cmds, completionList);
 			}
